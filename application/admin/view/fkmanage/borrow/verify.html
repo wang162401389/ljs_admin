@@ -1,0 +1,71 @@
+<form id="verify-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th width="15%"></th>
+                <th width="85%"></th>
+            </tr>
+        </thead>
+        <tbody>
+        	<tr>
+        		<td>
+        			{eq name="row.borrowStatus" value="0"}
+        				是否通过初审
+       				{else/}
+        				是否通过复审
+       				{/eq}
+       			</td>
+        		<td>
+        			<div class="row">
+                        <div class="col-sm-8 col-xs-12">
+			            	{:build_radios('row[borrowStatus]', ['1' => '通过', '0' => '拒绝'])}
+			            </div>
+			            <div class="col-sm-4"></div>
+		            </div>
+        		</td>
+        	</tr>
+        	<tr>
+	        	{eq name="row.borrowStatus" value="0"}
+	        		<td>设置发布时间</td>
+	        		<td>
+	        			<div class="row">
+	                        <div class="col-sm-8 col-xs-12">
+	 			            	<input id="c-bidTime" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[bidTime]" type="text" value="">
+				            </div>
+				            <div class="col-sm-4"></div>
+			            </div>
+	        		</td>
+	        	{else/}
+	        		<td>标的通道</td>
+	        		<td>
+	        			<div class="row">
+	                        <div class="col-sm-8 col-xs-12">
+	 			            	{$row.pay_channel_type_text}
+				            </div>
+				            <div class="col-sm-4"></div>
+			            </div>
+	        		</td>
+	        	{/eq}
+        	</tr>
+        	<tr>
+        		<td>处理意见</td>
+        		<td>
+        			<div class="row">
+                        <div class="col-sm-8 col-xs-12">
+            	            <textarea class="form-control" rows="5" name="{eq name="row.borrowStatus" value='0'}row[firstVerfiyRemarks]{else/}row[secondVerfiyRemarks]{/eq}" cols="50"></textarea>
+			            </div>
+			            <div class="col-sm-4"></div>
+		            </div>
+        		</td>
+        	</tr>
+        </tbody>
+    </table>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,12 @@
+/thinkphp/
+/vendor/
+/runtime/
+/application/admin/command/Install/*.lock
+/public/assets/libs/
+/public/uploads/*
+composer.lock
+.env
+.buildpath
+.project
+.settings/
+.svn/

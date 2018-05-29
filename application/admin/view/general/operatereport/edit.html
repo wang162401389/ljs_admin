@@ -1,0 +1,48 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label for="c-reportYear" class="control-label col-xs-12 col-sm-2">{:__('Reportyear')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-reportYear" class="form-control" name="row[reportYear]" type="number" value="{$row.reportYear}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-reportMonth" class="control-label col-xs-12 col-sm-2">{:__('Reportmonth')}:</label>
+        <div class="col-xs-12 col-sm-2">
+            <input id="c-reportMonth" class="form-control" name="row[reportMonth]" type="number" value="{$row.reportMonth}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-reportTitle" class="control-label col-xs-12 col-sm-2">{:__('Reporttitle')}:</label>
+        <div class="col-xs-12 col-sm-4">
+            <input id="c-reportTitle" class="form-control" name="row[reportTitle]" type="text" value="{$row.reportTitle}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-reportUrl" class="control-label col-xs-12 col-sm-2">{:__('Reporturl')}:</label>
+        <div class="col-xs-12 col-sm-6">
+            <input id="c-reportUrl" class="form-control" name="row[reportUrl]" type="text" value="{$row.reportUrl}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-backgroundImg" class="control-label col-xs-12 col-sm-2">{:__('Backgroundimg')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <div class="input-group">
+                <input id="c-backgroundImg" class="form-control" size="50" name="row[backgroundImg]" type="text" value="{$row.backgroundImg}">
+                <div class="input-group-addon no-border no-padding">
+                    <span><button type="button" id="plupload-image" class="btn btn-danger plupload" data-input-id="c-backgroundImg" data-mimetype="image/gif,image/jpeg,image/png,image/jpg,image/bmp" data-multiple="false" data-preview-id="p-backgroundImg"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+                    <span><button type="button" id="fachoose-image" class="btn btn-primary fachoose" data-input-id="c-backgroundImg" data-mimetype="image/*" data-multiple="false"><i class="fa fa-list"></i> {:__('Choose')}</button></span>
+                </div>
+                <span class="msg-box n-right" for="c-backgroundImg"></span>
+            </div>
+            <ul class="row list-inline plupload-preview" id="p-backgroundImg"></ul>
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

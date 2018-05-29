@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <title>{$post.title} - {$config.name}</title>
+        <meta name="renderer" content="webkit">
+        <meta name="apple-mobile-web-app-title" content="My App">
+        <meta content="yes" name="apple-mobile-web-app-capable" />
+        <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="author" content="">
+        <meta name="keywords" content="{$post.keywords}">
+        <meta name="description" content="{$post.description}">
+        <link rel="stylesheet" href="__ADDON__/css/main.css">
+        <!--[if lt IE 9]>
+            <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+            <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <!-- 侧栏 -->
+        {include file="common/sidebar"}
+        <!-- 文章列表 -->
+        <div id="post">
+            <div id="detail">
+                <h1>{$post.title}</h1>
+                <div class="post-meta"><a href="{$category.url}">{$category.name}</a> | {$post.createtime|human_date}发布 | <a href="#comments">{$post.views}人读过</a></div>
+                <div class="post-content">
+                    <p>
+                        {$post.content}
+                    </p>
+                </div>
+                <!-- 分享 -->
+                <div class="share">
+                    <a href="{:addon_url('blog')}" class="icon-home hidden-s"></a>
+                    <span class="bdsharebuttonbox"><a href="javascript:;" data-cmd="more" class="icon-share-alt"></a></span>
+                    <a href="#comments" class="icon-comments"></a>
+                    <a href="#post" class="icon-arrow-up"></a>
+                </div>
+                <!-- 扫二维码 -->
+                <div class="qcode ta-c">
+                    <img src="__ADDON__/img/qrcode.png" alt="">
+                    <span>感谢博主，喝杯咖啡~</span>
+                </div>
+            </div>
+            <div id="comments">
+                <h3><span id="commentcount">{$post.comments}</span> 条评论</h3> 
+                <div class="commentlist"> 
+                    {include file="common/commentlist"}
+                </div>
+            </div>
+            <div id="respond">
+                <h3>留下评论 <a href="javascript:;">取消回复</a></h3> 
+                <form action="" method="post" id="postform">  
+                    {:token()}
+                    <input type="hidden" name="post_id" id="post_id" value="{$post.id}" />
+                    <input type="hidden" name="pid" id="pid" value="0" />
+                    <p><input type="text" class="input" name="username" id="username" value="" size="22" tabindex="1" /> 
+                        <label for="username"><small>名称 (必须)</small></label></p> 
+                    <p><input type="text" class="input" name="email" id="email" value="" size="22" tabindex="2" /> 
+                        <label for="email"><small>邮件地址 (不会被公开) (必须)</small></label></p> 
+                    <p><input type="text" class="input" name="website" id="website" value="" size="22" tabindex="3" /> 
+                        <label for="url"><small>网站或博客</small></label></p> 
+                    <p><textarea name="content" class="input" id="commentcontent" cols="6" rows="5" tabindex="4"></textarea></p> 
+                    <p><input name="submit" type="submit" id="submit" tabindex="5" value="提交评论(Ctrl+回车)" class="btn btn-primary" /><span id="actiontips"></span></p> 
+                    <div class="clearfix"></div>
+                    <p><input name="rememberme" type="checkbox" class="checkbox" tabindex="6" checked value="1" /> 记住我的信息，方便下次评论 <br />
+                        <input name="subscribe" type="checkbox" class="checkbox" tabindex="7" checked value="1" /> 有人回复时邮件通知我</p> 
+                    <div class="clearfix"></div>
+                </form> 
+            </div> 
+            <!-- 下一篇 -->
+            <div class="next-post ta-c">
+                {if $nextpost}
+                <p>阅读下一篇博文</p>
+                <a href="{$nextpost['url']}" class="ta-l">
+                    <h3>{$nextpost['title']}</h3>
+                    <p>{$nextpost.summary|strip_tags|mb_substr=0,110,'utf-8'}</p>
+                </a>
+                {else /}
+                <p>当前已经是最新一篇日志</p>
+                {/if}
+            </div>
+        </div>
+        <script>
+            var post_id = {$post.id};
+            var postcomment_url = "{:addon_url('blog/comment/post')}";
+            var getcommentlist_url = "{:addon_url('blog/comment/index')}";
+        </script>
+
+        <script src="__ADDON__/lib/jquery.js"></script>
+        <script src="__ADDON__/js/main.js"></script>
+        <script src="__ADDON__/js/post.js"></script>
+    </body>
+
+</html>

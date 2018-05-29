@@ -1,0 +1,71 @@
+<link href="__CDN__/assets/css/wechat/menu.css?v={$site['version']}" rel="stylesheet">
+<style>
+.fieldlist dd ins {
+	width: 132px;
+}
+</style>
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+	<div class="panel panel-default panel-intro">
+	    <div class="panel-body">
+	        <div id="myTabContent" class="tab-content">
+	            <div class="tab-pane fade active in" id="one">
+	                <div class="widget-body no-padding">
+	                    <div class="weixin-menu-setting clearfix">
+	                        <div class="weixin-content">
+	                            <div class="item-info">
+                                    <div class="item-head">
+                                        <h4 id="current-item-name">发放优惠券</h4>
+                                    </div>
+                                    <div style="margin-top: 20px;">
+                                        <dl>
+                                            <dt id="current-item-option">发放用户：</dt>
+                                            <dd>
+                                           		<textarea name="uids" id="uids" class="form-control" rows="5" cols="30" placeholder="请输入用户ID/手机号，多个用户请用英文分号（;）分隔"></textarea>
+                                           	</dd>
+                                        </dl>
+                                        <dl class="is-item">
+                                            <dt id="current-item-type">优惠券类型：</dt>
+                                            <dd>
+                                                <input id="type1" type="radio" name="type" value="touzi" checked><label for="type1" data-editing="1"><span class="lbl_content">投资券</span></label>
+                                                <input id="type2" type="radio" name="type" value="jiaxi"><label for="type2"  data-editing="1"><span class="lbl_content">加息券</span></label>
+                                            </dd>
+                                        </dl>
+                                        <div id="menu-content" class="is-item">
+                                            <div class="viewbox is-view">
+                                                <p class="menu-content-tips">优惠券规则设置</p>
+									             <dl class="fieldlist" data-name="row[cpn_param]" data-template="customtpl">
+                                                    <dd>
+                                                        <ins><span class="show_name">投资</span>券<span class="show_unit">金额（元）</span></ins>
+								                     	<ins><span class="show_name">投资</span>券数量（张）</ins>
+								                     	<ins><span class="show_name">投资</span>券有效期（天）</ins>
+								                     	<ins><span class="show_name">投资</span>券期限大于天数</ins>
+								                     	<ins><span class="show_name">投资</span>券最低投资金额标准</ins>
+                                                    </dd>
+                                                    <dd><a href="javascript:;" class="btn btn-sm btn-success btn-append"><i class="fa fa-plus"></i> {:__('Append')}</a></dd>
+                                                    <textarea name="row[cpn_param]" class="form-control hide" cols="30" rows="5"></textarea>
+                                                </dl>
+                                            </div>
+                                        </div>
+                                    </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="row">
+	                        <div class="col-xs-8 text-center"><a href="javascript:;" id="grant" class="btn btn-danger">保存并发放</a></div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+</form>
+<script type="text/html" id="customtpl">
+    <dd class="form-inline">
+       <input type="number" name="money" class="form-control" value="0" size="10" style="width: 132px;"> 
+       <input type="number" name="num" class="form-control" value="0" size="10" style="width: 132px;"> 
+       <input type="number" name="expiry" class="form-control" value="0" size="10" style="width: 132px;"> 
+       <input type="number" name="limitday" class="form-control" value="0" size="10" style="width: 132px;">
+       <input type="number" name="limitmoney" class="form-control" value="0" size="10" style="width: 132px;"> 
+       <span class="btn btn-sm btn-danger btn-remove"><i class="fa fa-times"></i></span> 
+    </dd>
+</script>

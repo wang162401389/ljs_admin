@@ -1,0 +1,253 @@
+<div class="panel panel-default panel-intro">
+    <div class="panel-heading">
+        {:build_heading(null, false)}
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#basic" data-toggle="tab">基础配置</a></li>
+            <li class=""><a href="#detail" data-toggle="tab">标的详情</a></li>
+        </ul>
+    </div>
+    
+    <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+	    <div class="panel-body">
+	        <div id="myTabContent" class="tab-content">
+	            <div class="tab-pane fade active in" id="basic">
+	                <div class="widget-body no-padding">
+					    <div class="form-group">
+					        <label for="c-borrowName" class="control-label col-xs-12 col-sm-2">{:__('Borrowname')}:</label>
+					        <div class="col-xs-12 col-sm-6">
+					            <input id="c-borrowName" data-rule="required" class="form-control" name="row[borrowName]" type="text" value="{$row.borrowName}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="content" class="control-label col-xs-12 col-sm-2">{:__('Borrowduration')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					            <input type="radio" name="row[type]" value="1" id="type-text" {eq name="row.investInterestType" value="1"}checked{/eq} disabled="disabled"/>
+					            <label for="type-text">按天</label>
+					            <input type="radio" name="row[type]" value="2" id="type-app" {neq name="row.investInterestType" value="1"}checked{/neq} disabled="disabled"/>
+					            <label for="type-app">按月</label>
+					        </div>
+					    </div>
+					     <div class="form-group">
+					        <label for="c-borrowDuration" class="control-label col-xs-12 col-sm-2">（天/月）数:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-borrowDuration" data-rule="required" class="form-control" name="row[borrowDuration]" type="number" value="{$row.borrowDuration}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-borrowMoney" class="control-label col-xs-12 col-sm-2">{:__('Borrowmoney')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-borrowMoney" data-rule="required" class="form-control" name="row[borrowMoney]" type="number" value="{$row.borrowMoney}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-borrowInterestRate" class="control-label col-xs-12 col-sm-2">{:__('BorrowInterestRate')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-borrowInterestRate" data-rule="required" class="form-control" name="row[borrowInterestRate]" type="number" value="{$row.borrowInterestRate}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-addInterestRate" class="control-label col-xs-12 col-sm-2">{:__('Addinterestrate')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-addInterestRate" class="form-control" name="row[addInterestRate]" type="number" value="{$row.addInterestRate}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-collectDay" class="control-label col-xs-12 col-sm-2">{:__('collectDay')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-collectDay" data-rule="required" class="form-control" name="row[collectDay]" type="number" value="{$row.collectDay}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-borrowMin" class="control-label col-xs-12 col-sm-2">{:__('Borrowmin')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-borrowMin" data-rule="required" class="form-control" name="row[borrowMin]" type="number" value="{$row.borrowMin}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-borrowMax" class="control-label col-xs-12 col-sm-2">{:__('Borrowmax')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-borrowMax" data-rule="required" class="form-control" name="row[borrowMax]" type="number" value="{$row.borrowMax}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-serviceCharge" class="control-label col-xs-12 col-sm-2">{:__('serviceCharge')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            <input id="c-serviceCharge" data-rule="required" class="form-control" name="row[serviceCharge]" type="number" value="{$row.serviceCharge}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-productType" class="control-label col-xs-12 col-sm-2">{:__('Producttype')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            {$productTypeList}
+					        </div>
+					    </div>
+					    <div class="form-group" id="repaymenttype" {eq name="row.investInterestType" value="1"}style="display:none;"{/eq}>
+					        <label for="c-investInterestType" class="control-label col-xs-12 col-sm-2">{:__('InvestInterestType')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            {$investInterestTypeList}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-borrowInterestType" class="control-label col-xs-12 col-sm-2">{:__('BorrowInterestType')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            {$borrowInterestTypeList}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-borrowUse" class="control-label col-xs-12 col-sm-2">{:__('Borrowuse')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					            {$borrowUseList}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-danbao" class="control-label col-xs-12 col-sm-2">{:__('Danbao')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					        	{$guaranteeCompanyList}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-feetype" class="control-label col-xs-12 col-sm-2">{:__('FeeType')}:</label>
+					        <div class="col-xs-12 col-sm-3">
+					        	{$feeTypeList}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-testFlag" class="control-label col-xs-12 col-sm-2">{:__('Testflag')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					            {:build_radios('row[testFlag]', ['0' => __('Testflag 0'), '1' => __('Testflag 1')], $row['testFlag'])}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-isNew" class="control-label col-xs-12 col-sm-2">{:__('Isnew')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					            {:build_radios('row[isNew]', ['0' => __('Isnew 0'), '1' => __('Isnew 1')], $row['isNew'])}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-payChannelType" class="control-label col-xs-12 col-sm-2">{:__('Paychanneltype')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	{:build_radios('row[payChannelType]', ['1' => __('Paychanneltype 1'), '2' => __('Paychanneltype 2'), '3' => __('Paychanneltype 3')], $row['payChannelType'])}
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-addImageList" class="control-label col-xs-12 col-sm-2">{:__('Addimagelist')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					            <div class="input-group">
+					                <input id="c-addImageList" class="form-control" size="50" name="row[addImageList]" type="text" value="{$row.addImageList}">
+					                <div class="input-group-addon no-border no-padding">
+					                    <span><button type="button" id="plupload-addImageList" class="btn btn-danger plupload" data-input-id="c-addImageList" data-multiple="true" data-mimetype="image/*" data-preview-id="p-addImageList"><i class="fa fa-upload"></i> {:__('Upload')}</button></span>
+					                    <span><button type="button" id="fachoose-addImageList" class="btn btn-primary fachoose" data-input-id="c-addImageList" data-multiple="true" data-mimetype="image/*" ><i class="fa fa-list-ul"></i> {:__('Choose')}</button></span>
+					                </div>
+					                <span class="msg-box n-right"></span>
+					            </div>
+					            <ul class="row list-inline plupload-preview" id="p-addImageList"></ul>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-warehousing" class="control-label col-xs-12 col-sm-2">{:__('Warehousing')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					            <textarea id="c-warehousing" data-rule="required" class="form-control editor" rows="5" name="row[warehousing]" cols="50">{$row.warehousing}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-riskManageDetail" class="control-label col-xs-12 col-sm-2">{:__('RiskManageDetail')}:</label>
+					        <div class="col-xs-12 col-sm-8">
+					            <textarea id="c-riskManageDetail" data-rule="required" class="form-control editor" rows="5" name="row[riskManageDetail]" cols="50">{$row.riskManageDetail}</textarea>
+					        </div>
+					    </div>
+					    <!-- <div class="form-group layer-footer">
+					        <label class="control-label col-xs-12 col-sm-2"></label>
+					        <div class="col-xs-12 col-sm-8">
+					            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+					            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+					        </div>
+					    </div> -->
+	                </div>
+	            </div>
+	            <div class="tab-pane fade" id="detail">
+	                <div class="widget-body no-padding">
+					    <div class="form-group">
+					        <label for="c-debtor" class="control-label col-xs-12 col-sm-2">借款方:</label>
+					        <div class="col-xs-12 col-sm-6">
+					            <input id="c-debtor" class="form-control" name="row[debtor]" type="text" value="{$row.borrowDetails.detail.0.val}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-businessType" class="control-label col-xs-12 col-sm-2">业务类型:</label>
+					        <div class="col-xs-12 col-sm-6">
+					            <input id="c-businessType" class="form-control" name="row[businessType]" type="text" value="{$row.borrowDetails.detail.1.val}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-guaranteeWay" class="control-label col-xs-12 col-sm-2">担保方式:</label>
+					        <div class="col-xs-12 col-sm-6">
+					            <input id="c-guaranteeWay" class="form-control" name="row[guaranteeWay]" type="text" value="{$row.borrowDetails.detail.2.val}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-depositoryInstitution" class="control-label col-xs-12 col-sm-2">托管机构:</label>
+					        <div class="col-xs-12 col-sm-6">
+					            <input id="c-depositoryInstitution" class="form-control" name="row[depositoryInstitution]" type="text" value="{$row.borrowDetails.detail.3.val}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-ensure" class="control-label col-xs-12 col-sm-2">还款保障:</label>
+					        <div class="col-xs-12 col-sm-6">
+					            <input id="c-ensure" class="form-control" name="row[ensure]" type="text" value="{$row.borrowDetails.detail.4.val}" readonly="readonly">
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-debtorInfo" class="control-label col-xs-12 col-sm-2">借款方信息:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-debtorInfo" class="form-control editor" rows="5" name="row[debtorInfo]" cols="50">{$row.borrowDetails.detail.5.val}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-pledge" class="control-label col-xs-12 col-sm-2">质押物信息:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-pledge" class="form-control editor" rows="5" name="row[pledge]" cols="50">{$row.borrowDetails.detail.6.val}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-payment" class="control-label col-xs-12 col-sm-2">还款来源:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-payment" class="form-control editor" rows="5" name="row[payment]" cols="50">{$row.borrowDetails.detail.7.val}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-projectDetail" class="control-label col-xs-12 col-sm-2">项目状况:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-projectDetail" class="form-control editor" rows="5" name="row[projectDetail]" cols="50">{$row.borrowDetails.detail.8.val}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-riskControl" class="control-label col-xs-12 col-sm-2">风控措施:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-riskControl" class="form-control editor" rows="5" name="row[riskControl]" cols="50">{$row.borrowDetails.detail.9.val}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-pledgeAuthenticity" class="control-label col-xs-12 col-sm-2">质押物真实性:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-pledgeAuthenticity" class="form-control editor" rows="5" name="row[pledgeAuthenticity]" cols="50">{$row.borrowDetails.detail.10.val}</textarea>
+					        </div>
+					    </div>
+					    <div class="form-group">
+					        <label for="c-transparency" class="control-label col-xs-12 col-sm-2">信息透明度:</label>
+					        <div class="col-xs-12 col-sm-8">
+					        	<textarea id="c-transparency" class="form-control editor" rows="5" name="row[transparency]" cols="50">{$row.borrowDetails.detail.11.val}</textarea>
+					        </div>
+					    </div>
+					    <!-- <div class="form-group layer-footer">
+					        <label class="control-label col-xs-12 col-sm-2"></label>
+					        <div class="col-xs-12 col-sm-8">
+					            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+					            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+					        </div>
+					    </div> -->
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</form>
+</div>

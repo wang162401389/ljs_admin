@@ -1,0 +1,31 @@
+<table class="table table-striped">
+	{volist name="list" id="vo" empty="暂时没有数据"}
+		<tr>
+		    <td>修改时间：</td>
+		    <td>{$vo.vtime|date="Y-m-d H:i:s",###}</td>
+		    <td>申请人员：</td>
+		    <td>{$vo.apply_name}</td>
+		</tr>
+		<tr>
+		    <td>原推荐人：</td>
+		    <td>{$vo.pre_recommend}</td>
+		    <td>审核人员：</td>
+		    <td>{$vo.verify_name}</td>
+		</tr>
+		<tr>
+		    <td>新推荐人：</td>
+		    <td>{$vo.now_recommend}</td>
+		    <td>修改原因：</td>
+		    <td>{$vo.remark}</td>
+		</tr>
+		<tr>
+			<td colspan="4"><hr style="height:2px;border:none;border-top:2px dotted #185598;"/></td>
+		</tr>
+     {/volist}
+</table>
+<div class="hide layer-footer">
+    <label class="control-label col-xs-12 col-sm-2"></label>
+    <div class="col-xs-12 col-sm-8">
+        <button type="reset" class="btn btn-primary btn-embossed btn-close" onclick="Layer.closeAll();">{:__('Close')}</button>
+    </div>
+</div>

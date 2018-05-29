@@ -1,0 +1,328 @@
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label for="c-borrowSn" class="control-label col-xs-12 col-sm-2">{:__('Borrowsn')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowSn" data-rule="required" class="form-control" name="row[borrowSn]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowName" class="control-label col-xs-12 col-sm-2">{:__('Borrowname')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowName" data-rule="required" class="form-control" name="row[borrowName]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowUid" class="control-label col-xs-12 col-sm-2">{:__('Borrowuid')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowUid" data-rule="required" class="form-control" name="row[borrowUid]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowDuration" class="control-label col-xs-12 col-sm-2">{:__('Borrowduration')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowDuration" data-rule="required" class="form-control" name="row[borrowDuration]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowDurationTxt" class="control-label col-xs-12 col-sm-2">{:__('Borrowdurationtxt')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowDurationTxt" data-rule="required" class="form-control" name="row[borrowDurationTxt]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowMoney" class="control-label col-xs-12 col-sm-2">{:__('Borrowmoney')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowMoney" data-rule="required" class="form-control" name="row[borrowMoney]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowInterest" class="control-label col-xs-12 col-sm-2">{:__('Borrowinterest')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowInterest" data-rule="required" class="form-control" name="row[borrowInterest]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowInterestRate" class="control-label col-xs-12 col-sm-2">{:__('Borrowinterestrate')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowInterestRate" data-rule="required" class="form-control" name="row[borrowInterestRate]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-hasBorrow" class="control-label col-xs-12 col-sm-2">{:__('Hasborrow')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-hasBorrow" data-rule="required" class="form-control" name="row[hasBorrow]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowTimes" class="control-label col-xs-12 col-sm-2">{:__('Borrowtimes')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowTimes" data-rule="required" class="form-control" name="row[borrowTimes]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-productType" class="control-label col-xs-12 col-sm-2">{:__('Producttype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-productType" data-rule="required" class="form-control" name="row[productType]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-repaymentType" class="control-label col-xs-12 col-sm-2">{:__('Repaymenttype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-repaymentType" data-rule="required" class="form-control" name="row[repaymentType]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-total" class="control-label col-xs-12 col-sm-2">{:__('Total')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-total" data-rule="required" class="form-control" name="row[total]" type="number" value="1">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-hasPay" class="control-label col-xs-12 col-sm-2">{:__('Haspay')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-hasPay" data-rule="required" class="form-control" name="row[hasPay]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowStatus" class="control-label col-xs-12 col-sm-2">{:__('Borrowstatus')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowStatus" data-rule="required" class="form-control" name="row[borrowStatus]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowUse" class="control-label col-xs-12 col-sm-2">{:__('Borrowuse')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowUse" data-rule="required" class="form-control" name="row[borrowUse]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowUseDesc" class="control-label col-xs-12 col-sm-2">{:__('Borrowusedesc')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowUseDesc" data-rule="required" class="form-control" name="row[borrowUseDesc]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-bidTime" class="control-label col-xs-12 col-sm-2">{:__('Bidtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-bidTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[bidTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-collectDay" class="control-label col-xs-12 col-sm-2">{:__('Collectday')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-collectDay" data-rule="required" class="form-control" name="row[collectDay]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-collectTime" class="control-label col-xs-12 col-sm-2">{:__('Collecttime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-collectTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[collectTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-fullTime" class="control-label col-xs-12 col-sm-2">{:__('Fulltime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-fullTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[fullTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-deadline" class="control-label col-xs-12 col-sm-2">{:__('Deadline')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-deadline" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[deadline]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowMin" class="control-label col-xs-12 col-sm-2">{:__('Borrowmin')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-borrowMin" data-rule="required" class="form-control" name="row[borrowMin]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-danbao" class="control-label col-xs-12 col-sm-2">{:__('Danbao')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-danbao" data-rule="required" class="form-control" name="row[danbao]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-danbaoCompanyName" class="control-label col-xs-12 col-sm-2">{:__('Danbaocompanyname')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-danbaoCompanyName" data-rule="required" class="form-control" name="row[danbaoCompanyName]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-testFlag" class="control-label col-xs-12 col-sm-2">{:__('Testflag')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-testFlag" data-rule="required" class="form-control" name="row[testFlag]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-orderSn" class="control-label col-xs-12 col-sm-2">{:__('Ordersn')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-orderSn" data-rule="required" class="form-control" name="row[orderSn]" type="text">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-addInterestRate" class="control-label col-xs-12 col-sm-2">{:__('Addinterestrate')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-addInterestRate" data-rule="required" class="form-control" name="row[addInterestRate]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-orderInterestRateType" class="control-label col-xs-12 col-sm-2">{:__('Orderinterestratetype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-orderInterestRateType" data-rule="required" class="form-control" name="row[orderInterestRateType]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-orderInterestRate" class="control-label col-xs-12 col-sm-2">{:__('Orderinterestrate')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-orderInterestRate" data-rule="required" class="form-control" name="row[orderInterestRate]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-orderTotal" class="control-label col-xs-12 col-sm-2">{:__('Ordertotal')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-orderTotal" data-rule="required" class="form-control" name="row[orderTotal]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-orderHasPay" class="control-label col-xs-12 col-sm-2">{:__('Orderhaspay')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-orderHasPay" data-rule="required" class="form-control" name="row[orderHasPay]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-isAuto" class="control-label col-xs-12 col-sm-2">{:__('Isauto')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-isAuto" data-rule="required" class="form-control" name="row[isAuto]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-borrowDetails" class="control-label col-xs-12 col-sm-2">{:__('Borrowdetails')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-borrowDetails" data-rule="required" class="form-control " rows="5" name="row[borrowDetails]" cols="50"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-isSubstitute" class="control-label col-xs-12 col-sm-2">{:__('Issubstitute')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-isSubstitute" data-rule="required" class="form-control" name="row[isSubstitute]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-substituteUsrid" class="control-label col-xs-12 col-sm-2">{:__('Substituteusrid')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-substituteUsrid" data-rule="required" class="form-control" name="row[substituteUsrid]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-earlyPayStatus" class="control-label col-xs-12 col-sm-2">{:__('Earlypaystatus')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-earlyPayStatus" data-rule="required" class="form-control" name="row[earlyPayStatus]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-addImageList" class="control-label col-xs-12 col-sm-2">{:__('Addimagelist')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-addImageList" data-rule="required" class="form-control " rows="5" name="row[addImageList]" cols="50"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-isAssign" class="control-label col-xs-12 col-sm-2">{:__('Isassign')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-isAssign" data-rule="required" class="form-control" name="row[isAssign]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-specialLevel" class="control-label col-xs-12 col-sm-2">{:__('Speciallevel')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-specialLevel" data-rule="required" class="form-control" name="row[specialLevel]" type="number">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-isNew" class="control-label col-xs-12 col-sm-2">{:__('Isnew')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-isNew" data-rule="required" class="form-control" name="row[isNew]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-warehousing" class="control-label col-xs-12 col-sm-2">{:__('Warehousing')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <textarea id="c-warehousing" data-rule="required" class="form-control " rows="5" name="row[warehousing]" cols="50"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-payChannelType" class="control-label col-xs-12 col-sm-2">{:__('Paychanneltype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-payChannelType" data-rule="required" class="form-control" name="row[payChannelType]" type="number" value="1">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-firstVerifyTime" class="control-label col-xs-12 col-sm-2">{:__('Firstverifytime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-firstVerifyTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[firstVerifyTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-secondVerifyTime" class="control-label col-xs-12 col-sm-2">{:__('Secondverifytime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-secondVerifyTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[secondVerifyTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-firstVerfiyRemarks" class="control-label col-xs-12 col-sm-2">{:__('Firstverfiyremarks')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-firstVerfiyRemarks" data-rule="required" class="form-control" name="row[firstVerfiyRemarks]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-secondVerfiyRemarks" class="control-label col-xs-12 col-sm-2">{:__('Secondverfiyremarks')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-secondVerfiyRemarks" data-rule="required" class="form-control" name="row[secondVerfiyRemarks]" type="text" value="">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-firstVerfiyId" class="control-label col-xs-12 col-sm-2">{:__('Firstverfiyid')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-firstVerfiyId" data-rule="required" class="form-control" name="row[firstVerfiyId]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-secondVerfiyId" class="control-label col-xs-12 col-sm-2">{:__('Secondverfiyid')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-secondVerfiyId" data-rule="required" class="form-control" name="row[secondVerfiyId]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-serviceCharge" class="control-label col-xs-12 col-sm-2">{:__('Servicecharge')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-serviceCharge" data-rule="required" class="form-control" name="row[serviceCharge]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-feeType" class="control-label col-xs-12 col-sm-2">{:__('Feetype')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-feeType" data-rule="required" class="form-control" name="row[feeType]" type="number" value="0">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-createTime" class="control-label col-xs-12 col-sm-2">{:__('Createtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-createTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[createTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-updateTime" class="control-label col-xs-12 col-sm-2">{:__('Updatetime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-updateTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[updateTime]" type="text" value="{:date('Y-m-d H:i:s')}">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>

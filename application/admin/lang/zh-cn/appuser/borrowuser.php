@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'Borrowuserid'  =>  '用户ID',
+    'Username'  =>  '用户手机',
+    'Password'  =>  '密码',
+    'Usertype'  =>  '用户类型',
+    'Usertype 0'  =>  '普通',
+    'Usertype 1'  =>  '个人',
+    'Usertype 2'  =>  '企业',
+    'Issina'  =>  '新浪实名状态',
+    'Issina 0' => '未实名',
+    'Issina 1' => '已实名',
+    'IsSina 2'  =>  ' 企业审核申请中',
+    'IsSina 3'  =>  '企业审核失败',
+    'IsHuaxing'  =>  '华兴实名状态',
+    'IsHuaxing 0'  =>  '未实名',
+    'IsHuaxing 1'  =>  '已实名',
+    'IsHuaxing 2'  =>  '申请中',
+    'IsHuaxing 3'  =>  '申请失败',
+    'Regtime'  =>  '注册时间',
+    'Isloan'  =>  '借款状态',
+    'Isloan 1'  =>  '可借款',
+    'Isloan 0'  =>  '不可借款',
+    'RegChannel' => '注册渠道',
+    'RealName' => '真实姓名',
+];

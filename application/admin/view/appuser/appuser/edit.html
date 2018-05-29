@@ -1,0 +1,58 @@
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+
+    <div class="form-group">
+        <label for="c-userPhone" class="control-label col-xs-12 col-sm-2">{:__('Userphone')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-userPhone" data-rule="required" class="form-control" name="row[userPhone]" type="text" value="{$row.userPhone}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-userName" class="control-label col-xs-12 col-sm-2">{:__('Username')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-userName" data-rule="required" class="form-control" name="row[userName]" type="text" value="{$row.userName}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-userEmail" class="control-label col-xs-12 col-sm-2">{:__('Useremail')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-userEmail" data-rule="required" class="form-control" name="row[userEmail]" type="text" value="{$row.userEmail}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-pid" class="control-label col-xs-12 col-sm-2">{:__('Pid')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-pid" data-rule="required" class="form-control" name="row[pid]" type="text" value="{$row.pid}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-recommendPhone" class="control-label col-xs-12 col-sm-2">{:__('Recommendphone')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-recommendPhone" data-rule="required" class="form-control" name="row[recommendPhone]" type="text" value="{$row.recommendPhone}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-regSource" class="control-label col-xs-12 col-sm-2">{:__('Regsource')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-regSource" data-rule="required" class="form-control" name="row[regSource]" type="text" value="{$row.regSource}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-specialLevel" class="control-label col-xs-12 col-sm-2">{:__('Speciallevel')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-specialLevel" data-rule="required" class="form-control" name="row[specialLevel]" type="number" value="{$row.specialLevel}">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="c-createdTime" class="control-label col-xs-12 col-sm-2">{:__('Createdtime')}:</label>
+        <div class="col-xs-12 col-sm-8">
+            <input id="c-createdTime" data-rule="required" class="form-control datetimepicker" data-date-format="YYYY-MM-DD HH:mm:ss" data-use-current="true" name="row[createdTime]" type="text" value="{$row.createdTime}">
+        </div>
+    </div>
+    <div class="form-group layer-footer">
+        <label class="control-label col-xs-12 col-sm-2"></label>
+        <div class="col-xs-12 col-sm-8">
+            <button type="submit" class="btn btn-success btn-embossed disabled">{:__('OK')}</button>
+            <button type="reset" class="btn btn-default btn-embossed">{:__('Reset')}</button>
+        </div>
+    </div>
+</form>
