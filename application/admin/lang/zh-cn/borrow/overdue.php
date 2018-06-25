@@ -30,7 +30,7 @@ return [
     'Deadline' => '最近还款时间',
     
     'Borrowduration' => '借款期限',
-    'BorrowInterestRate'  =>  '过往年化利率（%）',
+    'BorrowInterestRate'  =>  '年化利率',
     'Addinterestrate'  =>  '平台加息利率（%）',
     'collectDay'  =>  '标的有效时间（天）',
     'Borrowmin'  =>  '最低投标金额（元）',

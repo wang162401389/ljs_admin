@@ -3,24 +3,25 @@
 namespace app\admin\controller\channel;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
- * 车轮投资数据统计
+ * 投资数据统计
  *
- * @icon fa fa-circle-o
+ * @icon fa fa-list
  */
-class Chelun extends Backend
+class Investlist extends Backend
 {
     
-    /**
-     * AppUser模型对象
-     */
     protected $model = null;
+    protected $typelist = [];
     
     public function _initialize()
     {
         parent::_initialize();
-        $this->model = model('AppUser');
+        $typelist = config('site.channeltype');
+        $this->typelist = $typelist;
+        $this->view->assign("typeList", $typelist);
     }
     
     /**
@@ -34,24 +35,30 @@ class Chelun extends Backend
      */
     public function index()
     {
-        //设置过滤方法
-        $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
         {
-            //如果发送的来源是Selectpage，则转发到Selectpage
-            if ($this->request->request('pkey_name'))
-            {
-                return $this->selectpage();
-            }
-            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+            $type = $this->request->request("type");
+            reset($this->typelist);
             
+            list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+
             $field = 'ir.id as `ir.id`,ir.userId as `ir.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,u.createdTime as `u.createdTime`,
                     ir.createTime as `ir.createTime`,bi.borrowName as `bi.borrowName`,ir.investorCapital * 0.01 as `ir.investorCapital`,
-                    ir.deductibleMoney * 0.01 as `ir.deductibleMoney`,bi.borrowDurationTxt as `bi.borrowDurationTxt`,bi.payChannelType as `bi.payChannelType`';
+                    ir.deductibleMoney * 0.01 as `ir.deductibleMoney`,bi.borrowDurationTxt as `bi.borrowDurationTxt`,bi.payChannelType as `bi.payChannelType`,
+                    CASE WHEN (SELECT min(id) FROM AppInvestorRecord WHERE investorUid = ir.userId) = ir.id THEN 1 ELSE 0 END is_first_invest';
             
-            $map['u.regSource'] = 'chel';
+            $type = $type == null ? key($this->typelist) : $type;
+            $map['u.regSource'] = $type;
+            if (in_array($type, ['fengche', 'fengc']))
+            {
+                $map['u.regSource'] = ['in', ['fengche', 'fengc']];
+            }
+            if (in_array($type, ['chelun', 'chel']))
+            {
+                $map['u.regSource'] = ['in', ['chelun', 'chel']];
+            }
             
-            $total = \think\Db::table('AppInvestorRecord')
+            $total = Db::table('AppInvestorRecord')
                     ->alias('ir')
                     ->field($field)
                     ->join('AppUser u','u.userId = ir.userId', 'LEFT')
@@ -61,7 +68,7 @@ class Chelun extends Backend
                     ->order($sort, $order)
                     ->count();
             
-            $list = \think\Db::table('AppInvestorRecord')
+            $list = Db::table('AppInvestorRecord')
                     ->alias('ir')
                     ->field($field)
                     ->join('AppUser u','u.userId = ir.userId', 'LEFT')
@@ -71,20 +78,17 @@ class Chelun extends Backend
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
-            
-            if (!empty($list)) 
+    
+            if (!empty($list))
             {
-                foreach ($list as &$v) 
+                foreach ($list as &$v)
                 {
-                    $min_id = \think\Db::table('AppInvestorRecord')->where('investorUid', $v['ir.userId'])->min('id');
-                    $v['ir.userId'] = (string)$v['ir.userId'];
-                    $v['pay_channel_type_text'] = model('Appborrowinfo')->getPayChannelTypeList()[$v['bi.payChannelType']];
-                    $v['is_first_invest_text'] = $min_id == $v['ir.id'] ? '是' : '否';
+                    $v['ir.userId'] = ''.$v['ir.userId'];
                 }
             }
-            
+        
             $result = array("total" => $total, "rows" => $list);
-    
+        
             return json($result);
         }
         return $this->view->fetch();

@@ -13,12 +13,21 @@ return array (
     'frontend' => 'zh-cn',
   ),
   'fixedpage' => 'dashboard',
-  'categorytype' => 
+  'channeltype' => 
   array (
-    'default' => 'Default',
-    'page' => 'Page',
-    'article' => 'Article',
-    'test' => 'Test',
+    'fengc' => '风车',
+    'chel' => '车轮',
+    'Netloan' => 'Netloan',
+    'vivo' => 'vivo',
+    'threehundredsixty' => 'threehundredsixty',
+    'uc' => 'uc',
+    'OPPO' => 'OPPO',
+    'wangyi' => 'wangyi',
+    'huawei' => '华为',
+    'todayheadline' => '近日头条',
+    'headline' => '落地注册',
+    'pinde' => '品德',
+    'yinqiao' => '银桥',
   ),
   'configgroup' => 
   array (
@@ -41,4 +50,11 @@ return array (
     0 => '',
   ),
   'test_accounts_id_str' => '',
+  'categorytype' => 
+  array (
+    'default' => 'Default',
+    'page' => 'Page',
+    'article' => 'Article',
+    'test' => 'Test',
+  ),
 );

@@ -78,39 +78,27 @@
                 var style = typeof vObjCol.style === 'undefined' ? '' : sprintf('style="%s"', vObjCol.style);
                 extend = typeof vObjCol.data !== 'undefined' && extend == '' ? vObjCol.data : extend;
                 if (vObjCol.searchList) {
-                    if (typeof vObjCol.searchList === 'object' && typeof vObjCol.searchList.then === 'function') {
-                        htmlForm.push(sprintf('<select class="%s" name="%s" %s %s>%s</select>', addClass, vObjCol.field, style, extend, sprintf('<option value="">%s</option>', that.options.formatCommonChoose())));
-                        (function (vObjCol, that) {
-                            $.when(vObjCol.searchList).done(function (ret) {
-                                var isArray = false;
-                                if (ret.data && ret.data.searchlist && $.isArray(ret.data.searchlist)) {
-                                    var resultlist = {};
-                                    $.each(ret.data.searchlist, function (key, value) {
-                                        resultlist[value.id] = value.name;
-                                    });
-                                } else if (ret.constructor === Array || ret.constructor === Object) {
-                                    var resultlist = ret;
-                                    isArray = ret.constructor === Array ? true : isArray;
-                                }
-                                var optionList = [];
-                                $.each(resultlist, function (key, value) {
-                                    var isSelect = (isArray ? value : key) == vObjCol.defaultValue ? 'selected' : '';
-                                    optionList.push(sprintf("<option value='" + (isArray ? value : key) + "' %s>" + value + "</option>", isSelect));
-                                });
-                                $("form.form-commonsearch select[name='" + vObjCol.field + "']", that.$container).append(optionList.join(''));
-                            });
-                        })(vObjCol, that);
-                    } else if (typeof vObjCol.searchList == 'function') {
+                    if (typeof vObjCol.searchList === 'function') {
                         htmlForm.push(vObjCol.searchList.call(this, vObjCol));
                     } else {
-                        var isArray = vObjCol.searchList.constructor === Array;
-                        var searchList = [];
-                        searchList.push(sprintf('<option value="">%s</option>', that.options.formatCommonChoose()));
-                        $.each(vObjCol.searchList, function (key, value) {
-                            var isSelect = (isArray ? value : key) == vObjCol.defaultValue ? 'selected' : '';
-                            searchList.push(sprintf("<option value='" + (isArray ? value : key) + "' %s>" + value + "</option>", isSelect));
-                        });
-                        htmlForm.push(sprintf('<select class="%s" name="%s" %s %s>%s</select>', addClass, vObjCol.field, style, extend, searchList.join('')));
+                        var optionList = [sprintf('<option value="">%s</option>', that.options.formatCommonChoose())];
+                        if (typeof vObjCol.searchList === 'object' && typeof vObjCol.searchList.then === 'function') {
+                            (function (vObjCol, that) {
+                                $.when(vObjCol.searchList).done(function (ret) {
+                                    var searchList = [];
+                                    if (ret.data && ret.data.searchlist && $.isArray(ret.data.searchlist)) {
+                                        searchList = ret.data.searchlist;
+                                    } else if (ret.constructor === Array || ret.constructor === Object) {
+                                        searchList = ret;
+                                    }
+                                    var optionList = createOptionList(searchList, vObjCol, that);
+                                    $("form.form-commonsearch select[name='" + vObjCol.field + "']", that.$container).html(optionList.join(''));
+                                });
+                            })(vObjCol, that);
+                        } else {
+                            optionList = createOptionList(vObjCol.searchList, vObjCol, that);
+                        }
+                        htmlForm.push(sprintf('<select class="%s" name="%s" %s %s>%s</select>', addClass, vObjCol.field, style, extend, optionList.join('')));
                     }
                 } else {
                     var placeholder = typeof vObjCol.placeholder === 'undefined' ? vObjCol.title : vObjCol.placeholder;
@@ -151,6 +139,22 @@
         htmlBtn.push(sprintf('<button type="reset" class="btn btn-default" >%s</button> ', searchReset));
         htmlBtn.push('</div>');
         return htmlBtn;
+    };
+
+    var createOptionList = function (searchList, vObjCol, that) {
+        var isArray = searchList.constructor === Array;
+        var optionList = [];
+        optionList.push(sprintf('<option value="">%s</option>', that.options.formatCommonChoose()));
+        $.each(searchList, function (key, value) {
+            if (value.constructor === Object) {
+                key = value.id;
+                value = value.name;
+            } else {
+                key = isArray ? value : key;
+            }
+            optionList.push(sprintf("<option value='" + key + "' %s>" + value + "</option>", key == vObjCol.defaultValue ? 'selected' : ''));
+        });
+        return optionList;
     };
 
     var isSearchAvailble = function (that) {
@@ -297,7 +301,7 @@
 
         var that = this,
             html = [];
-        if(that.options.showSearch){
+        if (that.options.showSearch) {
             html.push(sprintf('<div class="columns-%s pull-%s" style="margin-top:10px;margin-bottom:10px;">', this.options.buttonsAlign, this.options.buttonsAlign));
             html.push(sprintf('<button class="btn btn-default%s' + '" type="button" name="commonSearch" title="%s">', that.options.iconSize === undefined ? '' : ' btn-' + that.options.iconSize, that.options.formatCommonSearch()));
             html.push(sprintf('<i class="%s %s"></i>', that.options.iconsPrefix, that.options.icons.commonSearchIcon))
@@ -320,7 +324,7 @@
         that.$container.on("click", "." + that.options.searchClass, function () {
             var obj = $("form [name='" + $(this).data("field") + "']", that.$commonsearch);
             if (obj.size() > 0) {
-            	var value = $(this).data("value");
+                var value = $(this).data("value");
                 if (obj.is("select")) {
                     console.log($("option[value='" + value + "']", obj));
                     $("option[value='" + value + "']", obj).prop("selected", true);

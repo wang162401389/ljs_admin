@@ -96,7 +96,7 @@ return [
     'Orderinterestratetype 6' => '按月等额本金',
     'Orderinterestratetype 7' => '按总本金每期固定利率',
     
-    'BorrowInterestRate'  =>  '过往年化利率（%）',
+    'BorrowInterestRate'  =>  '年化利率',
     'Ordertotal'  =>  '借款人总期数',
     'Orderhaspay'  =>  '借款人已还款期数',
 

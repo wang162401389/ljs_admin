@@ -5,6 +5,7 @@ namespace app\admin\controller\fkmanage;
 use app\common\controller\Backend;
 use app\common\model\Appborrowinfo as BrrowInfoModel;
 use think\Db;
+use think\Log;
 
 /**
  * 标的管理
@@ -19,7 +20,7 @@ class Borrow extends Backend
      */
     protected $model = null;
     
-    protected $noNeedRight = ['verifylog', 'release_borrow_to_sina', 'release_borrow_to_huaxing', 'examine', 'repaymentinfo', 'canloan'];
+    protected $noNeedRight = ['verify', 'verifylog', 'release_borrow_to_sina', 'release_borrow_to_huaxing', 'examine', 'repaymentinfo', 'canloan'];
     
     /**
      * 是否开启Validate验证
@@ -167,9 +168,9 @@ class Borrow extends Backend
         $req = [];
         $req['userId'] = $uid;
         $req['accountType'] = $paychanneltype;
-        \think\Log::write("发布借款请求参数：".var_export($req,true), 'java');
+        Log::write("发布借款请求参数：".var_export($req,true), 'java');
         $res = json_decode($javaapi->accountInfo($req), true);
-        \think\Log::write("发布借款返回参数：".var_export($res,true), 'java');
+        Log::write("发布借款返回参数：".var_export($res,true), 'java');
         
         $sina_status = $paychanneltype == 2 && !$res['result']['sinaHasSetPayPwd'];
         $huaxing_status = $paychanneltype == 3 && !($res['result']['ifAccount'] && $res['result']['ifBank']);
@@ -234,8 +235,6 @@ class Borrow extends Backend
         }
         
         $this->view->assign("row", $row);
-        $this->view->assign('borrowdetailfield', BrrowInfoModel::borrowDetailField());
-        //halt($row['borrowDetails']);
         $this->view->assign('productTypeList', build_select('row[productType]', BrrowInfoModel::getProductTypeList(), $row['productType'], ['class' => 'form-control selectpicker']));
         $this->view->assign('investInterestTypeList', build_select('row[investInterestType]', BrrowInfoModel::getInvestInterestTypeList(), $row['investInterestType'], ['class' => 'form-control selectpicker']));
         $this->view->assign('borrowInterestTypeList', build_select('row[borrowInterestType]', BrrowInfoModel::getBorrowInterestTypeList(), $row['borrowInterestType'], ['class' => 'form-control selectpicker']));
@@ -434,9 +433,9 @@ class Borrow extends Backend
         $req['phone'] = $borrow_phone;
         
         $javaapi = new \fast\Javaapi();
-        \think\Log::write("新浪标的初审录入请求参数：".var_export($req,true), 'java');
+        Log::write("新浪标的初审录入请求参数：".var_export($req,true), 'java');
         $res = json_decode($javaapi->releaseBorrowToSina($req), true);
-        \think\Log::write("新浪标的初审录入返回结果：".var_export($res,true), 'java');
+        Log::write("新浪标的初审录入返回结果：".var_export($res,true), 'java');
         return $res;
     }
     
@@ -452,9 +451,9 @@ class Borrow extends Backend
         $req['borrowSn'] = $borrow_info['borrowSn'];
         
         $javaapi = new \fast\Javaapi();
-        \think\Log::write("华兴标的初审请求参数：".var_export($req,true), 'java');
+        Log::write("华兴标的初审请求参数：".var_export($req,true), 'java');
         $res = $javaapi->releaseBorrowToHuaXing($req);
-        \think\Log::write("华兴标的初审：".$res, 'java');
+        Log::write("华兴标的初审：".$res, 'java');
         return $res;
     }
     
@@ -475,7 +474,7 @@ class Borrow extends Backend
         }
 
         $borrow_info = Db::table('AppBorrowInfo')->where('borrowInfoId', $ids)
-                        ->field('borrowInfoId,investInterestType,borrowName,borrowMoney,borrowInterestRate,borrowDuration,borrowUid,borrowSn,payChannelType,bidTime,collectTime,borrowDurationTxt')
+                        ->field('borrowInfoId,borrowStatus,investInterestType,borrowName,borrowMoney,borrowInterestRate,borrowDuration,borrowUid,borrowSn,payChannelType,bidTime,collectTime,borrowDurationTxt')
                         ->find();
         if (empty($borrow_info))
         {
@@ -529,60 +528,67 @@ class Borrow extends Backend
         }
         elseif ($type == 2)
         {
-            $upd = true;
-            $params['secondVerifyTime'] = date("Y-m-d H:i:s");
-            $params['secondVerfiyId'] = $this->auth->id;
-            $params['secondVerfiyRemarks'] = $post['secondVerfiyRemarks'];
-            //华兴复审通过不改状态
-            if ($status != 1 || $borrow_info['payChannelType'] != 3)
+            if ($borrow_info['borrowStatus'] == 5)
             {
-                $params['borrowStatus'] = 5;
+                $done = false;
+                $msg = '复审正在处理中';
             }
-            $upd = Db::table('AppBorrowInfo')->where('borrowInfoId', $ids)->update($params);
-            
-            if ($upd) 
+            else 
             {
-                $javaapi = new \fast\Javaapi();
-                $req = [];
-                if ($status == 0)
+                $params['secondVerifyTime'] = date("Y-m-d H:i:s");
+                $params['secondVerfiyId'] = $this->auth->id;
+                $params['secondVerfiyRemarks'] = $post['secondVerfiyRemarks'];
+                
+                if ($status != 1)
                 {
-                    if ($borrow_info['payChannelType'] == 2)
-                    {
-                        $req['borrowInfoId'] = $ids;
-                        \think\Log::write("新浪标的复审拒绝请求参数：".var_export($req,true), 'java');
-                        $res = $javaapi->sinaReviewRefuse($req);
-                        \think\Log::write("新浪标的复审拒绝：".$res, 'java');
-                    }
-                    elseif ($borrow_info['payChannelType'] == 3)
-                    {
-                        $req['borrowInfoId'] = $ids;
-                        \think\Log::write("华兴标的复审拒绝请求参数：".var_export($req,true), 'java');
-                        $res = $javaapi->huaXingReviewRefuse($req);
-                        \think\Log::write("华兴标的复审拒绝：".$res, 'java');
-                    }
+                    $params['borrowStatus'] = 5;
                 }
-                elseif ($status == 1)
+                $upd = Db::table('AppBorrowInfo')->where('borrowInfoId', $ids)->update($params);
+                
+                if ($upd)
                 {
-                    if ($borrow_info['payChannelType'] == 2)
+                    $javaapi = new \fast\Javaapi();
+                    $req = [];
+                    if ($status == 0)
                     {
-                        $req['borrow_sn'] = $borrow_info['borrowSn'];
-                        $req['user_id'] = $this->auth->id;
-                        \think\Log::write("新浪标的复审通过请求参数：".var_export($req,true), 'java');
-                        $res = $javaapi->finishPreAuthTrade($req);
-                        \think\Log::write("新浪标的复审通过：".$res, 'java');
+                        if ($borrow_info['payChannelType'] == 2)
+                        {
+                            $req['borrowInfoId'] = $ids;
+                            Log::write("新浪标的复审拒绝请求参数：".var_export($req,true), 'java');
+                            $res = $javaapi->sinaReviewRefuse($req);
+                            Log::write("新浪标的复审拒绝：".$res, 'java');
+                        }
+                        elseif ($borrow_info['payChannelType'] == 3)
+                        {
+                            $req['borrowInfoId'] = $ids;
+                            Log::write("华兴标的复审拒绝请求参数：".var_export($req,true), 'java');
+                            $res = $javaapi->huaXingReviewRefuse($req);
+                            Log::write("华兴标的复审拒绝：".$res, 'java');
+                        }
                     }
-                    elseif ($borrow_info['payChannelType'] == 3)
+                    elseif ($status == 1)
                     {
-                        $req['borrowInfoId'] = $ids;
-                        \think\Log::write("华兴标的复审通过请求参数：".var_export($req,true), 'java');
-                        $res = $javaapi->huaXingReviewPass($req);
-                        \think\Log::write("华兴标的复审通过：".$res, 'java');
+                        if ($borrow_info['payChannelType'] == 2)
+                        {
+                            $req['borrow_sn'] = $borrow_info['borrowSn'];
+                            $req['user_id'] = $this->auth->id;
+                            Log::write("新浪标的复审通过请求参数：".var_export($req,true), 'java');
+                            $res = $javaapi->finishPreAuthTrade($req);
+                            Log::write("新浪标的复审通过：".$res, 'java');
+                        }
+                        elseif ($borrow_info['payChannelType'] == 3)
+                        {
+                            $req['borrowInfoId'] = $ids;
+                            Log::write("华兴标的复审通过请求参数：".var_export($req,true), 'java');
+                            $res = $javaapi->huaXingReviewPass($req);
+                            Log::write("华兴标的复审通过：".$res, 'java');
+                        }
                     }
-                }
-                $done = $res == 'success' ? true : false;
-                if (!$done)
-                {
-                    $msg = $res;
+                    $done = $res == 'success' ? true : false;
+                    if (!$done)
+                    {
+                        $msg = ($res !== null && !empty($res)) ? $res : '请求成功，请确认标的状态，若状态未变，请重试';
+                    }
                 }
             }
         }

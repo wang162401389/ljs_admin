@@ -5,7 +5,7 @@ namespace addons\third\model;
 use think\Model;
 
 /**
- * 会员模型
+ * 第三方登录模型
  */
 class Third Extends Model
 {

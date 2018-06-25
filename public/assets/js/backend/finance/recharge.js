@@ -23,17 +23,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 sortName: 'id',
                 columns: [
                     [
-                        {field: 'userId', title: __('UserId'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'userphone', title: '用户手机号', operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'realname', title: __('Realname'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'idname', title: '身份'},
+                        {field: 'userId', title: __('UserId')},
+                        {field: 'userPhone', title: '手机号'},
+                        {field: 'userName', title: __('Realname')},
+                        {field: 'idname', title: '身份', formatter: Controller.api.formatter.idname, searchList: {'1':'投资人',"2":'借款人'}},
                         {field: 'transactionAmt', title: __('Transactionamt'), operate: 'BETWEEN', sortable: true},
                         {field: 'addTime', title: __('Addtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
-                        {field: 'transactionStatus', title: __('Transactionstatus'), visible:false, searchList: {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')}},
-                        {field: 'transactionStatus_text', title: __('Transactionstatus'), operate:false},
-                        {field: 'payChannelType', title: __('Paychanneltype'), visible:false, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
-                        {field: 'payChannelType_text', title: __('Paychanneltype'), operate:false},
-                        {field: 'orderId', title: __('Orderid'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'transactionStatus', title: __('Transactionstatus'), formatter: Controller.api.formatter.status, searchList: {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')}},
+                        {field: 'payChannelType', title: __('Paychanneltype'), formatter: Controller.api.formatter.type, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
+                        {field: 'orderId', title: __('Orderid')},
                     ]
                 ],
                 search : false
@@ -51,7 +49,27 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
-            }
+            },
+	        formatter : {
+	        	idname : function (value, row, index) {
+                    var idnameArr = {'1': '投资人', '2': '借款人'};
+                    //渲染状态
+                    var html = '<span class="text-primary">' + idnameArr[value] + '</span>';
+                    return html;
+	        	},
+	        	status : function (value, row, index) {
+                    var statusnameArr = {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')};
+                    //渲染状态
+                    var html = '<span class="text-primary">' + __(statusnameArr[value]) + '</span>';
+                    return html;
+	        	},
+	        	type : function (value, row, index) {
+                    var typenameArr = {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')};
+                    //渲染状态
+                    var html = '<span class="text-primary">' + __(typenameArr[value]) + '</span>';
+                    return html;
+	        	}
+	        }
         }
     };
     return Controller;

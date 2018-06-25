@@ -51,11 +51,12 @@ class Done extends Backend
         if ($this->request->isAjax())
         {
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
-            
+
             $map['borrowStatus'] = 10;
 
             $field = "bi.borrowInfoId,bi.borrowSn as `bi.borrowSn`,u.userName as `u.userName`,u.realName as `u.realName`,bi.borrowName as `bi.borrowName`,
                     bi.borrowMoney * 0.01 as `bi.borrowMoney`,bi.investInterestType as `bi.investInterestType`,bi.borrowDurationTxt as `bi.borrowDurationTxt`,
+                    bi.borrowInterestRate as `bi.borrowInterestRate`,bi.addInterestRate as `bi.addInterestRate`,
                     bi.secondVerifyTime as `bi.secondVerifyTime`,bi.payChannelType as `bi.payChannelType`,SUM(br.repaymentMoney) * 0.01 AS repayd_total";
             
             $total = \think\Db::table('AppBorrowInfo')
@@ -85,6 +86,11 @@ class Done extends Backend
             {
                 foreach ($list as &$v) 
                 {
+                    $v['bi.borrowInterestRate'] = ($v['bi.borrowInterestRate'] / 100).'%';
+                    if ($v['bi.addInterestRate'] > 0)
+                    {
+                        $v['bi.borrowInterestRate'] .= ' + '.($v['bi.addInterestRate'] / 100).'%';
+                    }
                     $v['invest_interest_type_text'] = $this->model->getInvestInterestTypeList()[$v['bi.investInterestType']];
                     $v['pay_channel_type_text'] = $this->model->getPayChannelTypeList()[$v['bi.payChannelType']];
                 }

@@ -46,26 +46,8 @@ class Appuser extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $filter = json_decode($this->request->get("filter", ''), true);
-            $having = '';
-            if (isset($filter['total'])) 
-            {
-                $param_arr = explode(',', $filter['total']);
-                if (!empty($param_arr[0]) && !empty($param_arr[1])) 
-                {
-                    $having = 'total between ' .$param_arr[0] . ' and ' . $param_arr[1];
-                }
-                elseif (!empty($param_arr[0])) 
-                {
-                    $having = 'total > ' . $param_arr[0];
-                }
-                elseif (!empty($param_arr[1])) 
-                {
-                    $having = 'total < ' . $param_arr[1];
-                }
-            }
-            
-            $field = 'u.userId as `u.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,u.pid as `u.pid`,u.recommendPhone as `u.recommendPhone`,u.regSource as `u.regSource`,u.createdTime as `u.createdTime`,
+            $field = 'u.userId as `u.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,u.pid as `u.pid`,u.recommendPhone as `u.recommendPhone`,
+                      u.regSource as `u.regSource`,u.marketChannel as `u.marketChannel`,u.createdTime as `u.createdTime`,
                     sum(case when ir.borrowStatus not in (2,4) then ir.investorCapital end) * 0.01 as total';
             
             $total = \think\Db::table('AppUser')
@@ -75,7 +57,6 @@ class Appuser extends Backend
                     ->where($where)
                     ->order($sort, $order)
                     ->group('u.userId')
-                    ->having($having)
                     ->count();
 
             $list = \think\Db::table('AppUser')
@@ -86,14 +67,14 @@ class Appuser extends Backend
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->group('u.userId')
-                    ->having($having)
                     ->select();
-                    //halt(\think\Db::table('AppUser')->getLastSql());
+                    
             if (!empty($list)) 
             {
                 foreach ($list as &$v) 
                 {
-                    $v['u.userId'] = (string)$v['u.userId'];
+                    $v['u.userId'] = 'ID_'.$v['u.userId'];
+                    $v['u.pid'] = $v['u.pid'] ? 'PID_'.$v['u.pid'] : '';
                 }
             }
             

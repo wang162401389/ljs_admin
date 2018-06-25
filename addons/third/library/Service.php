@@ -3,7 +3,11 @@
 namespace addons\third\library;
 
 use addons\third\model\Third;
+use app\common\model\User;
 use fast\Random;
+use think\Debug;
+use think\Exception;
+use think\Log;
 
 /**
  * 第三方登录服务类
@@ -15,12 +19,13 @@ class Service
 
     /**
      * 第三方登录
-     * @param string    $platform   平台
-     * @param array     $params     参数
-     * @param int       $keeptime   有效时长
+     * @param string $platform 平台
+     * @param array $params 参数
+     * @param array $extend 会员扩展信息
+     * @param int $keeptime 有效时长
      * @return boolean
      */
-    public static function connect($platform, $params = [], $keeptime = 0)
+    public static function connect($platform, $params = [], $extend = [], $keeptime = 0)
     {
         $time = time();
         $values = [
@@ -37,35 +42,31 @@ class Service
 
         $auth->keeptime($keeptime);
         $third = Third::get(['platform' => $platform, 'openid' => $params['openid']]);
-        if ($third)
-        {
-            $user = \addons\user\model\User::get($third['user_id']);
-            if (!$user)
-            {
+        if ($third) {
+            $user = User::get($third['user_id']);
+            if (!$user) {
                 return FALSE;
             }
             $third->save($values);
             return $auth->direct($user->id);
-        }
-        else
-        {
+        } else {
             // 先随机一个用户名,随后再变更为u+数字id
             $username = Random::alnum(20);
             $password = Random::alnum(6);
             // 默认注册一个会员
-            $result = $auth->register($username, $password, '', '', [], $keeptime);
-            if (!$result)
-            {
+            $result = $auth->register($username, $password, $username . '@fastadmin.net', '', $extend, $keeptime);
+            if (!$result) {
                 return FALSE;
             }
             $user = $auth->getUser();
-            $fields = ['username' => 'u' . $user->id];
+            $fields = ['username' => 'u' . $user->id, 'email' => 'u' . $user->id . '@fastadmin.net'];
             if (isset($params['userinfo']['nickname']))
                 $fields['nickname'] = $params['userinfo']['nickname'];
             if (isset($params['userinfo']['avatar']))
                 $fields['avatar'] = $params['userinfo']['avatar'];
 
             // 更新会员资料
+            $user = User::get($user->id);
             $user->save($fields);
 
             // 保存第三方信息

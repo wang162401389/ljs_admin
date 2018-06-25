@@ -33,7 +33,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'summary', title: __('summary'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'jumpUrl', title: __('jumpUrl'), formatter: Table.api.formatter.url, operate:false},
                         {field: 'sort', title: __('sort'), operate:false},
-                        {field: 'status', title: __('Status'), formatter: Controller.api.formatter.status, searchList: {"1":__('normal'),"0":__('hidden')}},
+                        {field: 'status', title: __('Status'), formatter: Controller.api.formatter.status, searchList: {"0":__('Status 0'),"1":__('Status 1'),"2":__('Status 2')}},
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Table.api.formatter.operate}
                     ]
                 ]
@@ -62,7 +62,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     }
                     value = value === null ? '' : value.toString();
                     var color = value && typeof colorArr[value] !== 'undefined' ? colorArr[value] : 'primary';
-                    var statusnameArr = {'0': '隐藏', '1': '正常'};
+                    var statusnameArr = {'0': __('Status 0'), '1': __('Status 1'), '2': __('Status 2')};
                     //渲染状态
                     var html = '<span class="text-' + color + '"><i class="fa fa-circle"></i> ' + __(statusnameArr[value]) + '</span>';
                     return html;

@@ -10,6 +10,7 @@ return [
     'Recommendphone'  =>  '推荐人',
     'Isban'  =>  '是否冻结0:否 1:是',
     'Regsource'  =>  '注册渠道',
+    'MarketChannel'  =>  '市场渠道',
     'Equipmentsource'  =>  '设备来源,pc ios android',
     'Speciallevel'  =>  '特殊会员级别：0：普通会员,1：内部员工,2：特殊会员',
     'Createdtime'  =>  '注册时间',

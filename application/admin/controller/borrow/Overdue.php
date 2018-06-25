@@ -67,6 +67,11 @@ class Overdue extends Backend
             {
                 foreach ($list as &$v) 
                 {
+                    $v['borrow']['borrowInterestRate'] .= '%';
+                    if ($v['borrow']['addInterestRate'] > 0)
+                    {
+                        $v['borrow']['borrowInterestRate'] .= ' + '.$v['borrow']['addInterestRate'].'%';
+                    }
                     $v['periods'] = $v['curPeriods'].'/'.$v['totalPeriods'];
                 }
             }

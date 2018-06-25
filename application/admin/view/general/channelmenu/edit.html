@@ -1,5 +1,7 @@
+<style>
+.col-sm-3{width: 26%;}
+</style>
 <form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
-
     <div class="form-group">
         <label for="c-channelType" class="control-label col-xs-12 col-sm-2">{:__('Channeltype')}:</label>
         <div class="col-xs-12 col-sm-3">
@@ -47,7 +49,7 @@
     <div class="form-group">
         <label for="c-status" class="control-label col-xs-12 col-sm-2">{:__('Status')}:</label>
         <div class="col-xs-12 col-sm-8">
-            {:build_radios('row[status]', ['1'=>__('Normal'), '0'=>__('Hidden')], $row['status'])}
+            {:build_radios('row[status]', ['0'=>__('status 0'), '1'=>__('status 1'), '2'=>__('status 2')], $row['status'])}
         </div>
     </div>
     <div class="form-group layer-footer">

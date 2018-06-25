@@ -3,6 +3,7 @@
 namespace app\admin\controller\finance;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 充值对账
@@ -47,16 +48,33 @@ class Recharge extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $map['transactionType'] = 1;
+            $field1 = 'tf.id,tf.userId,a.userPhone,a.userName,1 as idname,tf.transactionAmt * 0.01 as transactionAmt,tf.addTime,tf.transactionStatus,
+                       tf.payChannelType,tf.orderId';
             
-            $total = $this->model
-                    ->where($map)
+            $field2 = 'tf.id,tf.userId,b.userName as userPhone,b.realName as userName,2 as idname,tf.transactionAmt * 0.01 as transactionAmt,tf.addTime,
+                        tf.transactionStatus,tf.payChannelType,tf.orderId';
+            
+            $subQuery = Db::table('AppTransactionFlowing')
+                        ->alias('tf')
+                        ->field($field1)
+                        ->join('AppUser a','a.userId = tf.userId')
+                        ->where('tf.transactionType', 1)
+                        ->union(function($query) use ($field2){
+                            $query->table('AppTransactionFlowing')
+                            ->alias('tf')
+                            ->field($field2)
+                            ->join('BorrowUser b','b.borrowUserId = tf.userId')
+                            ->where('tf.transactionType', 1);
+                        }, true)
+                        ->buildSql();
+            
+            $field = 't.id,t.userId,t.userPhone,t.userName,t.idname,t.transactionAmt,t.addTime,t.transactionStatus,t.payChannelType,t.orderId';
+            $total = Db::table($subQuery.' t')
                     ->where($where)
                     ->order($sort, $order)
                     ->count();
             
-            $list = $this->model
-                    ->where($map)
+            $list = Db::table($subQuery.' t')
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
@@ -67,26 +85,7 @@ class Recharge extends Backend
             {
                 foreach ($list as &$v) 
                 {
-                    $v['userId'] = (string)$v['userId'];
-                    $is_investor = \think\Db::table('AppUser')->field('userPhone,userName')->where('userId', $v['userId'])->find();
-                    $v['userphone'] = $v['realname'] = '';
-                    $v['idname'] = '未知';
-                    if (!empty($is_investor)) 
-                    {
-                        $v['userphone'] = $is_investor['userPhone'];
-                        $v['realname'] = $is_investor['userName'];
-                        $v['idname'] = '投资人';
-                    }
-                    else
-                    {
-                        $is_borrower = \Think\Db::table('BorrowUser')->field('userName,realName')->where('borrowUserId', $v['userId'])->find();
-                        if (!empty($is_borrower))
-                        {
-                            $v['userphone'] = $is_investor['userName'];
-                            $v['realname'] = $is_investor['realName'];
-                            $v['idname'] = '借款人';
-                        }
-                    }
+                    $v['userId'] = ''.$v['userId'];
                 }
             }
             $result = array("total" => $total, "rows" => $list);

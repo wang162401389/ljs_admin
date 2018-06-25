@@ -91,7 +91,7 @@ class Frontend extends Controller
         $this->view->assign('user', $this->auth->getUser());
 
         // 语言检测
-        $lang = strip_tags(Lang::detect());
+        $lang = strip_tags($this->request->langset());
 
         $site = Config::get("site");
 
@@ -129,7 +129,7 @@ class Frontend extends Controller
      */
     protected function loadlang($name)
     {
-        Lang::load(APP_PATH . $this->request->module() . '/lang/' . Lang::detect() . '/' . str_replace('.', '/', $name) . '.php');
+        Lang::load(APP_PATH . $this->request->module() . '/lang/' . $this->request->langset() . '/' . str_replace('.', '/', $name) . '.php');
     }
 
     /**

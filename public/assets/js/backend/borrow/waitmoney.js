@@ -34,6 +34,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'investInterestType', title: __('Investinteresttype'), visible:false, searchList: $.getJSON('borrow/waitmoney/investinteresttypelist')},
                         {field: 'invest_interest_type_text', title: __('Investinteresttype'), operate:false},
                         {field: 'borrowDurationTxt', title: __('Borrowdurationtxt'), operate:false},
+                        {field: 'borrowInterestRate', title:__('BorrowInterestRate'), operate:false},
                         {field: 'createTime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'fullTime', title: __('Fulltime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'payChannelType', title: __('Paychanneltype'), visible:false, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},

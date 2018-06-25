@@ -23,7 +23,6 @@ class Investment extends Backend
     {
         parent::_initialize();
         $this->model = model('Appinvestorrecord');
-
     }
     
     /**
@@ -43,7 +42,7 @@ class Investment extends Backend
         {
             $this->relationSearch = TRUE;
             //如果发送的来源是Selectpage，则转发到Selectpage
-            if ($this->request->request('pkey_name'))
+            if ($this->request->request('keyField'))
             {
                 return $this->selectpage();
             }
@@ -62,11 +61,12 @@ class Investment extends Backend
                     ->limit($offset, $limit)
                     ->select();
             
+            $list = collection($list)->toArray();
             if (!empty($list))
             {
                 foreach ($list as &$v)
                 {
-                    $v['userId'] = (string)$v['userId'];
+                    $v['userId'] = 'ID_'.$v['userId'];
                 }
             }
             

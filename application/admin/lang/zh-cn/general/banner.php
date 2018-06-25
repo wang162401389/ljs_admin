@@ -10,5 +10,8 @@ return [
     'summary'  =>  '备注',
     'jumpUrl'  =>  '链接地址',
     'sort'  =>  '权重',
-    'Status'  =>  '状态'
+    'Status'  =>  '状态',
+    'Status 0'  =>  '无效',
+    'Status 1'  =>  '有效',
+    'Status 2'  =>  'ios审核专用'
 ];

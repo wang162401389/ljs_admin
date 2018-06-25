@@ -12,6 +12,7 @@ return [
     'Attachment'                  => '附件配置',
     'Dictionary'                  => '字典配置',
     'Agreement'                   => '协议配置',
+    'Appconfig'                   => 'APP配置',
     'User'                        => '会员配置',
     'Example'                     => '示例分组',
     'Extend'                      => '扩展属性',

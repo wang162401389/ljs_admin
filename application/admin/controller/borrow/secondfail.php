@@ -70,6 +70,17 @@ class Secondfail extends Backend
                     ->select();
 
             $list = collection($list)->toArray();
+            if (!empty($list))
+            {
+                foreach ($list as &$v)
+                {
+                    $v['borrowInterestRate'] .= '%';
+                    if ($v['addInterestRate'] > 0)
+                    {
+                        $v['borrowInterestRate'] .= ' + '.$v['addInterestRate'].'%';
+                    }
+                }
+            }
             $result = array("total" => $total, "rows" => $list);
 
             return json($result);

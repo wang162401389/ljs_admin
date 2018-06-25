@@ -20,7 +20,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
                 pk: 'borrowInfoId',
-                sortName: 'borrowInfoId',
+                sortName: 'bi.borrowInfoId',
                 columns: [
                     [
                         {field: 'bi.borrowSn', title: __('Borrowsn'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
@@ -34,6 +34,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'bi.investInterestType', title: __('Investinteresttype'), visible:false, searchList: $.getJSON('borrow/waitmoney/investinteresttypelist')},
                         {field: 'invest_interest_type_text', title: __('Investinteresttype'), operate:false},
                         {field: 'bi.borrowDurationTxt', title: __('Borrowdurationtxt'), operate:false},
+                        {field: 'bi.borrowInterestRate', title:__('BorrowInterestRate'), operate:false},
                         {field: 'bi.secondVerifyTime', title: __('Secondverifytime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: '', title: '还款最终时间', operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: '', title: '提前还款时间', operate:'RANGE', addclass:'datetimerange', sortable: true},

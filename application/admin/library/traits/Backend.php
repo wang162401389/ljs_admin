@@ -241,7 +241,11 @@ trait Backend
         {
             $this->model->where($pk, 'in', $ids);
         }
-        $count = $this->model->restore('1=1');
+        $count = 0;
+        $list = $this->model->onlyTrashed()->select();
+        foreach ($list as $index => $item) {
+            $count += $item->restore();
+        }
         if ($count)
         {
             $this->success();
@@ -268,8 +272,11 @@ trait Backend
                     {
                         $this->model->where($this->dataLimitField, 'in', $adminIds);
                     }
-                    $this->model->where($this->model->getPk(), 'in', $ids);
-                    $count = $this->model->allowField(true)->isUpdate(true)->save($values);
+                    $count = 0;
+                    $list = $this->model->where($this->model->getPk(), 'in', $ids)->select();
+                    foreach ($list as $index => $item) {
+                        $count += $item->allowField(true)->isUpdate(true)->save($values);
+                    }
                     if ($count)
                     {
                         $this->success();

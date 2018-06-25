@@ -11,7 +11,12 @@
 // +----------------------------------------------------------------------
 use think\Env;
 
+$old_db_config = require_once 'database1.php';
+$old_java_db_config = require_once 'database2.php';
+
 return [
+    'old_db' => $old_db_config,
+    'old_java_db' => $old_java_db_config,
     // +----------------------------------------------------------------------
     // | 应用设置
     // +----------------------------------------------------------------------
@@ -163,7 +168,7 @@ return [
         'path'  => LOG_PATH,
         // 日志记录级别
         'level' => [],
-        'apart_level' => ['java'],
+        'apart_level' => ['java', 'crontab'],
     ],
     // +----------------------------------------------------------------------
     // | Trace设置 开启 app_trace 后 有效
@@ -273,7 +278,7 @@ return [
         //自动检测更新
         'checkupdate'      => false,
         //版本号
-        'version'          => '1.0.0.20180513_beta',
+        'version'          => '1.0.0.20180618_beta',
         //API接口地址
         'api_url'          => 'https://api.fastadmin.net',
     ],

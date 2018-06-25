@@ -128,6 +128,10 @@ class Appborrowinfo extends Model
      */
     public function setAddImageListAttr($value)
     {
+        if (empty($value)) 
+        {
+            return '';
+        }
         $pic_arr = array_map(function ($cell){return \think\Config::get('upload')['cdnurl'].$cell;}, explode(',', $value));
         return implode('|', $pic_arr);
     }
@@ -139,6 +143,10 @@ class Appborrowinfo extends Model
      */
     public function getAddImageListAttr($value)
     {
+        if (empty($value))
+        {
+            return '';
+        }
         $pic_arr = array_map(function ($cell){return str_replace(\think\Config::get('upload')['cdnurl'], '', $cell);}, explode('|', $value));
         return implode(',', $pic_arr);
     }
@@ -341,39 +349,7 @@ class Appborrowinfo extends Model
             ['label' => '信息透明度','val' => $data['transparency']],
         ];
         
-        $tmp = [];
-        foreach ($json_arr as $v)
-        {
-            if (empty($v['val'])) 
-            {
-                continue;
-            }
-            $tmp[] = $v;
-        }
-        
-        return json_encode(['detail' => $tmp]);
-    }
-    
-    /**
-     * 标的详情字段
-     * @return string[][]
-     */
-    public static function borrowDetailField()
-    {
-        return [
-            'debtor' => ['label' => '借款方', 'type' => 'text'],
-            'businessType' => ['label' => '业务类型', 'type' => 'text'],
-            'guaranteeWay' => ['label' => '担保方式', 'type' => 'text'],
-            'depositoryInstitution' => ['label' => '托管机构', 'type' => 'text'],
-            'ensure' => ['label' => '还款保障', 'type' => 'text'],
-            'debtorInfo' => ['label' => '借款方信息', 'type' => 'textarea'],
-            'pledge' => ['label' => '质押物信息', 'type' => 'textarea'],
-            'payment' => ['label' => '还款来源', 'type' => 'textarea'],
-            'projectDetail' => ['label' => '项目状况', 'type' => 'textarea'],
-            'riskControl' => ['label' => '风控措施', 'type' => 'textarea'],
-            'pledgeAuthenticity' => ['label' => '质押物真实性', 'type' => 'textarea'],
-            'transparency' => ['label' => '信息透明度', 'type' => 'textarea'],
-        ];
+        return json_encode(['detail' => $json_arr]);
     }
     
     /**

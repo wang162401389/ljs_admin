@@ -13,6 +13,7 @@ return [
     'Status'  =>  '状态',
     'Status 0' => '无效',
     'Status 1' => '有效',
+    'Status 2' => 'ios审核专用',
     
     'Summary'  =>  '摘要备注',
     

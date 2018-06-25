@@ -23,8 +23,8 @@ class Sms extends Api
     /**
      * 发送验证码
      *
-     * @param string    $mobile     手机号
-     * @param string    $event      事件名称
+     * @param string $mobile 手机号
+     * @param string $event 事件名称
      */
     public function send()
     {
@@ -32,9 +32,16 @@ class Sms extends Api
         $event = $this->request->request("event");
         $event = $event ? $event : 'register';
 
+        if (!$mobile || !\think\Validate::regex($mobile, "^1\d{10}$")) {
+            $this->error(__('手机号不正确'));
+        }
         $last = Smslib::get($mobile, $event);
         if ($last && time() - $last['createtime'] < 60)
         {
+            $this->error(__('发送频繁'));
+        }
+        $ipSendTotal = \app\common\model\Sms::where(['ip' => $this->request->ip()])->whereTime('createtime', '-1 hours')->count();
+        if ($ipSendTotal >= 5) {
             $this->error(__('发送频繁'));
         }
         if ($event)
@@ -70,9 +77,9 @@ class Sms extends Api
     /**
      * 检测验证码
      *
-     * @param string    $mobile     手机号
-     * @param string    $event      事件名称
-     * @param string    $captcha    验证码
+     * @param string $mobile 手机号
+     * @param string $event 事件名称
+     * @param string $captcha 验证码
      */
     public function check()
     {
@@ -81,6 +88,9 @@ class Sms extends Api
         $event = $event ? $event : 'register';
         $captcha = $this->request->request("captcha");
 
+        if (!$mobile || !\think\Validate::regex($mobile, "^1\d{10}$")) {
+            $this->error(__('手机号不正确'));
+        }
         if ($event)
         {
             $userinfo = User::getByMobile($mobile);

@@ -19,13 +19,11 @@ class Index extends Controller
     {
         parent::_initialize();
         $config = get_addon_config('third');
-        if (!$config)
-        {
+        if (!$config) {
             $this->error(__('Invalid parameters'));
         }
         $options = array_intersect_key($config, array_flip(['qq', 'weibo', 'wechat']));
-        foreach ($options as $k => &$v)
-        {
+        foreach ($options as $k => &$v) {
             $v['callback'] = addon_url('third/index/callback', [':platform' => $k], false, true);
             $options[$k] = $v;
         }
@@ -47,8 +45,7 @@ class Index extends Controller
     public function connect()
     {
         $platform = $this->request->param('platform');
-        if (!$this->app->{$platform})
-        {
+        if (!$this->app->{$platform}) {
             $this->error(__('Invalid parameters'));
         }
         // 跳转到登录授权页面
@@ -68,15 +65,12 @@ class Index extends Controller
 
         // 授权成功后的回调
         $result = $this->app->{$platform}->getUserInfo();
-        if ($result)
-        {
+        if ($result) {
             $loginret = Service::connect($platform, $result);
-            if ($loginret)
-            {
+            if ($loginret) {
                 $synchtml = '';
                 ////////////////同步到Ucenter////////////////
-                if (defined('UC_STATUS') && UC_STATUS)
-                {
+                if (defined('UC_STATUS') && UC_STATUS) {
                     $uc = new \addons\ucenter\library\client\Client();
                     $synchtml = $uc->uc_user_synlogin($this->auth->id);
                 }

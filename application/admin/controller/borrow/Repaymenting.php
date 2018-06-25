@@ -74,6 +74,11 @@ class Repaymenting extends Backend
             if (!empty($list)) 
             {
                 foreach ($list as &$v) {
+                    $v['borrowInterestRate'] .= '%';
+                    if ($v['addInterestRate'] > 0)
+                    {
+                        $v['borrowInterestRate'] .= ' + '.$v['addInterestRate'].'%';
+                    }
                     $v['last_deadline'] = \think\db::table('AppBorrowRepayment')
                                     ->where('borrowInfoId', $v['borrowInfoId'])
                                     ->whereIn('repaymentStatus', [0, 2])

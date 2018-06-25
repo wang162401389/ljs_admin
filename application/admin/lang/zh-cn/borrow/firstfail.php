@@ -9,7 +9,6 @@ return [
     'Borrowdurationtxt'  => '借款期限',
     'Borrowmoney'  =>  '借款金额（元）',
     'Borrowinterest'  =>  '投资人利息',
-    'Borrowinterestrate'  =>  '投资人利率（借款人利率 + 加息利率,平台出）',
     'Hasborrow'  =>  '投资者已投金额',
     'Borrowtimes'  =>  '投资人次',
     
@@ -96,7 +95,7 @@ return [
     'Orderinterestratetype 6' => '按月等额本金',
     'Orderinterestratetype 7' => '按总本金每期固定利率',
     
-    'BorrowInterestRate'  =>  '过往年化利率（%）',
+    'BorrowInterestRate'  =>  '年化利率',
     'Ordertotal'  =>  '借款人总期数',
     'Orderhaspay'  =>  '借款人已还款期数',
     

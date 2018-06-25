@@ -40,6 +40,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'investInterestType', title: __('Investinteresttype'), visible:false, searchList: $.getJSON('borrow/waitmoney/investinteresttypelist')},
                         {field: 'invest_interest_type_text', title: __('Investinteresttype'), operate:false},
                         {field: 'borrowDurationTxt', title: __('Borrowdurationtxt'), operate:false},
+                        {field: 'borrowInterestRate', title:__('BorrowInterestRate'), operate:false},
                         {field: 'secondVerifyTime', title: __('Secondverifytime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'secondVerfiyRemarks', title: __('secondVerfiyRemarks'), operate:false},
                         {field: 'secondverify.username', title: __('secondVerfiyId')},

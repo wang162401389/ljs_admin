@@ -3,6 +3,7 @@
 namespace app\admin\controller\appuser;
 
 use app\common\controller\Backend;
+use think\Db;
 use think\Validate;
 
 /**
@@ -48,9 +49,9 @@ class Refereeapply extends Backend
             
             $field = 'u.userId as `u.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,rl.pre_recommend,u.recommendPhone as `u.recommendPhone`,u.regSource as `u.regSource`,u.createdTime as `u.createdTime`';
             
-            $subsql = \think\Db::table('referee_log')->where(['status' => 1])->field('uid,pre_recommend')->order('id desc')->limit(1)->buildSql();
+            $subsql = Db::table('referee_log')->where(['status' => 1])->field('uid,pre_recommend')->order('id desc')->limit(1)->buildSql();
             
-            $total = \think\Db::table('AppUser')
+            $total = Db::table('AppUser')
                     ->alias('u')
                     ->field($field)
                     ->join([$subsql => 'rl'], 'u.userId = rl.uid', 'LEFT')
@@ -59,7 +60,7 @@ class Refereeapply extends Backend
                     ->group('u.userId')
                     ->count();
             
-            $list = \think\Db::table('AppUser')
+            $list = Db::table('AppUser')
                     ->alias('u')
                     ->field($field)
                     ->join([$subsql => 'rl'], 'u.userId = rl.uid', 'LEFT')
@@ -110,7 +111,7 @@ class Refereeapply extends Backend
             {
                 try
                 {
-                    $result = \think\Db::table('referee_log')->where('uid', $ids)->where('status', 0)->find();
+                    $result = Db::table('referee_log')->where('uid', $ids)->where('status', 0)->find();
                     if (!empty($result)) 
                     {
                         $this->error('你有一个修改申请正在审核中，审核通过之前不能重复提交');
@@ -133,7 +134,7 @@ class Refereeapply extends Backend
                         $this->error(__($validate->getError()));
                     }
                     
-                    $result = \think\Db::table('AppUser')->where('userPhone', $params['now_recommend'])->where('isBan', 0)->find();
+                    $result = Db::table('AppUser')->where('userPhone', $params['now_recommend'])->where('isBan', 0)->find();
                     if (empty($result)) 
                     {
                         $this->error('推荐人不存在');
@@ -146,7 +147,7 @@ class Refereeapply extends Backend
                     $arr['remark'] = $params['remark'];
                     $arr['ctime'] = $_SERVER['REQUEST_TIME'];
                     
-                    $result = \think\Db::table('referee_log')->insert($arr);
+                    $result = Db::table('referee_log')->insert($arr);
                     if ($result !== false)
                     {
                         $this->success();
@@ -186,13 +187,13 @@ class Refereeapply extends Backend
             }
         }
         
-        $result = \think\Db::table('referee_log')->where('uid', $ids)->where('status', 1)->select();
+        $result = Db::table('referee_log')->where('uid', $ids)->where('status', 1)->select();
         if (!empty($result)) 
         {
             foreach ($result as &$v)
             {
-                $v['apply_name'] = \think\Db::table('admin')->where('id', $v['apply_id'])->value('username');
-                $v['verify_name'] = \think\Db::table('admin')->where('id', $v['verify_id'])->value('username');
+                $v['apply_name'] = Db::table('admin')->where('id', $v['apply_id'])->value('username');
+                $v['verify_name'] = Db::table('admin')->where('id', $v['verify_id'])->value('username');
             }
         }
         $this->view->assign("list", $result);

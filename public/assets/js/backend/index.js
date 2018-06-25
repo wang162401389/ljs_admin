@@ -2,14 +2,14 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
     var Controller = {
         index: function () {
         	//在切换选项卡的时候刷新页面中的表格
-        	$(document.body).on('click', '[addtabs]', function (e) {
-                var iframe = $("#con_" + $(this).attr("addtabs") + " iframe");
-                if (iframe.size() > 0) {
-                    if (typeof iframe.get(0).contentWindow.$ !== 'undefined') {
-                        iframe.get(0).contentWindow.$(".bootstrap-table .toolbar .btn-refresh").trigger("click");
-                    }
-                }
-            });
+//        	$(document.body).on('click', '[addtabs]', function (e) {
+//                var iframe = $("#con_" + $(this).attr("addtabs") + " iframe");
+//                if (iframe.size() > 0) {
+//                    if (typeof iframe.get(0).contentWindow.$ !== 'undefined') {
+//                        iframe.get(0).contentWindow.$(".bootstrap-table .toolbar .btn-refresh").trigger("click");
+//                    }
+//                }
+//            });
         	
             //窗口大小改变,修正主窗体最小高度
             $(window).resize(function () {
@@ -99,10 +99,10 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
                     success: function (ret) {
                         if (ret.data && ignoreversion !== ret.data.newversion) {
                             Layer.open({
-                                title: '发现新版本',
+                                title: __('Discover new version'),
                                 maxHeight: 400,
-                                content: '<h5 style="background-color:#f7f7f7; font-size:14px; padding: 10px;">你的版本是:' + ret.data.version + '，新版本:' + ret.data.newversion + '</h5><span class="label label-danger">更新说明</span><br/>' + ret.data.upgradetext,
-                                btn: ['去下载更新', '忽略此次更新', '不再提示'],
+                                content: '<h5 style="background-color:#f7f7f7; font-size:14px; padding: 10px;">' + __('Your current version') + ':' + ret.data.version + '，' + __('New version') + ':' + ret.data.newversion + '</h5><span class="label label-danger">'+__('Release notes')+'</span><br/>' + ret.data.upgradetext,
+                                btn: [__('Go to download'), __('Ignore this version'), __('Do not remind again')],
                                 btn2: function (index, layero) {
                                     localStorage.setItem("ignoreversion", ret.data.newversion);
                                 },
@@ -115,12 +115,12 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
                             });
                         } else {
                             if (tips) {
-                                Toastr.success("当前已经是最新版本");
+                                Toastr.success(__('Currently is the latest version'));
                             }
                         }
                     }, error: function (e) {
                         if (tips) {
-                            Toastr.error("发生未知错误:" + e.message);
+                            Toastr.error(__('Unknown data format') + ":" + e.message);
                         }
                     }
                 });
@@ -230,11 +230,15 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
                     if ($(this).attr("url") == "javascript:;") {
                         var sonlist = $(".sidebar-menu > li[pid='" + $(this).attr("addtabs") + "']");
                         sonlist.removeClass("hidden");
+                        var sidenav;
                         var last_id = $(this).attr("last-id");
                         if (last_id) {
-                            $(".sidebar-menu > li[pid='" + $(this).attr("addtabs") + "'] a[addtabs='" + last_id + "']").trigger('click');
+                            sidenav = $(".sidebar-menu > li[pid='" + $(this).attr("addtabs") + "'] a[addtabs='" + last_id + "']");
                         } else {
-                            $(".sidebar-menu > li[pid='" + $(this).attr("addtabs") + "']:first > a").trigger('click');
+                            sidenav = $(".sidebar-menu > li[pid='" + $(this).attr("addtabs") + "']:first > a");
+                        }
+                        if (sidenav) {
+                            sidenav.attr("href") != "javascript:;" && sidenav.trigger('click');
                         }
                     } else {
 

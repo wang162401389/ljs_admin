@@ -58,11 +58,21 @@ class Install extends Command
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->query("CREATE DATABASE IF NOT EXISTS `{$database}` CHARACTER SET utf8 COLLATE utf8_general_ci;");
 
+        //连接install命令中指定的数据库
+        $instance = Db::connect([
+            'type' => "{$config['type']}",
+            'hostname' => "{$hostname}",
+            'hostport' => "{$hostport}",
+            'database' => "{$database}",
+            'username' => "{$username}",
+            'password' => "{$password}",
+        ]);
+        
         // 查询一次SQL,判断连接是否正常
-        Db::execute("SELECT 1");
+        $instance->execute("SELECT 1");
 
         // 调用原生PDO对象进行批量查询
-        Db::getPdo()->exec($sql);
+        $instance->getPdo()->exec($sql);
 
         file_put_contents($installLockFile, 1);
 

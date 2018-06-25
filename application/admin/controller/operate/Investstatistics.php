@@ -3,6 +3,7 @@
 namespace app\admin\controller\operate;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 用户投资统计
@@ -45,36 +46,59 @@ class Investstatistics extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $field = "u.userName as `u.userName`,
-                      u.regChannel as `u.regChannel`,u.isSina as `u.isSina`,u.isHuaxing as `u.isHuaxing`,u.regTime as `u.regTime`,
-                      u.borrowUserId as `u.borrowUserId`,u.realName as `u.realName`,u.userType as `u.userType`,sum(bi.borrowMoney) as total,
-                    sum(case when bi.payChannelType = 2 and bi.borrowStatus not in ('1','2','6') then bi.borrowMoney end) * 0.01 as sina_total,
-                    sum(case when bi.payChannelType = 3 and bi.borrowStatus not in ('1','2','6') then bi.borrowMoney end) * 0.01 as huaxing_total";
+            $field = "u.userId as `u.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,u.regSource as `u.regSource`,
+                      u.createdTime as `u.createdTime`,ir.touzicount as `ir.touzicount`,ir.totalmoney as `ir.totalmoney`,fl.charge_total as `fl.charge_total`,
+                      fl.charge_money_total as `fl.charge_money_total`,fl.withdraw_total as `fl.withdraw_total`,fl.withdraw_money_total as `fl.withdraw_money_total`";
             
-            $total = \think\Db::table('AppUser')
+            $subsql1_field = "userId,count(case when transactionType = 1 and transactionStatus = 2 then 'charge' end) charge_total,
+                              count(case when transactionType = 2 and transactionStatus = 2 then 'withdraw' end) withdraw_total,
+                              sum(case when transactionType = 1 and transactionStatus = 2 then transactionAmt end) * 0.01 as charge_money_total,
+                              sum(case when transactionType = 2 and transactionStatus = 2 then transactionAmt end) * 0.01 as withdraw_money_total";
+            
+            $subsql1 = Db::table('AppTransactionFlowing')
+                        ->field($subsql1_field)
+                        ->where('transactionStatus', 2)
+                        ->whereIn('transactionType', '1,2')
+                        ->group('userId')
+                        ->buildSql();
+                        
+            $subsql2_field = 'userId,count(*) as touzicount,sum(investorCapital) * 0.01 as totalmoney';
+                        
+            $subsql2 = Db::table('AppInvestorRecord')
+                        ->field($subsql2_field)
+                        ->group('userId')
+                        ->buildSql();
+            
+            $total = Db::table('AppUser')
                     ->alias('u')
                     ->field($field)
-                    ->join('AppBorrowInfo bi','u.borrowUserId = bi.borrowUid', 'LEFT')
+                    ->join([$subsql1 => 'fl'], 'fl.userId = u.userId', 'LEFT')
+                    ->join([$subsql2 => 'ir'], 'ir.userId = u.userId', 'LEFT')
                     ->where($where)
+                    ->where(function ($query) {
+                        $query->where('ir.touzicount', 'gt', 0)->whereOr('fl.charge_total', 'gt', 0)->whereOr('fl.withdraw_total', 'gt', 0);
+                    })
                     ->order($sort, $order)
-                    ->group('u.borrowUserId')
                     ->count();
             
-            $list = \think\Db::table('AppUser')
+            $list = Db::table('AppUser')
                     ->alias('u')
                     ->field($field)
-                    ->join('AppBorrowInfo bi','u.borrowUserId = bi.borrowUid', 'LEFT')
+                    ->join([$subsql1 => 'fl'], 'fl.userId = u.userId', 'LEFT')
+                    ->join([$subsql2 => 'ir'], 'ir.userId = u.userId', 'LEFT')
                     ->where($where)
+                    ->where(function ($query) {
+                        $query->where('ir.touzicount', 'gt', 0)->whereOr('fl.charge_total', 'gt', 0)->whereOr('fl.withdraw_total', 'gt', 0);
+                    })
                     ->order($sort, $order)
                     ->limit($offset, $limit)
-                    ->group('u.borrowUserId')
                     ->select();
-            
+                    
             if (!empty($list))
             {
                 foreach ($list as &$v)
                 {
-                    $v['userId'] = (string)$v['userId'];
+                    $v['u.userId'] = ''.$v['u.userId'];
                 }
             }
             $result = array("total" => $total, "rows" => $list);

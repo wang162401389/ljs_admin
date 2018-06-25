@@ -103,7 +103,7 @@ class Autotask extends Controller
                     if (substr($crontab['content'], 0, 1) == "/")
                     {
                         // 本地项目URL
-                        exec('nohup php ' . ROOT_PATH . 'public/index.php ' . $crontab['content'] . ' >> ' . $logDir . date("Y-m-d") . '.log 2>&1 &');
+                        exec('nohup /usr/local/php/bin/php ' . ROOT_PATH . 'public/index.php ' . $crontab['content'] . '/id/' . $crontab['id'] . ' >> ' . $logDir . date("Y-m-d") . '.log 2>&1 &');
                     }
                     else
                     {

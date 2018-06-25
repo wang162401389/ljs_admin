@@ -32,6 +32,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'borrowName', title: __('Borrowname'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'borrowMoney', title: __('Borrowmoney'), operate: 'BETWEEN', sortable: true},
                         {field: 'borrowDurationTxt', title: __('Borrowdurationtxt'), operate:false},
+                        {field: 'borrowInterestRate', title:__('BorrowInterestRate'), operate:false},
                         {field: 'createTime', title: __('Createtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'fullTime', title: __('Fulltime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'payChannelType', title: __('Paychanneltype'), visible:false, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},

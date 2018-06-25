@@ -4,8 +4,6 @@ namespace app\admin\controller\general;
 
 use app\common\controller\Backend;
 
-use think\Controller;
-
 /**
  * 
  *

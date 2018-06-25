@@ -6,10 +6,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Table.api.init({
                 extend: {
                     index_url: 'operate/investstatistics/index',
-                    add_url: 'operate/investstatistics/add',
-                    edit_url: 'operate/investstatistics/edit',
-                    del_url: 'operate/investstatistics/del',
-                    multi_url: 'operate/investstatistics/multi',
+                    add_url: '',
+                    edit_url: '',
+                    del_url: '',
+                    multi_url: '',
                     table: 'AppUser',
                 }
             });
@@ -19,21 +19,21 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             // 初始化表格
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
-                pk: 'userId',
-                sortName: 'createdTime',
+                pk: 'u.userId',
+                sortName: 'u.createdTime',
                 columns: [
                     [
-                        {field: 'userId', title: __('Userid'), sortable: true},
-                        {field: 'userPhone', title: __('Userphone')},
-                        {field: 'userName', title: __('Username')},
-                        {field: 'regSource', title: __('Regsource'), formatter: Table.api.formatter.search},
-                        {field: 'createdTime', title: __('Createdtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
-                        {field: '', title: '投资次数', operate: 'BETWEEN', sortable: true},
-                        {field: '', title: '投资金额', operate: 'BETWEEN', sortable: true},
-                        {field: '', title: '充值次数', operate: 'BETWEEN', sortable: true},
-                        {field: '', title: '充值金额', operate: 'BETWEEN', sortable: true},
-                        {field: '', title: '提现次数', operate: 'BETWEEN', sortable: true},
-                        {field: '', title: '提现金额', operate: 'BETWEEN', sortable: true},
+                        {field: 'u.userId', title: __('Userid'), sortable: true},
+                        {field: 'u.userPhone', title: __('Userphone')},
+                        {field: 'u.userName', title: __('Username')},
+                        {field: 'u.regSource', title: __('Regsource'), formatter: Table.api.formatter.search},
+                        {field: 'u.createdTime', title: __('Createdtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
+                        {field: 'ir.touzicount', title: '投资次数', operate: 'BETWEEN', sortable: true},
+                        {field: 'ir.totalmoney', title: '投资金额', operate: 'BETWEEN', sortable: true},
+                        {field: 'fl.charge_total', title: '充值次数', operate: 'BETWEEN', sortable: true},
+                        {field: 'fl.charge_money_total', title: '充值金额', operate: 'BETWEEN', sortable: true},
+                        {field: 'fl.withdraw_total', title: '提现次数', operate: 'BETWEEN', sortable: true},
+                        {field: 'fl.withdraw_money_total', title: '提现金额', operate: 'BETWEEN', sortable: true},
                         {field: '', title: '账户余额'}
                     ]
                 ],

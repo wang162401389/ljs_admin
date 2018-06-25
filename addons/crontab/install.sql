@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `__PREFIX__crontab` (
+CREATE TABLE IF NOT EXISTS `crontab` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `type` varchar(10) NOT NULL DEFAULT '' COMMENT '事件类型',
   `title` varchar(100) NOT NULL DEFAULT '' COMMENT '事件标题',
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `__PREFIX__crontab` (
   `weigh` int(10) NOT NULL DEFAULT '0' COMMENT '权重',
   `status` enum('completed','expired','hidden','normal') NOT NULL DEFAULT 'normal' COMMENT '状态',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='定时任务表' ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='定时任务表' ROW_FORMAT=DYNAMIC;
 
 BEGIN;
 INSERT INTO `__PREFIX__crontab` (`id`, `type`, `title`, `content`, `schedule`, `sleep`, `maximums`, `executes`, `createtime`, `updatetime`, `begintime`, `endtime`, `executetime`, `weigh`, `status`) VALUES
