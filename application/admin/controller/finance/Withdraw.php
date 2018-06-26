@@ -49,10 +49,10 @@ class Withdraw extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
             $field1 = 'tf.id,tf.userId,a.userPhone,a.userName,1 as idname,tf.transactionAmt * 0.01 as transactionAmt,tf.addTime,tf.transactionStatus,
-                       tf.payChannelType,tf.orderId,tf.payTime';
+                       tf.payChannelType,tf.orderId,tf.payTime,a.regSource,a.marketChannel';
             
-            $field2 = 'tf.id,tf.userId,b.userName as userPhone,b.realName as userName,2 as idname,tf.transactionAmt * 0.01 as transactionAmt,tf.addTime,
-                        tf.transactionStatus,tf.payChannelType,tf.orderId,tf.payTime';
+            $field2 = "tf.id,tf.userId,b.userName as userPhone,b.realName as userName,2 as idname,tf.transactionAmt * 0.01 as transactionAmt,tf.addTime,
+                        tf.transactionStatus,tf.payChannelType,tf.orderId,tf.payTime,b.regChannel as regSource,'' as marketChannel";
             
             $subQuery = Db::table('AppTransactionFlowing')
                         ->alias('tf')
@@ -68,7 +68,7 @@ class Withdraw extends Backend
                         }, true)
                         ->buildSql();
             
-            $field = 't.id,t.userId,t.userPhone,t.userName,t.idname,t.transactionAmt,t.addTime,t.transactionStatus,t.payChannelType,t.orderId,t.payTime';
+            $field = 't.id,t.userId,t.userPhone,t.userName,t.idname,t.transactionAmt,t.addTime,t.transactionStatus,t.payChannelType,t.orderId,t.payTime,t.regSource,t.marketChannel';
             $total = Db::table($subQuery.' t')
                     ->where($where)
                     ->order($sort, $order)

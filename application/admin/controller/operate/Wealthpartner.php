@@ -181,6 +181,7 @@ class Wealthpartner extends Backend
                     ->join([$subsql1 => 't'], 't.recommendPhone = u.userPhone')
                     ->field($field)
                     ->where($where)
+                    ->where('t.investorTime', 'gt', '2018-06')
                     ->count();
 
             $list = Db::table('AppUser')
@@ -188,6 +189,7 @@ class Wealthpartner extends Backend
                     ->join([$subsql1 => 't'], 't.recommendPhone = u.userPhone')
                     ->field($field)
                     ->where($where)
+                    ->where('t.investorTime', 'gt', '2018-06')
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();

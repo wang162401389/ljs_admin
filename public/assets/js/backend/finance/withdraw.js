@@ -27,6 +27,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'userPhone', title: '用户手机号'},
                         {field: 'userName', title: __('Realname')},
                         {field: 'idname', title: '身份', formatter: Controller.api.formatter.idname, searchList: {'1':'投资人',"2":'借款人'}},
+                        {field: 'regSource', title: '注册渠道', formatter: Table.api.formatter.search},
+                        {field: 'marketChannel', title: '市场渠道', formatter: Table.api.formatter.search},
                         {field: 'transactionAmt', title: __('Transactionamt'), operate: 'BETWEEN', sortable: true},
                         {field: 'addTime', title: __('Addtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'payTime', title: '完成时间', operate:'RANGE', addclass:'datetimerange', sortable: true},
