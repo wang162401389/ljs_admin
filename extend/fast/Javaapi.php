@@ -55,7 +55,7 @@ class Javaapi
      */
     public function finishPreAuthTrade($data = [])
     {
-        return Http::post($this->url.'/upload/contract/gnerate.do', $data);
+        return Http::post($this->url.'/any/contract/gnerate.do', $data);
     }
     
     /**

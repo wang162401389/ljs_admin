@@ -572,9 +572,10 @@ class Borrow extends Backend
                         {
                             $req['borrow_sn'] = $borrow_info['borrowSn'];
                             $req['user_id'] = $this->auth->id;
-                            Log::write("新浪标的复审通过请求参数：".var_export($req,true), 'java');
-                            $res = $javaapi->finishPreAuthTrade($req);
-                            Log::write("新浪标的复审通过：".$res, 'java');
+                            Log::write("新浪标的复审通过请求参数：".var_export($req, true), 'java');
+                            $return = json_decode($javaapi->finishPreAuthTrade($req), true);
+                            $res = $return['status'] == 'ok' ? 'success' : 'fail';
+                            Log::write("新浪标的复审通过：".var_export($return, true), 'java');
                         }
                         elseif ($borrow_info['payChannelType'] == 3)
                         {
