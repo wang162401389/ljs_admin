@@ -57,7 +57,7 @@ class Act201807 extends Backend
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
-            //halt($list);
+
             $list = collection($list)->toArray();
             if (!empty($list))
             {

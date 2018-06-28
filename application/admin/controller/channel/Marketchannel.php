@@ -6,11 +6,11 @@ use app\common\controller\Backend;
 use think\Db;
 
 /**
- * 投资数据统计
+ * 市场渠道别
  *
  * @icon fa fa-list
  */
-class Investlist extends Backend
+class Marketchannel extends Backend
 {
     
     protected $model = null;
@@ -19,7 +19,7 @@ class Investlist extends Backend
     public function _initialize()
     {
         parent::_initialize();
-        $typelist = config('site.channeltype');
+        $typelist = config('site.marketchanneltype');
         $this->typelist = $typelist;
         $this->view->assign("typeList", $typelist);
     }
@@ -48,15 +48,7 @@ class Investlist extends Backend
                     CASE WHEN (SELECT min(id) FROM AppInvestorRecord WHERE investorUid = ir.userId) = ir.id THEN 1 ELSE 0 END is_first_invest';
             
             $type = $type == null ? key($this->typelist) : $type;
-            $map['u.regSource'] = $type;
-            if (in_array($type, ['fengche', 'fengc']))
-            {
-                $map['u.regSource'] = ['in', ['fengche', 'fengc']];
-            }
-            if (in_array($type, ['chelun', 'chel']))
-            {
-                $map['u.regSource'] = ['in', ['chelun', 'chel']];
-            }
+            $map['u.marketChannel'] = $type;
             
             $total = Db::table('AppInvestorRecord')
                     ->alias('ir')
