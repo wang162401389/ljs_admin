@@ -4,7 +4,7 @@
 @import url("../css/iconfont.css");
 @import url("../libs/font-awesome/css/font-awesome.min.css");
 @import url("../libs/toastr/toastr.min.css");
-@import url("../libs/layer/dist/theme/default/layer.css");
+@import url("../libs/fastadmin-layer/dist/theme/default/layer.css");
 @import url("../libs/bootstrap-table/dist/bootstrap-table.min.css");
 @import url("../libs/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css");
 @import url("../libs/bootstrap-daterangepicker/daterangepicker.css");
@@ -37,7 +37,7 @@ body.is-dialog {
   /*width: 70%;*/
   max-width: 885px;
 }
-/*iOSå…¼å®¹*/
+/*iOS¼æÈÝ*/
 html.ios-fix,
 html.ios-fix body {
   height: 100%;
@@ -96,7 +96,7 @@ html.ios-fix body {
   margin-bottom: 15px;
   background-color: #f5f5f5;
 }
-/* å›ºå®šçš„åº•éƒ¨æŒ‰é’® */
+/* ¹Ì¶¨µÄµ×²¿°´Å¥ */
 .fixed-footer {
   position: fixed;
   bottom: 0;
@@ -104,10 +104,6 @@ html.ios-fix body {
   width: 100%;
   margin-bottom: 0;
   padding: 10px;
-}
-/* åŒ…è£¹åœ¨layerå¤–å±‚ */
-.layer-footer {
-  display: none;
 }
 table.table-template {
   overflow: hidden;
@@ -165,6 +161,9 @@ table.table-template {
 .is-dialog #main {
   background: #fff;
 }
+.is-dialog .layer-footer {
+  display: none;
+}
 form.form-horizontal .control-label {
   font-weight: normal;
 }
@@ -172,7 +171,7 @@ form.form-horizontal .control-label {
   width: 45px;
   height: 45px;
 }
-/*panelæ‰©å±•æè¿°æ ·å¼*/
+/*panelÀ©Õ¹ÃèÊöÑùÊ½*/
 .panel-intro {
   margin-bottom: 0;
   border: none;
@@ -233,14 +232,14 @@ form.form-horizontal .control-label {
   border-bottom-color: transparent;
   cursor: default;
 }
-/*å•è¡¨æ ¼*/
+/*µ¥±í¸ñ*/
 .panel-tabs .panel-heading {
   padding: 12px 15px 12px 15px;
 }
 .panel-tabs .panel-heading .panel-lead {
   margin-bottom: 0px;
 }
-/*é€‰é¡¹å¡*/
+/*Ñ¡Ïî¿¨*/
 .panel-nav .panel-heading {
   padding: 0px;
   padding-bottom: 0;
@@ -263,7 +262,7 @@ form.form-horizontal .control-label {
   border-color: #f1f4f6;
   border-bottom-color: transparent;
 }
-/*é¡¶æ addtabs*/
+/*¶¥À¸addtabs*/
 .nav-addtabs {
   height: 100%;
   border: none;
@@ -370,7 +369,7 @@ form.form-horizontal .control-label {
   z-index: 99;
   background: transparent;
 }
-/*æ¬¡æ èœå•æ */
+/*´ÎÀ¸²Ëµ¥À¸*/
 #secondnav {
   height: 44px;
   position: absolute;
@@ -517,7 +516,7 @@ form.form-horizontal .control-label {
   text-decoration: none;
   font-weight: bold;
 }
-/* å¼¹çª—ä¸­çš„è¡¨å• */
+/* µ¯´°ÖÐµÄ±íµ¥ */
 .form-layer {
   height: 100%;
   min-height: 150px;
@@ -585,11 +584,11 @@ form.form-horizontal .control-label {
 #treeview .jstree-themeicon {
   display: none;
 }
-/*åŽ»é™¤bootstrap-tableçš„è¾¹æ¡†*/
+/*È¥³ýbootstrap-tableµÄ±ß¿ò*/
 .fixed-table-container {
   border: none !important;
 }
-/*ä¿®å¤nice-validatoræ–°ç‰ˆä¸‹çš„ä¸€å¤„BUG*/
+/*ÐÞ¸´nice-validatorÐÂ°æÏÂµÄÒ»´¦BUG*/
 .nice-validator input,
 .nice-validator select,
 .nice-validator textarea,
@@ -598,11 +597,11 @@ form.form-horizontal .control-label {
   *display: inline;
   *zoom: 1;
 }
-/*ä¿®å¤nice-validatorå’Œsummernoteçš„ç¼–è¾‘æ¡†å†²çª*/
+/*ÐÞ¸´nice-validatorºÍsummernoteµÄ±à¼­¿ò³åÍ»*/
 .nice-validator .note-editor .note-editing-area .note-editable {
   display: inherit;
 }
-/*é¢„è§ˆåŒºåŸŸ*/
+/*Ô¤ÀÀÇøÓò*/
 .plupload-preview {
   padding: 0 10px;
   margin-bottom: 0;
@@ -722,7 +721,7 @@ table.table-nowrap thead > tr > th {
   border-radius: 6px 0 6px 6px;
   background-clip: padding-box;
 }
-/*é‡å†™toastçš„å‡ ä¸ªèƒŒæ™¯è‰²*/
+/*ÖØÐ´toastµÄ¼¸¸ö±³¾°É«*/
 .toast-primary {
   background-color: #48c9b0 !important;
 }
@@ -751,7 +750,7 @@ table.table-nowrap thead > tr > th {
   box-shadow: 0 0 3px #eee;
 }
 .layui-layer-fast {
-  /*è‡ªå®šä¹‰åº•éƒ¨ç°è‰²æ“ä½œåŒº*/
+  /*×Ô¶¨Òåµ×²¿»ÒÉ«²Ù×÷Çø*/
 }
 .layui-layer-fast .layui-layer-title {
   background: #2c3e50 !important;
@@ -864,13 +863,13 @@ table.table-nowrap thead > tr > th {
 }
 .layui-layer-fast-msg {
   min-width: 100px;
-  border-radius: 2px;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
 }
-.layui-layer-fast-msg .layui-layer-content {
-  padding: 12px 25px;
-  text-align: center;
+.layui-layer-fast-tab .layui-layer-title .layui-this {
+  color: #333;
+}
+.layui-layer-fast-tab .layui-layer-content .layui-layer-tabmain {
+  margin: 0;
+  padding: 0;
 }
 .n-bootstrap .input-group > .n-right {
   position: absolute;
@@ -883,7 +882,7 @@ table.table-nowrap thead > tr > th {
     width: 130px;
   }
 }
-/*æ‰‹æœºç‰ˆæ ·å¼*/
+/*ÊÖ»ú°æÑùÊ½*/
 @media (max-width: 480px) {
   #firstnav .navbar-custom-menu ul li a {
     padding-left: 10px;
@@ -912,7 +911,7 @@ table.table-nowrap thead > tr > th {
     padding-top: 144px;
   }
 }
-/*å¹³æ¿æ ·å¼*/
+/*Æ½°åÑùÊ½*/
 @media (max-width: 768px) {
   body .wrapper .main-header .logo {
     background: none;
@@ -972,7 +971,7 @@ table.table-nowrap thead > tr > th {
     margin-right: 15px;
   }
 }
-/*ä¿®å¤radioå’Œcheckboxæ ·å¼å¯¹é½*/
+/*ÐÞ¸´radioºÍcheckboxÑùÊ½¶ÔÆë*/
 .radio > label,
 .checkbox > label {
   margin-right: 10px;
@@ -983,5 +982,13 @@ table.table-nowrap thead > tr > th {
 }
 .wipecache li a {
   color: #444444 !important;
+}
+/*ÐÞÕý¿ª¹Ø¹Ø±ÕÏÂµÄÑÕÉ«Öµ*/
+.btn-switcher.disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+.btn-switcher .text-gray {
+  color: #d2d6de !important;
 }
 /*# sourceMappingURL=../css/backend.css.map */

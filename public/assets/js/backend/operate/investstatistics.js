@@ -10,6 +10,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     edit_url: '',
                     del_url: '',
                     multi_url: '',
+                    saving_url : 'operate/investstatistics/querysaving',
                     table: 'AppUser',
                 }
             });
@@ -34,7 +35,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'fl.charge_money_total', title: '充值金额', operate: 'BETWEEN', sortable: true},
                         {field: 'fl.withdraw_total', title: '提现次数', operate: 'BETWEEN', sortable: true},
                         {field: 'fl.withdraw_money_total', title: '提现金额', operate: 'BETWEEN', sortable: true},
-                        {field: '', title: '账户余额'}
+                        {field: 'operate', title: '账户余额', table: table, events: Controller.api.events.operate, formatter: Controller.api.formatter.operate}
                     ]
                 ],
                 search : false
@@ -52,6 +53,43 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+            },
+            events : {
+            	operate: {
+            		'click .btn-saving': function (e, value, row, index) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        var that = this;
+                        var table = $(that).closest('table');
+                        var options = table ? table.bootstrapTable('getOptions') : {};
+                        Fast.api.ajax({
+							url: options.extend.repayment_url,
+							data: {'id': row.borrowInfoId},
+              		  	}, function (data, ret) {
+              		  		//逾期的借款
+							if(ret.code == 1){
+								Layer.alert(ret.data.msg);
+							}
+							return false;
+						}, function (data, ret) {
+							Layer.alert(ret.msg);
+						});
+                    }
+            	}
+            },
+            formatter : {
+            	operate: function (value, row, index) {
+                    this.buttons = [];
+                	this.buttons.push(
+                		{
+            				name: '还款信息',
+            				text: '还款信息',
+            				classname: 'btn btn-info btn-xs btn-saving btn-dialog',
+            				url: 'fkmanage/borrow/saving_url'
+            			}
+                	);
+                	return Table.api.formatter.operate.call(this, value, row, index);
+            	}
             }
         }
     };

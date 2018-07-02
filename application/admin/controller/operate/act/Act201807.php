@@ -36,7 +36,7 @@ class Act201807 extends Backend
                         ->join('AppTransactionFlowing tf',"tf.borrowInfoId = ir.borrowInfoId AND tf.userId = ir.userId AND tf.transactionType = 7 AND tf.remark LIKE '%号标满标奖励%'", 'LEFT')
                         ->field('max(ir.id) as id,ir.userId,ir.investorTime,ir.investorCapital * 0.01 as investorCapital,ir.borrowInfoId,CASE WHEN tf.transactionStatus = 2 then 1 ELSE 0 END has_send')
                         ->where('investorCapital', 'egt', 300000)
-                        ->whereTime('investorTime', 'between', ['2018-01-01 00:00:00', '2018-08-01 00:00:00'])
+                        ->whereTime('investorTime', 'between', ['2018-07-02 00:00:00', '2018-08-01 00:00:00'])
                         ->group('borrowInfoId')
                         ->buildSql();
         
