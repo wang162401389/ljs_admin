@@ -3,6 +3,7 @@
 namespace app\admin\controller\borrow;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 已完成的借款
@@ -44,57 +45,39 @@ class Done extends Backend
      */
     public function index()
     {
-        //当前是否为关联查询
-        $this->relationSearch = true;
         //设置过滤方法
         $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
         {
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
-            $map['borrowStatus'] = 10;
-
-            $field = "bi.borrowInfoId,bi.borrowSn as `bi.borrowSn`,u.userName as `u.userName`,u.realName as `u.realName`,bi.borrowName as `bi.borrowName`,
-                    bi.borrowMoney * 0.01 as `bi.borrowMoney`,bi.investInterestType as `bi.investInterestType`,bi.borrowDurationTxt as `bi.borrowDurationTxt`,
-                    bi.borrowInterestRate as `bi.borrowInterestRate`,bi.addInterestRate as `bi.addInterestRate`,
-                    bi.secondVerifyTime as `bi.secondVerifyTime`,bi.payChannelType as `bi.payChannelType`,SUM(br.repaymentMoney) * 0.01 AS repayd_total";
+            $sub_field = "b.borrowInfoId,b.borrowSn,u.userName,u.realName,b.borrowName,b.borrowMoney * 0.01 as borrowMoney,
+                          b.investInterestType,b.borrowDurationTxt,b.borrowInterestRate * 0.01 as borrowInterestRate,
+                          b.addInterestRate * 0.01 as addInterestRate,b.secondVerifyTime,b.payChannelType,
+                          SUM(br.interest) * 0.01 AS interest_total,SUM(br.repaymentMoney) * 0.01 AS repayd_total,
+                          case when br.repaymentStatus in(1,3) then max(br.deadline) else 0 end as last_deadline,
+                          case when br.repaymentStatus in(1,3) then max(br.repaymentTime) else 0 end as last_repaymentTime,
+                          (b.borrowInterestRate+b.addInterestRate) * 0.01 as rate_total";
             
-            $total = \think\Db::table('AppBorrowInfo')
-                    ->alias('bi')
-                    ->field($field)
-                    ->join('BorrowUser u','bi.borrowUid = u.borrowUserId', 'LEFT')
-                    ->join('AppBorrowRepayment br','bi.borrowInfoId = br.borrowInfoId', 'LEFT')
+            $subQuery = Db::table('AppBorrowInfo')
+                        ->alias('b')
+                        ->field($sub_field)
+                        ->join('BorrowUser u', 'u.borrowUserId = b.borrowUid', 'LEFT')
+                        ->join('AppBorrowRepayment br', 'br.borrowInfoId = b.borrowInfoId', 'LEFT')
+                        ->where('b.borrowStatus', 10)
+                        ->group('b.borrowInfoId')
+                        ->buildSql();
+            
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
-                    ->order($sort, $order)
-                    ->group('bi.borrowInfoId')
                     ->count();
             
-            $list = \think\Db::table('AppBorrowInfo')
-                    ->alias('bi')
-                    ->field($field)
-                    ->join('BorrowUser u','bi.borrowUid = u.borrowUserId', 'LEFT')
-                    ->join('AppBorrowRepayment br','bi.borrowInfoId = br.borrowInfoId', 'LEFT')
+            $list = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
-                    ->group('bi.borrowInfoId')
                     ->select();
             
-            if (!empty($list)) 
-            {
-                foreach ($list as &$v) 
-                {
-                    $v['bi.borrowInterestRate'] = ($v['bi.borrowInterestRate'] / 100).'%';
-                    if ($v['bi.addInterestRate'] > 0)
-                    {
-                        $v['bi.borrowInterestRate'] .= ' + '.($v['bi.addInterestRate'] / 100).'%';
-                    }
-                    $v['invest_interest_type_text'] = $this->model->getInvestInterestTypeList()[$v['bi.investInterestType']];
-                    $v['pay_channel_type_text'] = $this->model->getPayChannelTypeList()[$v['bi.payChannelType']];
-                }
-            }
             $result = array("total" => $total, "rows" => $list);
 
             return json($result);

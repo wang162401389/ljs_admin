@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\common\controller\Backend;
 use think\Db;
+use think\Config;
 
 /**
  * 控制台
@@ -50,7 +51,10 @@ class Dashboard extends Backend
         
         $total = Db::table('AppUser')->count('userId');
         $new_count = Db::table('AppUser')->whereTime('createdTime', '-7 days')->count('userId');
-
+        
+        $hooks = config('addons.hooks');
+        $uploadmode = isset($hooks['upload_config_init']) && $hooks['upload_config_init'] ? implode(',', $hooks['upload_config_init']) : 'local';
+  
         $this->view->assign([
             'first_verify_count' => Db::table('AppBorrowInfo')->where('borrowStatus', 0)->count('borrowInfoId'),
             'second_verify_count' => Db::table('AppBorrowInfo')->where('borrowStatus', 4)->count('borrowInfoId'),
@@ -64,6 +68,7 @@ class Dashboard extends Backend
             'withdrawlist' => $withdrawlist,
             'chargelist' => $chargelist,
             'investlist' => $investlist,
+            'uploadmode' => $uploadmode
         ]);
 
         return $this->view->fetch();

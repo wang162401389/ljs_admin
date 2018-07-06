@@ -6,10 +6,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Table.api.init({
                 extend: {
                     index_url: 'finance/jxcoupons/index',
-                    add_url: 'finance/jxcoupons/add',
-                    edit_url: 'finance/jxcoupons/edit',
-                    del_url: 'finance/jxcoupons/del',
-                    multi_url: 'finance/jxcoupons/multi',
+                    add_url: '',
+                    edit_url: '',
+                    del_url: '',
+                    multi_url: '',
                     table: 'AppTransactionFlowing',
                 }
             });
@@ -23,22 +23,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 sortName: 'id',
                 columns: [
                     [
-                        {field: 'appborrowinfo.borrowSn', title: __('Appborrowinfo.borrowsn'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                    	{field: 'borrowSn', title: __('Appborrowinfo.borrowsn'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'userId', title: __('UserId'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'appuser.userPhone', title: __('Appuser.userphone'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'appuser.userName', title: __('Appuser.username'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'userPhone', title: __('Appuser.userphone'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'userName', title: __('Appuser.username'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'transactionAmt', title: __('Transactionamt'), operate: 'BETWEEN', sortable: true},
-                        {field: 'coupon.money', title: __('Appcoupon.money'), operate: 'BETWEEN', sortable: true},
-                        {field: 'coupon.defName', title: __('Appcoupon.defName'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'coupon.grant_man_name', title: __('Appcoupon.grantMan'), operate: false},
-                        {field: 'coupon.createdTime', title: __('Appcoupon.createdTime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
-                        {field: 'appborrowinfo.borrowDurationTxt', title: __('Appborrowinfo.borrowdurationtxt'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'money', title: __('Appcoupon.money'), operate: 'BETWEEN', sortable: true},
+                        {field: 'defName', title: __('Appcoupon.defName'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'grantmanname', title: __('Appcoupon.grantMan'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'createdTime', title: __('Appcoupon.createdTime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
+                        {field: 'borrowDurationTxt', title: __('Appborrowinfo.borrowdurationtxt'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'addTime', title: __('Addtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
-                        {field: 'transactionStatus', title: __('Transactionstatus'), visible:false, searchList: {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')}},
-                        {field: 'transactionStatus_text', title: __('Transactionstatus'), operate:false},
+                        {field: 'transactionStatus', title: __('Transactionstatus'), formatter: Controller.api.formatter.status_text, searchList: {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')}},
                         {field: '', title: '加息金额', operate: 'BETWEEN', sortable: true},
-                        {field: 'payChannelType', title: __('Paychanneltype'), visible:false, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
-                        {field: 'payChannelType_text', title: __('Paychanneltype'), operate:false},
+                        {field: 'payChannelType', title: __('Paychanneltype'), formatter: Controller.api.formatter.pay_channel_type_text, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
                         {field: 'orderId', title: __('Orderid'), operate: 'LIKE %...%', placeholder: '模糊搜索'}
                     ]
                 ],
@@ -57,6 +55,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+            },
+            formatter : {
+            	status_text : function (value, row, index) {
+	                var status_textArr = {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(status_textArr[value]) + '</span>';
+	                return html;
+	        	},
+	        	pay_channel_type_text : function (value, row, index) {
+	                var pay_channel_type_textArr = {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(pay_channel_type_textArr[value]) + '</span>';
+	                return html;
+	        	}
             }
         }
     };

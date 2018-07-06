@@ -19,18 +19,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             // 初始化表格
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
-                pk: 'u.userId',
-                sortName: 'u.createdTime',
+                pk: 'userId',
+                sortName: 'createdTime',
                 columns: [
                     [
-                        {field: 'u.userId', title: __('Userid'), sortable: true},
-                        {field: 'u.userPhone', title: __('Userphone')},
-                        {field: 'u.userName', title: __('Username')},
-                        {field: 'u.pid', title: __('Pid')},
-                        {field: 'u.recommendPhone', title: __('Recommendphone')},
-                        {field: 'u.regSource', title: __('Regsource'), formatter: Table.api.formatter.search},
-                        {field: 'u.marketChannel', title: __('MarketChannel'), formatter: Table.api.formatter.search},
-                        {field: 'u.createdTime', title: __('Createdtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
+                        {field: 'userId', title: __('Userid'), sortable: true},
+                        {field: 'userPhone', title: __('Userphone')},
+                        {field: 'userName', title: __('Username')},
+                        {field: 'pid', title: __('Pid')},
+                        {field: 'recommendPhone', title: __('Recommendphone')},
+                        {field: 'regSource', title: __('Regsource'), formatter: Table.api.formatter.search},
+                        {field: 'marketChannel', title: __('MarketChannel'), formatter: Table.api.formatter.search},
+                        {field: 'createdTime', title: __('Createdtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'total', title: '用户累计投资金额', operate: 'BETWEEN', sortable: true}
                     ]
                 ],

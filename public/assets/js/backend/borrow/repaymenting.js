@@ -6,10 +6,10 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Table.api.init({
                 extend: {
                     index_url: 'borrow/repaymenting/index',
-                    add_url: 'borrow/repaymenting/add',
+                    add_url: '',
                     edit_url: '',
                     del_url: '',
-                    multi_url: 'borrow/repaymenting/multi',
+                    multi_url: '',
                     repayment_url : 'fkmanage/borrow/repaymentinfo',
                     table: 'AppBorrowInfo',
                 }
@@ -25,21 +25,17 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 columns: [
                     [
                         {field: 'borrowSn', title: __('Borrowsn'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'borrower.userName', title: __('borrower.username'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: '', title: '法人手机号', operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'borrower.realName', title: __('borrower.realname'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'productType', title: __('Producttype'), visible:false, searchList: $.getJSON('borrow/waitverify/producttypelist')},
-                        {field: 'product_type_text', title: __('Producttype'), operate:false},
+                        {field: 'userName', title: __('borrower.username'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'realName', title: __('borrower.realname'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'productType', title: __('Producttype'), formatter: Controller.api.formatter.product_type_text, searchList: $.getJSON('borrow/waitverify/producttypelist')},
                         {field: 'borrowName', title: __('Borrowname'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'borrowMoney', title: __('Borrowmoney'), operate: 'BETWEEN', sortable: true},
-                        {field: 'investInterestType', title: __('Investinteresttype'), visible:false, searchList: $.getJSON('borrow/waitmoney/investinteresttypelist')},
-                        {field: 'invest_interest_type_text', title: __('Investinteresttype'), operate:false},
+                        {field: 'investInterestType', title: __('Investinteresttype'), formatter: Controller.api.formatter.invest_interest_type_text, searchList: $.getJSON('borrow/waitmoney/investinteresttypelist')},
                         {field: 'borrowDurationTxt', title: __('Borrowdurationtxt'), operate:false},
-                        {field: 'borrowInterestRate', title:__('BorrowInterestRate'), operate:false},
+                        {field: 'rate_total', title:__('BorrowInterestRate'), formatter: Controller.api.formatter.rate_text, operate:'BETWEEN', sortable: true},
                         {field: 'secondVerifyTime', title: __('Secondverifytime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'last_deadline', title: '最近还款时间', operate:false, addclass:'datetimerange', sortable: true},
-                        {field: 'payChannelType', title: __('Paychanneltype'), visible:false, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
-                        {field: 'pay_channel_type_text', title: __('Paychanneltype'), operate:false},
+                        {field: 'payChannelType', title: __('Paychanneltype'), formatter: Controller.api.formatter.pay_channel_type_text, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
                         {field: 'operate', title: __('Operate'), table: table, events: Controller.api.events.operate, 
 //                        	buttons: [
 //                        		{
@@ -132,7 +128,33 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             			}
                 	);
                 	return Table.api.formatter.operate.call(this, value, row, index);
-            	}
+            	},
+            	product_type_text : function (value, row, index) {
+	                var product_type_textArr = {'1': __('Producttype 1'), '2': __('Producttype 2'), '3': __('Producttype 3'), '4': __('Producttype 4'), '5': __('Producttype 5'), '6': __('Producttype 6'), '7': __('Producttype 7'), '8': __('Producttype 8')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(product_type_textArr[value]) + '</span>';
+	                return html;
+	        	},
+	        	invest_interest_type_text : function (value, row, index) {
+	                var invest_interest_type_textArr = {'1': __('InvestInterestType 1'), '2': __('InvestInterestType 2'), '3': __('InvestInterestType 3'), '4': __('InvestInterestType 4'), '5': __('InvestInterestType 5'), '7': __('InvestInterestType 7')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(invest_interest_type_textArr[value]) + '</span>';
+	                return html;
+	        	},
+	        	pay_channel_type_text : function (value, row, index) {
+	                var pay_channel_type_textArr = {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(pay_channel_type_textArr[value]) + '</span>';
+	                return html;
+	        	},
+	        	rate_text : function (value, row, index) {
+	                //渲染状态
+	                var html = row.borrowInterestRate + '%';
+	                if(row.addInterestRate > 0){
+	                	html += '+' + row.addInterestRate + '%'; 
+	                }
+	                return html;
+	        	}
             }
         }
     };

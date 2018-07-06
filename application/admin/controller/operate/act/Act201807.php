@@ -31,39 +31,45 @@ class Act201807 extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
                 
-            $subQuery = Db::table('AppInvestorRecord')
+            $subQuery1 = Db::table('AppInvestorRecord')
                         ->alias('ir')
-                        ->join('AppTransactionFlowing tf',"tf.borrowInfoId = ir.borrowInfoId AND tf.userId = ir.userId AND tf.transactionType = 7 AND tf.remark LIKE '%号标满标奖励%'", 'LEFT')
-                        ->field('max(ir.id) as id,ir.userId,ir.investorTime,ir.investorCapital * 0.01 as investorCapital,ir.borrowInfoId,CASE WHEN tf.transactionStatus = 2 then 1 ELSE 0 END has_send')
-                        ->where('investorCapital', 'egt', 300000)
-                        ->whereTime('investorTime', 'between', ['2018-07-02 00:00:00', '2018-08-01 00:00:00'])
-                        ->group('borrowInfoId')
+                        ->join('AppBorrowInfo b', 'b.borrowInfoId = ir.borrowInfoId', 'LEFT')
+                        ->field('ir.userId,max(ir.investorTime) as investorTime,b.borrowSn,ir.borrowInfoId')
+                        ->where('b.isNew', 0)
+                        ->whereNotIn('b.borrowStatus', '0,1,2,3,6,11')
+                        ->group('ir.borrowInfoId')
                         ->buildSql();
         
-            $total = Db::table($subQuery.' t')
+            $map['record.investorCapital'] = ['egt', 300000];
+            $map['record.investorTime'] = ['between', ['2018-07-02 00:00:00', '2018-08-01 00:00:00']];
+                        
+            $subQuery2 = Db::table($subQuery1.' t')
+                        ->field('record.userId,u.userPhone,u.userName,t.borrowSn,t.investorTime,record.investorCapital * 0.01 as investorCapital,CASE WHEN tf.transactionStatus = 2 then 1 ELSE 0 END as has_send')
+                        ->join('AppInvestorRecord record','record.borrowInfoId = t.borrowInfoId AND record.investorTime = t.investorTime')
+                        ->join('AppUser u','u.userId = record.userId', 'LEFT')
+                        ->join('AppTransactionFlowing tf', "tf.borrowInfoId = t.borrowInfoId AND tf.userId = record.userId AND tf.transactionType = 7 AND tf.remark LIKE '%号标满标奖励%'", 'LEFT')
+                        ->where($map)
+                        ->buildSql();
+            
+            $total = Db::table($subQuery2.' t1')
                     ->where($where)
-                    ->join('AppBorrowInfo bi','bi.borrowInfoId = t.borrowInfoId AND bi.isNew = 0', 'LEFT')
-                    ->join('AppUser u','u.userId = t.userId', 'LEFT')
-                    ->order($sort, $order)
                     ->count();
 
-            $field = 't.userId as `t.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,bi.borrowSn as `bi.borrowSn`,
-                    t.investorTime,t.investorCapital as `t.investorCapital`,t.has_send as `t.has_send`';
-            $list = Db::table($subQuery.' t')
+            $field = 't1.userId,t1.userPhone,t1.userName,t1.borrowSn,t1.investorTime,t1.investorCapital,t1.has_send';
+            $list = Db::table($subQuery2.' t1')
                     ->field($field)
                     ->where($where)
-                    ->join('AppBorrowInfo bi','bi.borrowInfoId = t.borrowInfoId AND bi.isNew = 0', 'LEFT')
-                    ->join('AppUser u','u.userId = t.userId', 'LEFT')
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             $list = collection($list)->toArray();
+
             if (!empty($list))
             {
                 foreach ($list as &$v) 
                 {
-                    $v['t.userId'] = ''.$v['t.userId'];
+                    $v['userId'] = ''.$v['userId'];
                     $v['prize'] = 30;
                 }
             }

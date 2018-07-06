@@ -347,10 +347,19 @@
     };
 
     BootstrapTable.prototype.onCommonSearch = function () {
-        var searchQuery = getSearchQuery(this);
-        this.trigger('common-search', this, searchQuery);
-        this.options.pageNumber = 1;
-        this.refresh({});
+//        var searchQuery = getSearchQuery(this);
+//        this.trigger('common-search', this, searchQuery);
+//        this.options.pageNumber = 1;
+//        this.refresh({});
+    	
+    	var searchQuery = getSearchQuery(this);
+    	var params = getQueryParams(this.options.queryParams({}), searchQuery, true);
+    	this.trigger('common-search', this, searchQuery);
+    	this.options.pageNumber = 1;
+    	this.options.queryParams = function (options) {
+    		return $.extend({}, options, params);
+    	};
+    	this.refresh({query : params});
     };
 
     BootstrapTable.prototype.load = function (data) {

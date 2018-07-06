@@ -10,3 +10,4 @@ composer.lock
 .project
 .settings/
 .svn/
+/application/admin/command/Min/node.log

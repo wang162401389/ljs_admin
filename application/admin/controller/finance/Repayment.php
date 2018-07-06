@@ -3,6 +3,7 @@
 namespace app\admin\controller\finance;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 还款对账
@@ -47,18 +48,27 @@ class Repayment extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $map['transactionType'] = 6;
+            $sub_field = "tf.id,b.borrowSn,u.userName,u.realName,r.capital * 0.01 as capital,r.interest * 0.01 as interest,
+                          r.borrowFee * 0.01 as borrowFee,tf.transactionAmt * 0.01 as transactionAmt,
+                          tf.addTime,concat_ws('/',r.curPeriods,totalPeriods) as periods,tf.orderId,tf.transactionStatus,
+                        tf.payChannelType,tf.userId";
             
-            $total = $this->model
-                    ->with(['borrower', 'appborrowinfo', 'repayment'])
-                    ->where($map)
+            $map['tf.transactionType'] = 6;
+            
+            $subQuery = Db::table('AppTransactionFlowing')
+                        ->alias('tf')
+                        ->field($sub_field)
+                        ->join('AppBorrowInfo b','b.borrowInfoId = tf.borrowInfoId', 'LEFT')
+                        ->join('BorrowUser u','u.borrowUserId = tf.userId', 'LEFT')
+                        ->join('AppBorrowRepayment r','r.id = tf.innerOrderId', 'LEFT')
+                        ->where($map)
+                        ->buildSql();
+            
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->order($sort, $order)
                     ->count();
             
-            $list = $this->model
-                    ->with(['borrower', 'appborrowinfo', 'repayment'])
-                    ->where($map)
+            $list = Db::table($subQuery.' t')
                     ->where($where)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
@@ -69,8 +79,7 @@ class Repayment extends Backend
             {
                 foreach ($list as &$v) 
                 {
-                    $v['userId'] = (string)$v['userId'];
-                    $v['periods'] = $v['repayment']['curPeriods'].'/'.$v['repayment']['totalPeriods'];
+                    $v['userId'] = ''.$v['userId'];
                 }
             }
             $result = array("total" => $total, "rows" => $list);

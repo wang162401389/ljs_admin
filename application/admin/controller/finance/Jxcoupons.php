@@ -3,6 +3,7 @@
 namespace app\admin\controller\finance;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 加息券对账
@@ -32,35 +33,40 @@ class Jxcoupons extends Backend
      * 因此在当前控制器中可不用编写增删改查的代码,除非需要自己控制这部分逻辑
      * 需要将application/admin/library/traits/Backend.php中对应的方法复制到当前控制器,然后进行修改
      */
-    
 
     /**
      * 查看
      */
     public function index()
     {
-        //当前是否为关联查询
-        $this->relationSearch = true;
         //设置过滤方法
         $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
         {
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $map['transactionType'] = 3;
-            $map['couponsIdJx'] = ['gt', 0];
+            $sub_field = "tf.id,b.borrowSn,tf.userId,u.userPhone,u.userName,tf.transactionAmt * 0.01 as transactionAmt,tf.orderId,b.borrowDurationTxt,
+                          c.money * 0.01 as money,c.defName,c.createdTime,c.endTime,tf.addTime,tf.transactionStatus,tf.payChannelType,
+                          case when c.grantMan > 0 then (select username from admin where id = c.grantMan) else '系统派送' end as grantmanname";
             
-            $total = $this->model
-                    ->with(['appborrowinfo','appuser','coupon'])
+            $map['tf.transactionType'] = 3;
+            $map['tf.couponsIdJx'] = ['gt', 0];
+            
+            $subQuery = Db::table('AppTransactionFlowing')
+                        ->alias('tf')
+                        ->field($sub_field)
+                        ->join('AppBorrowInfo b','b.borrowInfoId = tf.borrowInfoId', 'LEFT')
+                        ->join('AppUser u','u.userId = tf.userId', 'LEFT')
+                        ->join('AppCoupon c','c.id = tf.couponsIdTz', 'LEFT')
+                        ->where($map)
+                        ->buildSql();
+            
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
-                    ->order($sort, $order)
                     ->count();
-
-            $list = $this->model
-                    ->with(['appborrowinfo','appuser','coupon'])
+            
+            $list = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
@@ -70,7 +76,7 @@ class Jxcoupons extends Backend
             {
                 foreach ($list as &$v)
                 {
-                    $v['userId'] = (string)$v['userId'];
+                    $v['userId'] = ''.$v['userId'];
                 }
             }
             $result = array("total" => $total, "rows" => $list);

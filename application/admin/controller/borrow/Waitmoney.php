@@ -3,6 +3,7 @@
 namespace app\admin\controller\borrow;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 标的管理
@@ -44,43 +45,35 @@ class Waitmoney extends Backend
      */
     public function index()
     {
-        //当前是否为关联查询
-        $this->relationSearch = true;
         //设置过滤方法
         $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
         {
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
+
+            $sub_field = 'b.borrowInfoId,b.borrowSn,b.productType,b.borrowName,b.borrowMoney * 0.01 as borrowMoney,b.investInterestType,
+                          b.borrowInterestRate * 0.01 as borrowInterestRate,b.createTime,b.fullTime,b.payChannelType,b.borrowDurationTxt,
+                          b.addInterestRate * 0.01 as addInterestRate,(b.borrowInterestRate+b.addInterestRate) * 0.01 as rate_total,
+                          u.userName,u.realName';
             
-            $map['borrowStatus'] = 3;
-            
-            $total = $this->model
-                    ->with(['borrower'])
+            $subQuery = Db::table('AppBorrowInfo')
+                        ->alias('b')
+                        ->field($sub_field)
+                        ->join('BorrowUser u','u.borrowUserId = b.borrowUid', 'LEFT')
+                        ->where('b.borrowStatus', 3)
+                        ->buildSql();
+
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
-                    ->order($sort, $order)
                     ->count();
 
-            $list = $this->model
-                    ->with(['borrower'])
+            $list = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             $list = collection($list)->toArray();
-            if (!empty($list))
-            {
-                foreach ($list as &$v)
-                {
-                    $v['borrowInterestRate'] .= '%';
-                    if ($v['addInterestRate'] > 0)
-                    {
-                        $v['borrowInterestRate'] .= ' + '.$v['addInterestRate'].'%';
-                    }
-                }
-            }
             $result = array("total" => $total, "rows" => $list);
 
             return json($result);

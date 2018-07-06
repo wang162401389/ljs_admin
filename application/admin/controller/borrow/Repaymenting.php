@@ -3,6 +3,7 @@
 namespace app\admin\controller\borrow;
 
 use app\common\controller\Backend;
+use think\Db;
 
 /**
  * 还款中的借款
@@ -37,54 +38,43 @@ class Repaymenting extends Backend
      * 因此在当前控制器中可不用编写增删改查的代码,除非需要自己控制这部分逻辑
      * 需要将application/admin/library/traits/Backend.php中对应的方法复制到当前控制器,然后进行修改
      */
-    
 
     /**
      * 查看
      */
     public function index()
     {
-        //当前是否为关联查询
-        $this->relationSearch = true;
         //设置过滤方法
         $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
         {
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $map['borrowStatus'] = 7;
+            $sub_field = 'b.borrowInfoId,b.borrowSn,b.productType,b.borrowName,b.borrowMoney * 0.01 as borrowMoney,b.investInterestType,
+                          b.borrowInterestRate * 0.01 as borrowInterestRate,b.createTime,b.fullTime,b.payChannelType,b.borrowDurationTxt,
+                          b.addInterestRate * 0.01 as addInterestRate,(b.borrowInterestRate+b.addInterestRate) * 0.01 as rate_total,
+                          b.secondVerifyTime,u.userName,u.realName,case when br.repaymentStatus in(0,2) then min(br.deadline) else 0 end as last_deadline';
             
-            $total = $this->model
-                    ->with(['borrower'])
+            $subQuery = Db::table('AppBorrowInfo')
+                        ->alias('b')
+                        ->field($sub_field)
+                        ->join('BorrowUser u', 'u.borrowUserId = b.borrowUid', 'LEFT')
+                        ->join('AppBorrowRepayment br', 'br.borrowInfoId = b.borrowInfoId', 'LEFT')
+                        ->where('b.borrowStatus', 7)
+                        ->group('b.borrowInfoId')
+                        ->buildSql();
+            
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
-                    ->order($sort, $order)
                     ->count();
-
-            $list = $this->model
-                    ->with(['borrower'])
+            
+            $list = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
 
             $list = collection($list)->toArray();
-            
-            if (!empty($list)) 
-            {
-                foreach ($list as &$v) {
-                    $v['borrowInterestRate'] .= '%';
-                    if ($v['addInterestRate'] > 0)
-                    {
-                        $v['borrowInterestRate'] .= ' + '.$v['addInterestRate'].'%';
-                    }
-                    $v['last_deadline'] = \think\db::table('AppBorrowRepayment')
-                                    ->where('borrowInfoId', $v['borrowInfoId'])
-                                    ->whereIn('repaymentStatus', [0, 2])
-                                    ->value('min(deadline) as deadline');
-                }
-            }
 
             $result = array("total" => $total, "rows" => $list);
 

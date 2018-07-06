@@ -132,6 +132,7 @@ class Crontab extends Frontend
                     $ins['user_phone'] = $val['userPhone'];
                     $ins['reg_time'] = $val['createdTime'];
                     $ins['reg_ip'] = $val['regIp'];
+                    $ins['user_regtype'] = 1;
                     if (!empty($val['recommendPhone']))
                     {
                         $ins['recommend_id'] = Db::table('AppUser')->where('userPhone', $val['recommendPhone'])->value('userId');
@@ -387,4 +388,6 @@ class Crontab extends Frontend
             Log::write("定时发放投资券错误用户 ： " . json_encode($send_wrg_uid), 'crontab');
         }
     }
+    
+    
 }

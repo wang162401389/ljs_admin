@@ -19,18 +19,18 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             // 初始化表格
             table.bootstrapTable({
                 url: $.fn.bootstrapTable.defaults.extend.index_url,
-                pk: 't.userId',
+                pk: 'userId',
                 sortName: 'investorTime',
                 columns: [
                     [
-                        {field: 't.userId', title: '用户ID', sortable: true},
-                        {field: 'u.userPhone', title: '手机号'},
-                        {field: 'u.userName', title: '姓名'},
-                        {field: 'bi.borrowSn', title: '标号'},
+                        {field: 'userId', title: '用户ID', sortable: true},
+                        {field: 'userPhone', title: '手机号'},
+                        {field: 'userName', title: '姓名'},
+                        {field: 'borrowSn', title: '标号'},
                         {field: 'investorTime', title: '投资时间', operate: false, sortable: true},
-                        {field: 't.investorCapital', title: '投资金额', operate: 'BETWEEN', sortable: true},
+                        {field: 'investorCapital', title: '投资金额', operate: 'BETWEEN', sortable: true},
                         {field: 'prize', title: '满标奖励', operate: false},
-                        {field: 't.has_send', title: '状态', formatter: Controller.api.formatter.send_status, searchList: {"0":'未发放',"1":'已发放'}}
+                        {field: 'has_send', title: '状态', formatter: Controller.api.formatter.send_status, searchList: {"0":'未发放',"1":'已发放'}}
                     ]
                 ],
                 search : false

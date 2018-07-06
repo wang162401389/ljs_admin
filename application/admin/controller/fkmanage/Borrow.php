@@ -48,27 +48,31 @@ class Borrow extends Backend
         $this->request->filter(['strip_tags']);
         if ($this->request->isAjax())
         {
-            $this->relationSearch = TRUE;
             //如果发送的来源是Selectpage，则转发到Selectpage
-            if ($this->request->request('pkey_name'))
+            if ($this->request->request('keyField'))
             {
                 return $this->selectpage();
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-            $map['borrowStatus'] = ['in', [0, 1, 2, 3]];
+            $map['b.borrowStatus'] = ['in', [0, 1, 2, 3]];
             
-            $total = $this->model
-                    ->with('Borrower')
+            $sub_field = 'b.borrowInfoId,b.borrowUid,b.borrowSn,b.borrowName,b.borrowMoney * 0.01 as borrowMoney,b.createTime,b.borrowDurationTxt,
+                          b.borrowStatus,u.userName,u.realName';
+            
+            $subQuery = Db::table('AppBorrowInfo')
+                        ->alias('b')
+                        ->field($sub_field)
+                        ->join('BorrowUser u','u.borrowUserId = b.borrowUid', 'LEFT')
+                        ->where($map)
+                        ->buildSql();
+            
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
-                    ->order($sort, $order)
                     ->count();
             
-            $list = $this->model
-                    ->with('Borrower')
+            $list = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
@@ -77,7 +81,7 @@ class Borrow extends Backend
             {
                 foreach ($list as &$v)
                 {
-                    $v['borrowUid'] = (string)$v['borrowUid'];
+                    $v['borrowUid'] = ''.$v['borrowUid'];
                 }
             }
                     

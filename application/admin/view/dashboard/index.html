@@ -254,6 +254,54 @@
                     </div>
                 </div>
                 
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="box box-info">
+                            <div class="box-header"><h3 class="box-title">{:__('Server info')}</h3></div>
+                            <div class="box-body">
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <td>{:__('Sapi name')}</td>
+                                            <td>{:php_sapi_name()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Debug mode')}</td>
+                                            <td>{$Think.config.app_debug?__('Yes'):__('No')}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Software')}</td>
+                                            <td>{$Think.server.SERVER_SOFTWARE}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Upload mode')}</td>
+                                            <td>{$uploadmode}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Upload url')}</td>
+                                            <td>{$config.upload.uploadurl}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Upload Cdn url')}</td>
+                                            <td>{$config.upload.cdnurl}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Timezone')}</td>
+                                            <td>{:date_default_timezone_get()}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Cdn url')}</td>
+                                            <td>__CDN__</td>
+                                        </tr>
+                                        <tr>
+                                            <td>{:__('Language')}</td>
+                                            <td>{$config.language}</td>
+                                        </tr>
+                                    </tbody></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
             </div>
             <div class="tab-pane fade" id="two">

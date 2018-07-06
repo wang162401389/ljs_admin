@@ -23,22 +23,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                 sortName: 'id',
                 columns: [
                     [
-                        {field: 'appborrowinfo.borrowSn', title: __('Appborrowinfo.borrowsn'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'borrowSn', title: __('Appborrowinfo.borrowsn'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'userId', title: __('UserId'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'borrower.userName', title: __('Borrower.userName'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'borrower.realName', title: __('Borrower.realName'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'repayment.capital', title: __('Repayment.Capital'), operate: 'BETWEEN', sortable: true},
-                        {field: 'repayment.interest', title: __('Repayment.Interest'), operate: 'BETWEEN', sortable: true},
-                        {field: 'repayment.borrowFee', title: __('Repayment.borrowFee'), operate: 'BETWEEN', sortable: true},
+                        {field: 'userName', title: __('Borrower.userName'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'realName', title: __('Borrower.realName'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
+                        {field: 'capital', title: __('Repayment.Capital'), operate: 'BETWEEN', sortable: true},
+                        {field: 'interest', title: __('Repayment.Interest'), operate: 'BETWEEN', sortable: true},
+                        {field: 'borrowFee', title: __('Repayment.borrowFee'), operate: 'BETWEEN', sortable: true},
                         {field: '', title: '平台加息金额', operate: 'BETWEEN', sortable: true},
                         {field: '', title: '用户加息券金额', operate: 'BETWEEN', sortable: true},
                         {field: 'transactionAmt', title: __('TransactionAmt'), operate: 'BETWEEN', sortable: true},
                         {field: 'periods', title: '期数', operate: false},
                         {field: 'addTime', title: __('Addtime'), operate:'RANGE', addclass:'datetimerange', sortable: true},
-                        {field: 'transactionStatus', title: __('Transactionstatus'), visible:false, searchList: {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')}},
-                        {field: 'transactionStatus_text', title: __('Transactionstatus'), operate:false},
-                        {field: 'payChannelType', title: __('Paychanneltype'), visible:false, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
-                        {field: 'payChannelType_text', title: __('Paychanneltype'), operate:false},
+                        {field: 'transactionStatus', title: __('Transactionstatus'), formatter: Controller.api.formatter.status_text, searchList: {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')}},
+                        {field: 'payChannelType', title: __('Paychanneltype'), formatter: Controller.api.formatter.pay_channel_type_text, searchList: {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')}},
                         {field: 'orderId', title: __('Orderid'), operate: 'LIKE %...%', placeholder: '模糊搜索'}
                     ]
                 ],
@@ -57,6 +55,20 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
         api: {
             bindevent: function () {
                 Form.api.bindevent($("form[role=form]"));
+            },
+            formatter : {
+            	status_text : function (value, row, index) {
+	                var status_textArr = {'1':__('Transactionstatus 1'),"2":__('Transactionstatus 2'),'3':__('Transactionstatus 3')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(status_textArr[value]) + '</span>';
+	                return html;
+	        	},
+	        	pay_channel_type_text : function (value, row, index) {
+	                var pay_channel_type_textArr = {'1':__('Paychanneltype 1'),"2":__('Paychanneltype 2'),'3':__('Paychanneltype 3')};
+	                //渲染状态
+	                var html = '<span class="text-primary">' + __(pay_channel_type_textArr[value]) + '</span>';
+	                return html;
+	        	}
             }
         }
     };

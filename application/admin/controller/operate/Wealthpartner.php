@@ -39,27 +39,6 @@ class Wealthpartner extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-//             $sql = 'SELECT userPhone,userName,userId,investorCapital,inviteCount,isPartner FROM 
-//                     (
-//                 		SELECT u.userPhone,u.userName,u.userId,sum(case when i.borrowStatus in(3,5) then investorCapital end) as investorCapital,
-//                 			   (SELECT COUNT(userId) FROM appuser WHERE recommendPhone = u.userPhone) inviteCount,
-//                 			   CASE 
-//                                    WHEN 
-//                                        (SELECT count(userId) FROM appuser WHERE recommendPhone = u.userPhone) >= 2 
-//                                        AND 
-//                                        (SELECT SUM(investorCapital) FROM AppInvestorRecord WHERE borrowStatus in(3,5) AND userId=u.userId) >= 200000 
-//                                    THEN 
-//                                         1 
-//                                    ELSE 
-//                                         0 
-//                                    END 
-//                                isPartner
-//                 		FROM AppUser u LEFT JOIN AppInvestorRecord i ON u.userId = i.userId
-//                 		WHERE investorCapital > 0
-//                 		GROUP BY u.userId
-//                     ) t
-//                     WHERE investorCapital > 0 or inviteCount > 0 order BY investorCapital DESC';
-            
             $subfiled = 'u.userPhone,u.userName,u.userId,sum(case when i.borrowStatus in(3,5) then investorCapital end) * 0.01 as investorCapital,
                         (SELECT COUNT(userId) FROM AppUser WHERE recommendPhone = u.userPhone) inviteCount,
                         CASE WHEN (SELECT count(userId) FROM AppUser WHERE recommendPhone = u.userPhone) >= 2 AND 
@@ -125,24 +104,6 @@ class Wealthpartner extends Backend
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
-//             $sql = "SELECT t.userId inviteUserId,t.userName inviteUsername,t.userPhone inviteUserPhone,t.investorCapital,t.investorTime, u.userName partnerUsername,u.userId partnerUserId,u.userPhone partnerUserPhone
-//             FROM AppUser u ,
-//             (
-//             SELECT u.userId,u.userName,u.userPhone,sum(i.investorCapital) investorCapital,investorTime,u.recommendPhone
-//             FROM AppUser u,AppInvestorRecord i WHERE i.userId=u.userId AND u.recommendPhone in
-            
-// 							(
-// 								SELECT u.userPhone FROM AppUser u,AppInvestorRecord i WHERE i.userId = u.userId AND (
-// 										(SELECT count(1) FROM AppUser WHERE recommendPhone = u.userPhone ) >= 2
-// 										 AND (SELECT sum(investorCapital) / 100 FROM AppInvestorRecord WHERE userId = u.userId AND borrowStatus IN (3, 5) ) >= 2000
-// 								)
-// 								GROUP BY u.userId
-// 							)
-
-//             GROUP BY u.userId,date_format(investorTime,'%Y-%m') ORDER BY date_format(investorTime,'%Y-%m')DESC
-//             )
-// 						t WHERE t.recommendPhone = u.userPhone";
-            
             $subsql1_1 = '(SELECT count(1) FROM AppUser WHERE recommendPhone = u.userPhone)';
             $subsql1_2 = '(SELECT sum(investorCapital) FROM AppInvestorRecord WHERE userId = u.userId AND borrowStatus IN (3, 5))';
                         
@@ -152,9 +113,9 @@ class Wealthpartner extends Backend
                       WHEN sum(i.investorCapital) >= 50000000 and sum(i.investorCapital) <= 100000000 THEN truncate(sum(i.investorCapital) * 1.0 * 0.01 * 0.01 / 12, 2)  
                       WHEN sum(i.investorCapital) >= 100000000 and sum(i.investorCapital) <= 200000000 then truncate(sum(i.investorCapital) * 1.2 * 0.01 * 0.01 / 12, 2) 
                       WHEN sum(i.investorCapital) >= 200000000 and sum(i.investorCapital) <= 500000000 then truncate(sum(i.investorCapital) * 1.5 * 0.01 * 0.01 / 12, 2)  
-                      WHEN sum(i.investorCapital) > 500000000 then truncate(sum(i.investorCapital) * 2.0 * 0.01 * 0.01 / 12, 2)  ELSE 0 END bonus,
+                      WHEN sum(i.investorCapital) > 500000000 then truncate(sum(i.investorCapital) * 2.0 * 0.01 * 0.01 / 12, 2)  ELSE 0 END as bonus,
                       CASE WHEN (SELECT count(id) FROM AppDividend WHERE userId = u.userId and date_format(dividendTime,'%Y-%m') = date_format(i.investorTime,'%Y-%m')) >= 1
-                        THEN 1 ELSE 0 END send_status";
+                        THEN 1 ELSE 0 END as send_status";
             
             $subsql1 = Db::table('AppUser')
                     ->alias('u')

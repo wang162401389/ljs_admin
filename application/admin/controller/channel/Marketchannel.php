@@ -42,31 +42,28 @@ class Marketchannel extends Backend
             
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
 
-            $field = 'ir.id as `ir.id`,ir.userId as `ir.userId`,u.userPhone as `u.userPhone`,u.userName as `u.userName`,u.createdTime as `u.createdTime`,
-                    ir.createTime as `ir.createTime`,bi.borrowName as `bi.borrowName`,ir.investorCapital * 0.01 as `ir.investorCapital`,
-                    ir.deductibleMoney * 0.01 as `ir.deductibleMoney`,bi.borrowDurationTxt as `bi.borrowDurationTxt`,bi.payChannelType as `bi.payChannelType`,
-                    CASE WHEN (SELECT min(id) FROM AppInvestorRecord WHERE investorUid = ir.userId) = ir.id THEN 1 ELSE 0 END is_first_invest';
+            $sub_field = 'ir.id,ir.userId,u.userPhone,u.userName,u.createdTime,ir.createTime,bi.borrowName,
+                    ir.investorCapital * 0.01 as `investorCapital`,ir.deductibleMoney * 0.01 as `deductibleMoney`,bi.borrowDurationTxt,bi.payChannelType,
+                    CASE WHEN (SELECT min(id) FROM AppInvestorRecord WHERE investorUid = ir.userId) = ir.id THEN 1 ELSE 0 END as is_first_invest';
             
             $type = $type == null ? key($this->typelist) : $type;
             $map['u.marketChannel'] = $type;
             
-            $total = Db::table('AppInvestorRecord')
-                    ->alias('ir')
-                    ->field($field)
-                    ->join('AppUser u','u.userId = ir.userId', 'LEFT')
-                    ->join('AppBorrowInfo bi','ir.borrowInfoId = bi.borrowInfoId', 'LEFT')
+            $subQuery = Db::table('AppInvestorRecord')
+                        ->alias('ir')
+                        ->field($sub_field)
+                        ->join('AppUser u','u.userId = ir.userId', 'LEFT')
+                        ->join('AppBorrowInfo bi','ir.borrowInfoId = bi.borrowInfoId', 'LEFT')
+                        ->where($map)
+                        ->buildSql();
+            
+            $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->where($map)
-                    ->order($sort, $order)
                     ->count();
             
-            $list = Db::table('AppInvestorRecord')
-                    ->alias('ir')
-                    ->field($field)
-                    ->join('AppUser u','u.userId = ir.userId', 'LEFT')
-                    ->join('AppBorrowInfo bi','ir.borrowInfoId = bi.borrowInfoId', 'LEFT')
+            $list = Db::table($subQuery.' t')
+                    ->field('*')
                     ->where($where)
-                    ->where($map)
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
@@ -75,7 +72,7 @@ class Marketchannel extends Backend
             {
                 foreach ($list as &$v)
                 {
-                    $v['ir.userId'] = ''.$v['ir.userId'];
+                    $v['userId'] = ''.$v['userId'];
                 }
             }
         
