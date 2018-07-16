@@ -49,7 +49,7 @@ class Investment extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
             $subfield = 'ir.id,b.borrowSn,ir.userId,u.userPhone,u.userName,u.recommendPhone,u.regSource,u.createdTime,ir.investorCapital * 0.01 as investorCapital,
-                        b.investInterestType,b.borrowDurationTxt,ir.investorTime,ir.deductibleMoney * 0.01 as deductibleMoney,
+                        b.investInterestType,b.borrowDurationTxt,ir.investorTime,ir.deductibleMoney * 0.01 as deductibleMoney,u.marketChannel,
                         ir.interestCcfaxRate * 0.01 as interestCcfaxRate,ir.borrowStatus,ir.payChannelType,ir.orderId';
             
             $subfield .= ",case left(u.pid,2)

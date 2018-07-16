@@ -36,6 +36,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'operate', title: __('Operate'), table: table, events: Table.api.events.operate, formatter: Controller.api.formatter.operate}
                     ]
                 ],
+                exportOptions: {
+		            mso:{
+		                // fileFormat:        'xlsx',
+		                 //修复导出数字不显示为科学计数法
+		            	onMsoNumberFormat: function (cell, row, col) {
+		                   return !isNaN($(cell).text())?'\\@':'';
+		            	}
+		             }
+                },
                 search : false
             });
 

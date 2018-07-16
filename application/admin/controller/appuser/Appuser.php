@@ -22,7 +22,6 @@ class Appuser extends Backend
     {
         parent::_initialize();
         $this->model = model('AppUser');
-
     }
     
     /**
@@ -48,19 +47,19 @@ class Appuser extends Backend
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
             
             $sub_field = 'u.userId,u.userPhone,u.userName,u.pid,u.recommendPhone,u.regSource,u.marketChannel,u.createdTime,
-                          sum(case when ir.borrowStatus not in (2,4) then ir.investorCapital end) * 0.01 as total';
+                          sum(case when ir.borrowStatus not in (2,4) then ir.investorCapital else 0 end) * 0.01 as total';
             
             $subQuery = Db::table('AppUser')
-                    ->alias('u')
-                    ->field($sub_field)
-                    ->join('AppInvestorRecord ir','u.userId = ir.userId', 'LEFT')
-                    ->group('u.userId')
-                    ->buildSql();
+                        ->alias('u')
+                        ->field($sub_field)
+                        ->join('AppInvestorRecord ir','u.userId = ir.userId', 'LEFT')
+                        ->group('u.userId')
+                        ->buildSql();
             
             $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->count();
-            
+                    ->count(1);
+
             $list = Db::table($subQuery.' t')
                     ->where($where)
                     ->order($sort, $order)
@@ -71,8 +70,8 @@ class Appuser extends Backend
             {
                 foreach ($list as &$v) 
                 {
-                    $v['userId'] = 'ID_'.$v['userId'];
-                    $v['pid'] = $v['pid'] ? 'PID_'.$v['pid'] : '';
+                    $v['userId'] = ''.$v['userId'];
+                    $v['pid'] = $v['pid'] ? ''.$v['pid'] : '';
                 }
             }
             

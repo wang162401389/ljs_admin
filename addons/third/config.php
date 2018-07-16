@@ -34,7 +34,7 @@ return array (
       'app_id' => '',
       'app_secret' => '',
       'callback' => '',
-      'scope' => 'snsapi_userinfo',
+      'scope' => 'snsapi_base',
     ),
     'value' => 
     array (

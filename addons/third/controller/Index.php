@@ -5,6 +5,8 @@ namespace addons\third\controller;
 use addons\third\library\Application;
 use addons\third\library\Service;
 use think\addons\Controller;
+use think\Cookie;
+use think\Hook;
 
 /**
  * 第三方登录插件
@@ -58,6 +60,22 @@ class Index extends Controller
      */
     public function callback()
     {
+        $auth = $this->auth;
+
+        //监听注册登录注销的事件
+        Hook::add('user_login_successed', function ($user) use ($auth) {
+            $expire = input('post.keeplogin') ? 30 * 86400 : 0;
+            Cookie::set('uid', $user->id, $expire);
+            Cookie::set('token', $auth->getToken(), $expire);
+        });
+        Hook::add('user_register_successed', function ($user) use ($auth) {
+            Cookie::set('uid', $user->id);
+            Cookie::set('token', $auth->getToken());
+        });
+        Hook::add('user_logout_successed', function ($user) use ($auth) {
+            Cookie::delete('uid');
+            Cookie::delete('token');
+        });
         $platform = $this->request->param('platform');
 
         // 成功后返回会员中心

@@ -39,7 +39,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             {field: 'inviteCount', title: '用户邀请好友数', operate: 'BETWEEN', sortable: true},
                             {field: 'isPartner', title: '是否为财富合伙人', formatter: Controller.api.formatter.status, searchList: {"0":'否',"1":'是'}}
                         ]
-                    ]
+                    ],
+                    exportOptions: {
+    		            mso:{
+    		                // fileFormat:        'xlsx',
+    		                 //修复导出数字不显示为科学计数法
+    		            	onMsoNumberFormat: function (cell, row, col) {
+    		                   return !isNaN($(cell).text())?'\\@':'';
+    		            	}
+    		             }
+                    }
                 });
 
                 // 为表格1绑定事件
@@ -74,7 +83,16 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             {field: 't.bonus', title: '合伙人当月返利', operate: 'BETWEEN', sortable: true},
                             {field: 't.send_status', title: '返利发放状态', formatter: Controller.api.formatter.send_status, searchList: {"0":'未发放',"1":'已发放'}}
                         ]
-                    ]
+                    ],
+                    exportOptions: {
+    		            mso:{
+    		                // fileFormat:        'xlsx',
+    		                 //修复导出数字不显示为科学计数法
+    		            	onMsoNumberFormat: function (cell, row, col) {
+    		                   return !isNaN($(cell).text())?'\\@':'';
+    		            	}
+    		             }
+                    }
                 });
 
                 // 为表格2绑定事件

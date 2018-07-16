@@ -36,6 +36,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'is_first_invest', title: '是否首次投资', formatter: Controller.api.formatter.isfirst, searchList: {'0':'否',"1":'是'}},
                     ]
                 ],
+                exportOptions: {
+		            mso:{
+		                // fileFormat:        'xlsx',
+		                 //修复导出数字不显示为科学计数法
+		            	onMsoNumberFormat: function (cell, row, col) {
+		                   return !isNaN($(cell).text())?'\\@':'';
+		            	}
+		             }
+                },
                 search : false
             };
             // 初始化表格

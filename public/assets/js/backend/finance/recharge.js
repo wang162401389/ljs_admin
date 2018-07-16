@@ -36,6 +36,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'orderId', title: __('Orderid')},
                     ]
                 ],
+                exportOptions: {
+		            mso:{
+		                // fileFormat:        'xlsx',
+		                 //修复导出数字不显示为科学计数法
+		            	onMsoNumberFormat: function (cell, row, col) {
+		                   return !isNaN($(cell).text())?'\\@':'';
+		            	}
+		             }
+                },
                 search : false
             });
 

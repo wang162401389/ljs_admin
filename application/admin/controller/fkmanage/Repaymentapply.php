@@ -4,6 +4,8 @@ namespace app\admin\controller\fkmanage;
 
 use app\common\controller\Backend;
 use think\Request;
+use think\Log;
+use think\Db;
 
 /**
  * 标的管理
@@ -108,8 +110,8 @@ class Repaymentapply extends Backend
                 $javaapi = new \fast\Javaapi();
                 $req = [];
                 
-                $mobile = \think\Db::table('BorrowUser')->where('borrowUserId', $row->userId)->value('userName');
-                $borrowsn = \think\Db::table('AppBorrowInfo')->where('borrowInfoId', $row->borrowInfoId)->value('borrowSn');
+                $mobile = Db::table('BorrowUser')->where('borrowUserId', $row->userId)->value('userName');
+                $borrowsn = Db::table('AppBorrowInfo')->where('borrowInfoId', $row->borrowInfoId)->value('borrowSn');
                 if (!empty($mobile) && !empty($borrowsn)) 
                 {
                     $req['mobile'] = $mobile;
@@ -145,9 +147,9 @@ class Repaymentapply extends Backend
                         }
                     }
                     
-                    \think\Log::write("还款申请发送短信请求参数：".var_export($req, true), 'java');
+                    Log::write("还款申请发送短信请求参数：".var_export($req, true), 'java');
                     $javaapi->sendSms(['message' => encrypt(json_encode($req))]);
-                    \think\Log::write("还款申请发送短信请求密文：".encrypt(json_encode($req)), 'java');
+                    Log::write("还款申请发送短信请求密文：".encrypt(json_encode($req)), 'java');
                 }
                 
                 $this->success('操作成功');

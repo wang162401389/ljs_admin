@@ -24,6 +24,10 @@ return array (
     array (
       0 => 'loginbg',
     ),
+    'upload_config_init' => 
+    array (
+      0 => 'upyun',
+    ),
   ),
   'route' => 
   array (
@@ -38,5 +42,8 @@ return array (
     '/leesign$' => 'leesign/index/index',
     '/qrcode$' => 'qrcode/index/index',
     '/qrcode/build$' => 'qrcode/index/build',
+    '/third$' => 'third/index/index',
+    '/third/connect/[:platform]' => 'third/index/connect',
+    '/third/callback/[:platform]' => 'third/index/callback',
   ),
 );

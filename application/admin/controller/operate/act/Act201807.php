@@ -70,7 +70,6 @@ class Act201807 extends Backend
                 foreach ($list as &$v) 
                 {
                     $v['userId'] = ''.$v['userId'];
-                    $v['prize'] = 30;
                 }
             }
             $result = array("total" => $total, "rows" => $list);

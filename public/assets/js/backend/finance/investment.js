@@ -28,7 +28,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'userPhone', title: '用户手机号', operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'userName', title: '投资人姓名', operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'recommendPhone', title: '推荐人', operate: 'LIKE %...%', placeholder: '模糊搜索'},
-                        {field: 'regSource', title: '注册渠道', formatter: Table.api.formatter.search},
+                        {field: 'regSource', title: '注册来源', formatter: Table.api.formatter.search},
+                        {field: 'marketChannel', title: '市场渠道', formatter: Table.api.formatter.search},
                         {field: 'createdTime', title: '注册时间', operate:'RANGE', addclass:'datetimerange', sortable: true},
                         {field: 'native_place', title: '籍贯', formatter: Table.api.formatter.search, operate: 'LIKE %...%', placeholder: '模糊搜索'},
                         {field: 'investorCapital', title: __('Investorcapital'), operate: 'BETWEEN', sortable: true},
@@ -42,6 +43,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'orderId', title: __('Orderid'), operate: 'LIKE %...%', placeholder: '模糊搜索'},
                     ]
                 ],
+                exportOptions: {
+		            mso:{
+		                // fileFormat:        'xlsx',
+		                 //修复导出数字不显示为科学计数法
+		            	onMsoNumberFormat: function (cell, row, col) {
+		                   return !isNaN($(cell).text())?'\\@':'';
+		            	}
+		             }
+                },
                 search : false
             });
 

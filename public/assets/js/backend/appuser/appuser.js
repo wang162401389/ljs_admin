@@ -34,26 +34,15 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         {field: 'total', title: '用户累计投资金额', operate: 'BETWEEN', sortable: true}
                     ]
                 ],
-//                exportOptions: {
-//                	
-//                    type: 'excel', 
-//                    onMsoNumberFormat: function(cell, row, col) {
-//                        return '\\@';
-//                    }
-//                	
-//		            mso:{
-//		                // fileFormat:        'xlsx',
-//		                 //修复导出数字不显示为科学计数法
-//		            	onMsoNumberFormat: function (cell, row, col) {
-//		                   return !isNaN($(cell).text())?'\\@':'';
-//		            	}
-//		             }
-//                	
-//                	onMsoNumberFormat: function (cell, row, col) {
-//                        return !isNaN($(cell).text())?'\\@':'';
-//                    }
-//                	
-//                },
+                exportOptions: {
+		            mso:{
+		                // fileFormat:        'xlsx',
+		                 //修复导出数字不显示为科学计数法
+		            	onMsoNumberFormat: function (cell, row, col) {
+		                   return !isNaN($(cell).text())?'\\@':'';
+		            	}
+		             }
+                },
                 search : false
             });
 
