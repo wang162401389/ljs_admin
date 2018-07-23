@@ -1,20 +1,18 @@
 <?php
 
-namespace app\admin\controller\operate;
+namespace app\admin\controller\jpush;
 
 use app\common\controller\Backend;
 use think\Db;
 use think\log;
 
 /**
- * 发放优惠券
+ * 发送通知
  *
- * @icon fa fa-user
+ * @icon fa fa-paper-plane
  */
-class Grantcoupon extends Backend
+class Dopush extends Backend
 {
-    
-    protected $noNeedRight = ['grant'];
     
     public function _initialize()
     {
@@ -26,6 +24,14 @@ class Grantcoupon extends Backend
      */
     public function index()
     {
+        $this->view->selects = [
+            'reg' => '注册N天未投资/从未投资的用户',
+            'coupon' => '优惠券/注册红包/活动红包N天后失效的用户',
+            'recepay' => '回款后N天未投资的用户',
+            'birthday' => '今天过生日的用户',
+            'rece_this_month' => '当月回款的用户',
+            'withdraw_this_month' => '当月提现的用户'
+        ];
         return $this->view->fetch();
     }
     

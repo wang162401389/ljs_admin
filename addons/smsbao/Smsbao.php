@@ -2,7 +2,6 @@
 
 namespace addons\smsbao;
 
-use app\common\library\Menu;
 use think\Addons;
 
 /**

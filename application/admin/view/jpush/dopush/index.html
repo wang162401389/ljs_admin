@@ -1,0 +1,75 @@
+<link href="__CDN__/assets/css/wechat/menu.css?v={$site['version']}" rel="stylesheet">
+<style>
+.fieldlist dd ins {
+	width: 143px;
+}
+</style>
+<form id="add-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+	<div class="panel panel-default panel-intro">
+	    <div class="panel-body">
+	        <div id="myTabContent" class="tab-content">
+                <div class="widget-body no-padding">
+                    <div class="weixin-menu-setting clearfix">
+                        <div class="weixin-content">
+                            <div class="item-info">
+                                   <div class="item-head">
+                                       <h4 id="current-item-name">发送通知</h4>
+                                   </div>
+                                   <div style="margin-top: 20px;">
+                                       <dl>
+                                           <dt>推送内容：</dt>
+                                           <dd>
+                                          		<textarea name="pushtext" id="pushtext" class="form-control" rows="5" cols="30" placeholder="请在这里输入推送内容"></textarea>
+                                          	</dd>
+                                       </dl>
+                                       
+                                       <dl>
+                                           <dt>推送对象：</dt>
+                                           <dd>
+                                               <div id="menu-content" class="is-item">
+	                                                <div class="row">
+									                    <div class="col-xs-12">
+								                            <div class="form-group">
+								                                <div class="row">
+								                                    <div class="col-xs-3">
+								                                        <label>请选择事件</label>
+								                                        <select name="select_event" id="select_event" class="form-control selectpicker">
+																	        {foreach $selects as $k => $v}
+																	            <option value="{$k}">{$v}</option>
+																	        {/foreach}
+																	    </select>
+								                                    </div>
+								                                    <div class="col-xs-1 day-input">
+								                                        <label>天数</label>
+								                                        <input type="number" class="form-control" name="days">
+								                                    </div>
+								                                </div>
+								                            </div>
+									                    </div>
+									                </div>
+                                       			</div>
+                                           </dd>
+                                       </dl>
+                                       
+                                       <dl>
+                                           <dt>返回结果：</dt>
+                                           <dd>
+                                           	<textarea class="form-control" rel="result" rows="5" placeholder="请点击立即执行"></textarea>
+                                           </dd>
+                                       </dl>
+                                         
+                                   </div>
+                            </div>
+                            
+                            <div>
+                                 <button type="button" class="btn btn-info btn-embossed btn-command">{:__('检查发送')}</button>
+                                 <button type="submit" class="btn btn-success btn-embossed btn-execute">{:__('立即发送')}</button>
+                            </div>
+			                            
+                        </div>
+                    </div>
+                </div>
+	        </div>
+	    </div>
+	</div>
+</form>

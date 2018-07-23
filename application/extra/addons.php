@@ -16,6 +16,14 @@ return array (
     array (
       0 => 'clsms',
     ),
+    'send_msg' => 
+    array (
+      0 => 'jpush',
+    ),
+    'testhook' => 
+    array (
+      0 => 'jpush',
+    ),
     'leesignhook' => 
     array (
       0 => 'leesign',
@@ -23,10 +31,6 @@ return array (
     'login_init' => 
     array (
       0 => 'loginbg',
-    ),
-    'upload_config_init' => 
-    array (
-      0 => 'upyun',
     ),
   ),
   'route' => 
