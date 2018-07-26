@@ -1,0 +1,48 @@
+公众号
+ccfax2015
+lianjinsuo11a
+
+2676480662@qq.com
+wang4291616
+
+
+测试环境：
+http://weixintest.ccfax.cn
+Administrator
+Administrator
+
+正式环境：
+Administrator
+mcdh201811
+
+测试号信息
+appID   wx7ee1dc7ceda6294b
+appsecret   a6b2b4ff54abbe57d20e31e95bc8e162
+
+接口配置信息
+URL   http://weixintest.ccfax.cn/index.php?s=/home/weixin/index/id/2.html
+Token  weiphp
+
+http://wechat.ccfax.cn/addons/wechat/index/api
+oldwang_wechat_test
+
+
+
+
+
+http://weixin.ccfax.cn/index.php?s=/home/weixin/index/id/4.htm
+
+weiphp
+
+EDW2CMRrzMvSqeeUA7HQZJn0nWdho8nnhrndxsTZYiR
+
+
+
+
+
+
+
+
+
+
+
