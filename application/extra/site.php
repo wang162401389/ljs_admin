@@ -57,4 +57,5 @@ return array (
     'chain_yingyongbao' => '应用宝',
     'appStore' => 'appStore',
   ),
+  'expired_rate' => '0.003',
 );

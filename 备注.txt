@@ -1,0 +1,20 @@
+
+120.78.188.214
+
+bucket           lianjinsuo-img
+CDN地址          http://pic.ccfax.cn
+上传接口地址     http://v0.api.upyun.com/lianjinsuo-img
+回调通知地址     http://test.ccfax.cn:8888/addons/upyun/index/notify
+表单密钥         1crAVRntDjfHPSFw1gAWBphDa14=
+保存文件名       /uploads/{year}{mon}{day}/{filemd5}{.suffix}
+上传有效时长     600
+最大可上传       10M
+可上传后缀格式   *
+
+
+'DB_HOST'           =>'rm-wz96805ifx9t30401ho.mysql.rds.aliyuncs.com',
+'DB_NAME'           =>'ccfaxp2p',
+'DB_USER'           =>'ljsonline',
+'DB_PWD'            =>'Aliyunljs@ccfax.cn',
+
+
