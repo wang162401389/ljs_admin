@@ -14,18 +14,18 @@ class Builder
 
     /**
      *
-     * @var \think\View 
+     * @var \think\View
      */
     public $view = null;
 
     /**
      * parse classes
-     * @var array 
+     * @var array
      */
     protected $classes = [];
 
     /**
-     * 
+     *
      * @param array $classes
      */
     public function __construct($classes = [])
@@ -37,8 +37,12 @@ class Builder
     protected function extractAnnotations()
     {
         $st_output = [];
-        foreach ($this->classes as $class)
-        {
+        foreach ($this->classes as $class) {
+            $classAnnotation = Extractor::getClassAnnotations($class);
+            // 如果忽略
+            if (isset($classAnnotation['ApiInternal'])) {
+                continue;
+            }
             $st_output[] = Extractor::getAllClassAnnotations($class);
         }
         return end($st_output);
@@ -180,6 +184,7 @@ class Builder
                     'method_label'      => $this->generateBadgeForMethod($docs),
                     'section'           => $section,
                     'route'             => is_array($docs['ApiRoute'][0]) ? $docs['ApiRoute'][0]['data'] : $docs['ApiRoute'][0],
+                    'title'             => is_array($docs['ApiTitle'][0]) ? $docs['ApiTitle'][0]['data'] : $docs['ApiTitle'][0],
                     'summary'           => is_array($docs['ApiSummary'][0]) ? $docs['ApiSummary'][0]['data'] : $docs['ApiSummary'][0],
                     'body'              => isset($docs['ApiBody'][0]) ? is_array($docs['ApiBody'][0]) ? $docs['ApiBody'][0]['data'] : $docs['ApiBody'][0] : '',
                     'headerslist'       => $this->generateHeadersTemplate($docs),

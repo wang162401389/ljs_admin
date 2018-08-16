@@ -14,7 +14,7 @@ class Rule extends Backend
 {
 
     /**
-     * UserRule模型对象
+     * @var \app\admin\model\UserRule
      */
     protected $model = null;
     protected $rulelist = [];

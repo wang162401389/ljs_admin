@@ -105,6 +105,8 @@ trait Backend
                 catch (\think\exception\PDOException $e)
                 {
                     $this->error($e->getMessage());
+                }catch (\think\Exception $e) {
+                    $this->error($e->getMessage());
                 }
             }
             $this->error(__('Parameter %s can not be empty', ''));
@@ -154,6 +156,8 @@ trait Backend
                 }
                 catch (\think\exception\PDOException $e)
                 {
+                    $this->error($e->getMessage());
+                }catch (\think\Exception $e) {
                     $this->error($e->getMessage());
                 }
             }
@@ -390,6 +394,8 @@ trait Backend
         catch (\think\exception\PDOException $exception)
         {
             $this->error($exception->getMessage());
+        }catch (\Exception $e) {
+            $this->error($e->getMessage());
         }
 
         $this->success();

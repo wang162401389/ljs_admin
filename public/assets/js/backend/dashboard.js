@@ -129,6 +129,9 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'table', 'echarts', 'echart
                         }
                     ]
                 });
+                if ($("#echart").width() != $("#echart canvas").width() && $("#echart canvas").width() < $("#echart").width()) {
+                    myChart.resize();
+                }
             }, 2000);
             $(window).resize(function () {
                 myChart.resize();

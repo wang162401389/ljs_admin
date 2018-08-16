@@ -10,11 +10,6 @@ define(['jquery', 'bootstrap', 'backend', 'addtabs', 'adminlte', 'form'], functi
 //                    }
 //                }
 //            });
-        	
-            //窗口大小改变,修正主窗体最小高度
-            $(window).resize(function () {
-                $(".tab-addtabs").css("height", $(".content-wrapper").height() + "px");
-            });
 
             //双击重新加载页面
             $(document).on("dblclick", ".sidebar-menu li > a", function (e) {

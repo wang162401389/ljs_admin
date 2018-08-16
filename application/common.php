@@ -786,3 +786,14 @@ function get_day($day_string)
 
     return $day;
 }
+
+function encrypt($str)
+{
+    $size = mcrypt_get_block_size ( MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC );
+    $pad = $size - (strlen ( $str ) % $size);
+    $str .= str_repeat ( chr ( $pad ), $pad );
+    
+    $data = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, 'LjsAuthorizeSeed', $str, MCRYPT_MODE_CBC, 'HelloThisIsWorld');
+    
+    return base64_encode($data);
+}

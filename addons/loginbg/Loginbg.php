@@ -28,7 +28,7 @@ class Loginbg extends Addons
         return true;
     }
 
-    public function loginInit(\think\Request &$request)
+    public function adminLoginInit(\think\Request &$request)
     {
         $config = $this->getConfig();
         if ($config['mode'] == 'random' || $config['mode'] == 'daily')

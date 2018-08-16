@@ -11,6 +11,10 @@
 @import url("../libs/nice-validator/dist/jquery.validator.css");
 @import url("../libs/bootstrap-select/dist/css/bootstrap-select.min.css");
 @import url("../libs/fastadmin-selectpage/selectpage.css");
+html,
+body {
+  height: 100%;
+}
 body {
   background: #f1f4f6;
   font-size: 13px;
@@ -37,24 +41,25 @@ body.is-dialog {
   /*width: 70%;*/
   max-width: 885px;
 }
-/*iOS¼æÈÝ*/
+/*iOSï¿½ï¿½ï¿½ï¿½*/
 html.ios-fix,
 html.ios-fix body {
   height: 100%;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+.wrapper {
+  height: 100%;
+}
 #header {
   background: #fff;
 }
 .content-wrapper {
   position: relative;
+  height: 100%;	
 }
 .control-relative {
   position: relative;
-}
-.tab-addtabs {
-  overflow: hidden;
 }
 .tab-addtabs .tab-pane {
   height: 100%;
@@ -96,7 +101,7 @@ html.ios-fix body {
   margin-bottom: 15px;
   background-color: #f5f5f5;
 }
-/* ¹Ì¶¨µÄµ×²¿°´Å¥ */
+/* ï¿½Ì¶ï¿½ï¿½Äµ×²ï¿½ï¿½ï¿½Å¥ */
 .fixed-footer {
   position: fixed;
   bottom: 0;
@@ -171,7 +176,7 @@ form.form-horizontal .control-label {
   width: 45px;
   height: 45px;
 }
-/*panelÀ©Õ¹ÃèÊöÑùÊ½*/
+/*panelï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½*/
 .panel-intro {
   margin-bottom: 0;
   border: none;
@@ -232,14 +237,14 @@ form.form-horizontal .control-label {
   border-bottom-color: transparent;
   cursor: default;
 }
-/*µ¥±í¸ñ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½*/
 .panel-tabs .panel-heading {
   padding: 12px 15px 12px 15px;
 }
 .panel-tabs .panel-heading .panel-lead {
   margin-bottom: 0px;
 }
-/*Ñ¡Ïî¿¨*/
+/*Ñ¡ï¿½î¿¨*/
 .panel-nav .panel-heading {
   padding: 0px;
   padding-bottom: 0;
@@ -262,7 +267,7 @@ form.form-horizontal .control-label {
   border-color: #f1f4f6;
   border-bottom-color: transparent;
 }
-/*¶¥À¸addtabs*/
+/*ï¿½ï¿½ï¿½ï¿½addtabs*/
 .nav-addtabs {
   height: 100%;
   border: none;
@@ -369,7 +374,7 @@ form.form-horizontal .control-label {
   z-index: 99;
   background: transparent;
 }
-/*´ÎÀ¸²Ëµ¥À¸*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½*/
 #secondnav {
   height: 44px;
   position: absolute;
@@ -516,7 +521,7 @@ form.form-horizontal .control-label {
   text-decoration: none;
   font-weight: bold;
 }
-/* µ¯´°ÖÐµÄ±íµ¥ */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ±ï¿½ */
 .form-layer {
   height: 100%;
   min-height: 150px;
@@ -584,11 +589,11 @@ form.form-horizontal .control-label {
 #treeview .jstree-themeicon {
   display: none;
 }
-/*È¥³ýbootstrap-tableµÄ±ß¿ò*/
+/*È¥ï¿½ï¿½bootstrap-tableï¿½Ä±ß¿ï¿½*/
 .fixed-table-container {
   border: none !important;
 }
-/*ÐÞ¸´nice-validatorÐÂ°æÏÂµÄÒ»´¦BUG*/
+/*ï¿½Þ¸ï¿½nice-validatorï¿½Â°ï¿½ï¿½Âµï¿½Ò»ï¿½ï¿½BUG*/
 .nice-validator input,
 .nice-validator select,
 .nice-validator textarea,
@@ -597,11 +602,11 @@ form.form-horizontal .control-label {
   *display: inline;
   *zoom: 1;
 }
-/*ÐÞ¸´nice-validatorºÍsummernoteµÄ±à¼­¿ò³åÍ»*/
+/*ï¿½Þ¸ï¿½nice-validatorï¿½ï¿½summernoteï¿½Ä±à¼­ï¿½ï¿½ï¿½Í»*/
 .nice-validator .note-editor .note-editing-area .note-editable {
   display: inherit;
 }
-/*Ô¤ÀÀÇøÓò*/
+/*Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 .plupload-preview {
   padding: 0 10px;
   margin-bottom: 0;
@@ -721,7 +726,7 @@ table.table-nowrap thead > tr > th {
   border-radius: 6px 0 6px 6px;
   background-clip: padding-box;
 }
-/*ÖØÐ´toastµÄ¼¸¸ö±³¾°É«*/
+/*ï¿½ï¿½Ð´toastï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«*/
 .toast-primary {
   background-color: #48c9b0 !important;
 }
@@ -750,7 +755,7 @@ table.table-nowrap thead > tr > th {
   box-shadow: 0 0 3px #eee;
 }
 .layui-layer-fast {
-  /*×Ô¶¨Òåµ×²¿»ÒÉ«²Ù×÷Çø*/
+  /*ï¿½Ô¶ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 }
 .layui-layer-fast .layui-layer-title {
   background: #2c3e50 !important;
@@ -882,7 +887,7 @@ table.table-nowrap thead > tr > th {
     width: 130px;
   }
 }
-/*ÊÖ»ú°æÑùÊ½*/
+/*ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ê½*/
 @media (max-width: 480px) {
   #firstnav .navbar-custom-menu ul li a {
     padding-left: 10px;
@@ -911,7 +916,7 @@ table.table-nowrap thead > tr > th {
     padding-top: 144px;
   }
 }
-/*Æ½°åÑùÊ½*/
+/*Æ½ï¿½ï¿½ï¿½ï¿½Ê½*/
 @media (max-width: 768px) {
   body .wrapper .main-header .logo {
     background: none;
@@ -971,7 +976,7 @@ table.table-nowrap thead > tr > th {
     margin-right: 15px;
   }
 }
-/*ÐÞ¸´radioºÍcheckboxÑùÊ½¶ÔÆë*/
+/*ï¿½Þ¸ï¿½radioï¿½ï¿½checkboxï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½*/
 .radio > label,
 .checkbox > label {
   margin-right: 10px;
@@ -983,7 +988,7 @@ table.table-nowrap thead > tr > th {
 .wipecache li a {
   color: #444444 !important;
 }
-/*ÐÞÕý¿ª¹Ø¹Ø±ÕÏÂµÄÑÕÉ«Öµ*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹Ø±ï¿½ï¿½Âµï¿½ï¿½ï¿½É«Öµ*/
 .btn-switcher.disabled {
   opacity: .6;
   cursor: not-allowed;
