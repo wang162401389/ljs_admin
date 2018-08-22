@@ -151,10 +151,10 @@
   width: 100%;
   box-sizing: border-box;
   font-family: monaco;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.6;
   border: none;
-  padding: 22px 15px 40px;
+  padding: 22px 15px 36px;
   min-height: 300px;
   outline: none;
   background: transparent;
@@ -276,12 +276,12 @@
 }
 .simditor .simditor-toolbar > ul > li > .toolbar-item {
   display: inline-block;
-  width: 46px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   outline: none;
   color: #333333;
   font-size: 15px;
-  line-height: 40px;
+  line-height: 36px;
   vertical-align: middle;
   text-align: center;
   text-decoration: none;
@@ -353,7 +353,7 @@
 .simditor .simditor-toolbar .toolbar-menu {
   display: none;
   position: absolute;
-  top: 40px;
+  top: 36px;
   left: 0;
   z-index: 21;
   background: #ffffff;
@@ -363,7 +363,7 @@
 .simditor .simditor-toolbar .toolbar-menu:before {
   content: '';
   display: block;
-  width: 46px;
+  width: 36px;
   height: 4px;
   background: #ffffff;
   position: absolute;
@@ -378,7 +378,7 @@
 }
 .simditor .simditor-toolbar .toolbar-menu ul > li .menu-item {
   display: block;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 2em;
   padding: 0 10px;
   text-decoration: none;
@@ -419,7 +419,7 @@
   width: 96px;
 }
 .simditor .simditor-toolbar .toolbar-menu.toolbar-menu-color .color-list {
-  height: 40px;
+  height: 36px;
   margin: 10px 6px 6px 10px;
   padding: 0;
   min-width: 0;
@@ -612,7 +612,7 @@
 }
 .simditor .simditor-body h1, .simditor .simditor-body h2, .simditor .simditor-body h3, .simditor .simditor-body h4, .simditor .simditor-body h5, .simditor .simditor-body h6, .editor-style h1, .editor-style h2, .editor-style h3, .editor-style h4, .editor-style h5, .editor-style h6 {
   font-weight: normal;
-  margin: 40px 0 20px;
+  margin: 36px 0 20px;
   color: #000000;
 }
 .simditor .simditor-body h1, .editor-style h1 {
@@ -654,7 +654,7 @@
 .simditor .simditor-body ul, .simditor .simditor-body ol, .editor-style ul, .editor-style ol {
   list-style: disc outside none;
   margin: 15px 0;
-  padding: 0 0 0 40px;
+  padding: 0 0 0 36px;
   line-height: 1.6;
 }
 .simditor .simditor-body ul li, .simditor .simditor-body ol li, .editor-style ul li, .editor-style ol li {
@@ -728,7 +728,7 @@
   background-color: #f9f9f9;
 }
 .simditor .simditor-body table td, .simditor .simditor-body table th, .editor-style table td, .editor-style table th {
-  min-width: 40px;
+  min-width: 36px;
   height: 30px;
   border: 1px solid #ccc;
   vertical-align: top;

@@ -2,7 +2,7 @@ require.config({
     paths: {
         'summernote': '../addons/summernote/lang/summernote-zh-CN.min'
     },
-    shim:{
+    shim: {
         'summernote': ['../addons/summernote/js/summernote.min', 'css!../addons/summernote/css/summernote.css'],
     }
 });
@@ -14,6 +14,48 @@ require(['form', 'upload'], function (Form, Upload) {
             //绑定summernote事件
             if ($(".summernote,.editor", form).size() > 0) {
                 require(['summernote'], function () {
+                    var imageButton = function (context) {
+                        var ui = $.summernote.ui;
+                        var button = ui.button({
+                            contents: '<i class="fa fa-file-image-o"/>',
+                            tooltip: __('Choose'),
+                            click: function () {
+                                parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=image/*", __('Choose'), {
+                                    callback: function (data) {
+                                        var urlArr = data.url.split(/\,/);
+                                        $.each(urlArr, function () {
+                                            var url = Fast.api.cdnurl(this);
+                                            context.invoke('editor.insertImage', url);
+                                        });
+                                    }
+                                });
+                                return false;
+                            }
+                        });
+                        return button.render();
+                    };
+                    var attachmentButton = function (context) {
+                        var ui = $.summernote.ui;
+                        var button = ui.button({
+                            contents: '<i class="fa fa-file"/>',
+                            tooltip: __('Choose'),
+                            click: function () {
+                                parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=*", __('Choose'), {
+                                    callback: function (data) {
+                                        var urlArr = data.url.split(/\,/);
+                                        $.each(urlArr, function () {
+                                            var url = Fast.api.cdnurl(this);
+                                            var node = $("<a href='" + url + "'>" + url + "</a>");
+                                            context.invoke('insertNode', node[0]);
+                                        });
+                                    }
+                                });
+                                return false;
+                            }
+                        });
+                        return button.render();
+                    };
+
                     $(".summernote,.editor", form).summernote({
                         height: 250,
                         lang: 'zh-CN',
@@ -34,8 +76,13 @@ require(['form', 'upload'], function (Form, Upload) {
                             ['para', ['ul', 'ol', 'paragraph', 'height']],
                             ['table', ['table', 'hr']],
                             ['insert', ['link', 'picture', 'video']],
-                            ['view', ['fullscreen', 'codeview', 'help']]
+                            ['select', ['image', 'attachment']],
+                            ['view', ['fullscreen', 'codeview', 'help']],
                         ],
+                        buttons: {
+                            image: imageButton,
+                            attachment: attachmentButton,
+                        },
                         dialogsInBody: true,
                         callbacks: {
                             onChange: function (contents) {

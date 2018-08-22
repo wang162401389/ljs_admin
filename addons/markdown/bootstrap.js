@@ -27,7 +27,30 @@ require(['form', 'upload'], function (Form, Upload) {
         try {
             if ($(".editor", form).size() > 0) {
                 require(['bootstrap-markdown', 'hyperdown', 'pasteupload'], function (undefined, undefined, undefined) {
-                    $.fn.markdown.messages.zh={Bold:"粗体",Italic:"斜体",Heading:"标题","URL/Link":"链接",Image:"图片",List:"列表","Unordered List":"无序列表","Ordered List":"有序列表",Code:"代码",Quote:"引用",Preview:"预览","strong text":"粗体","emphasized text":"强调","heading text":"标题","enter link description here":"输入链接说明","Insert Hyperlink":"URL地址","enter image description here":"输入图片说明","Insert Image Hyperlink":"图片URL地址","enter image title here":"在这里输入图片标题","list text here":"这里是列表文本","code text here":"这里输入代码","quote here":"这里输入引用文本"};
+                    $.fn.markdown.messages.zh = {
+                        Bold: "粗体",
+                        Italic: "斜体",
+                        Heading: "标题",
+                        "URL/Link": "链接",
+                        Image: "图片",
+                        List: "列表",
+                        "Unordered List": "无序列表",
+                        "Ordered List": "有序列表",
+                        Code: "代码",
+                        Quote: "引用",
+                        Preview: "预览",
+                        "strong text": "粗体",
+                        "emphasized text": "强调",
+                        "heading text": "标题",
+                        "enter link description here": "输入链接说明",
+                        "Insert Hyperlink": "URL地址",
+                        "enter image description here": "输入图片说明",
+                        "Insert Image Hyperlink": "图片URL地址",
+                        "enter image title here": "在这里输入图片标题",
+                        "list text here": "这里是列表文本",
+                        "code text here": "这里输入代码",
+                        "quote here": "这里输入引用文本"
+                    };
                     var parser = new HyperDown();
                     window.marked = function (text) {
                         return parser.makeHtml(text);
@@ -39,7 +62,7 @@ require(['form', 'upload'], function (Form, Upload) {
                         ajaxOptions: {
                             url: Fast.api.fixurl(Config.upload.uploadurl),
                             beforeSend: function (jqXHR, settings) {
-                                $.each(Config.upload.multipart, function(i,j ){
+                                $.each(Config.upload.multipart, function (i, j) {
                                     settings.data.append(i, j);
                                 });
                                 return true;
@@ -67,7 +90,51 @@ require(['form', 'upload'], function (Form, Upload) {
                             language: 'zh',
                             iconlibrary: 'fa',
                             autofocus: false,
-                            savable: false
+                            savable: false,
+                            additionalButtons: [
+                                [{
+                                    name: "groupCustom",
+                                    data: [{
+                                        name: "cmdSelectImage",
+                                        toggle: false,
+                                        title: "Select image",
+                                        icon: "fa fa-file-image-o",
+                                        callback: function (e) {
+                                            parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=image/*", __('Choose'), {
+                                                callback: function (data) {
+                                                    var urlArr = data.url.split(/\,/);
+                                                    $.each(urlArr, function () {
+                                                        var url = Fast.api.cdnurl(this);
+                                                        e.replaceSelection("\n" + '![输入图片说明](' + url + ' "在这里输入图片标题")');
+                                                    });
+                                                    e.$element.blur();
+                                                    e.$element.focus();
+                                                }
+                                            });
+                                            return false;
+                                        }
+                                    }, {
+                                        name: "cmdSelectAttachment",
+                                        toggle: false,
+                                        title: "Select image",
+                                        icon: "fa fa-file",
+                                        callback: function (e) {
+                                            parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=*", __('Choose'), {
+                                                callback: function (data) {
+                                                    var urlArr = data.url.split(/\,/);
+                                                    $.each(urlArr, function () {
+                                                        var url = Fast.api.cdnurl(this);
+                                                        e.replaceSelection("\n" + '[输入链接说明](' + url + ')');
+                                                    });
+                                                    e.$element.blur();
+                                                    e.$element.focus();
+                                                }
+                                            });
+                                            return false;
+                                        }
+                                    }]
+                                }]
+                            ]
                         });
                         $(this).pasteUploadImage();
                     });

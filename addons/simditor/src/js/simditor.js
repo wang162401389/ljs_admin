@@ -1583,6 +1583,7 @@ UndoManager = (function(superClass) {
         }
         return;
       }
+
       range = document.createRange();
       range.setStart(startContainer, startOffset);
       range.setEnd(endContainer, endOffset);
@@ -2691,6 +2692,7 @@ Simditor.i18n = {
     'hr': '分隔线',
     'image': '插入图片',
     'externalImage': '外链图片',
+    'selectImage': '选择图片',
     'uploadImage': '上传图片',
     'uploadFailed': '上传失败了',
     'uploadError': '上传出错了',
@@ -2744,6 +2746,7 @@ Simditor.i18n = {
     'hr': 'Horizontal Line',
     'image': 'Insert Image',
     'externalImage': 'External Image',
+    'selectImage': 'Select Image',
     'uploadImage': 'Upload Image',
     'uploadFailed': 'Upload failed',
     'uploadError': 'Error occurs during upload',
@@ -2873,7 +2876,20 @@ Button = (function(superClass) {
         }
         _this.editor.toolbar.wrapper.removeClass('menu-on');
         param = btn.data('param');
-        _this.command(param);
+        if(btn.hasClass("menu-item-select-image")){
+            parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=image/*", "选择", {
+                callback: function (data) {
+                    var urlArr = data.url.split(/\,/);
+                    $.each(urlArr, function () {
+                        var url = Fast.api.cdnurl(this);
+                        _this.command(url);
+                    });
+                }
+            });
+            return false;
+        }else{
+          _this.command(param);
+        }
         return false;
       };
     })(this));
@@ -4258,6 +4274,9 @@ ImageButton = (function(superClass) {
           }, {
             name: 'external-image',
             text: this._t('externalImage')
+          }, {
+              name: 'select-image',
+              text: this._t('selectImage')
           }
         ];
       } else {
@@ -4615,6 +4634,7 @@ ImageButton = (function(superClass) {
 
   ImageButton.prototype.command = function(src) {
     var $img;
+
     $img = this.createImage();
     return this.loadImage($img, src || this.defaultImage, (function(_this) {
       return function() {
@@ -4826,6 +4846,7 @@ ImagePopover = (function(superClass) {
       return;
     }
     return this.button.loadImage(this.target, src, (function(_this) {
+
       return function(img) {
         var blob;
         if (!img) {

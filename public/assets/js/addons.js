@@ -95,9 +95,52 @@ require(['form', 'upload'], function (Form, Upload) {
 
 require.config({
     paths: {
+        'simditor': '../addons/simditor/js/simditor.min',
+    },
+    shim: {
+        'simditor': [
+            'css!../addons/simditor/css/simditor.min.css'
+        ]
+    }
+});
+
+if ($(".editor").size() > 0) {
+    //修改上传的接口调用
+    require(['upload', 'simditor'], function (Upload, Simditor) {
+        var editor, mobileToolbar, toolbar;
+        Simditor.locale = 'zh-CN';
+        Simditor.list = {};
+        toolbar = ['title', 'bold', 'italic', 'underline', 'strikethrough', 'fontScale', 'color', '|', 'ol', 'ul', 'blockquote', 'code', 'table', '|', 'link', 'image', 'hr', '|', 'indent', 'outdent', 'alignment'];
+        mobileToolbar = ["bold", "underline", "strikethrough", "color", "ul", "ol"];
+        $(".editor").each(function () {
+            var id = $(this).attr("id");
+            editor = new Simditor({
+                textarea: this,
+                toolbarFloat: false,
+                toolbar: toolbar,
+                pasteImage: true,
+                defaultImage: Fast.api.cdnurl('/assets/addons/simditor/images/image.png'),
+                upload: {url: '/'}
+            });
+            editor.uploader.on('beforeupload', function (e, file) {
+                Upload.api.send(file.obj, function (data) {
+                    var url = Fast.api.cdnurl(data.url);
+                    editor.uploader.trigger("uploadsuccess", [file, {success: true, file_path: url}]);
+                });
+                return false;
+            });
+            editor.on("blur", function () {
+                this.textarea.trigger("blur");
+            });
+            Simditor.list[id] = editor;
+        });
+    });
+}
+require.config({
+    paths: {
         'summernote': '../addons/summernote/lang/summernote-zh-CN.min'
     },
-    shim:{
+    shim: {
         'summernote': ['../addons/summernote/js/summernote.min', 'css!../addons/summernote/css/summernote.css'],
     }
 });
@@ -109,6 +152,48 @@ require(['form', 'upload'], function (Form, Upload) {
             //绑定summernote事件
             if ($(".summernote,.editor", form).size() > 0) {
                 require(['summernote'], function () {
+                    var imageButton = function (context) {
+                        var ui = $.summernote.ui;
+                        var button = ui.button({
+                            contents: '<i class="fa fa-file-image-o"/>',
+                            tooltip: __('Choose'),
+                            click: function () {
+                                parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=image/*", __('Choose'), {
+                                    callback: function (data) {
+                                        var urlArr = data.url.split(/\,/);
+                                        $.each(urlArr, function () {
+                                            var url = Fast.api.cdnurl(this);
+                                            context.invoke('editor.insertImage', url);
+                                        });
+                                    }
+                                });
+                                return false;
+                            }
+                        });
+                        return button.render();
+                    };
+                    var attachmentButton = function (context) {
+                        var ui = $.summernote.ui;
+                        var button = ui.button({
+                            contents: '<i class="fa fa-file"/>',
+                            tooltip: __('Choose'),
+                            click: function () {
+                                parent.Fast.api.open("general/attachment/select?element_id=&multiple=true&mimetype=*", __('Choose'), {
+                                    callback: function (data) {
+                                        var urlArr = data.url.split(/\,/);
+                                        $.each(urlArr, function () {
+                                            var url = Fast.api.cdnurl(this);
+                                            var node = $("<a href='" + url + "'>" + url + "</a>");
+                                            context.invoke('insertNode', node[0]);
+                                        });
+                                    }
+                                });
+                                return false;
+                            }
+                        });
+                        return button.render();
+                    };
+
                     $(".summernote,.editor", form).summernote({
                         height: 250,
                         lang: 'zh-CN',
@@ -129,8 +214,13 @@ require(['form', 'upload'], function (Form, Upload) {
                             ['para', ['ul', 'ol', 'paragraph', 'height']],
                             ['table', ['table', 'hr']],
                             ['insert', ['link', 'picture', 'video']],
-                            ['view', ['fullscreen', 'codeview', 'help']]
+                            ['select', ['image', 'attachment']],
+                            ['view', ['fullscreen', 'codeview', 'help']],
                         ],
+                        buttons: {
+                            image: imageButton,
+                            attachment: attachmentButton,
+                        },
                         dialogsInBody: true,
                         callbacks: {
                             onChange: function (contents) {
@@ -160,4 +250,25 @@ require(['form', 'upload'], function (Form, Upload) {
     };
 });
 
+//修改上传的接口调用
+require(['upload'], function (Upload) {
+    var _onUploadResponse = Upload.events.onUploadResponse;
+    Upload.events.onUploadResponse = function (response) {
+        try {
+            var ret = typeof response === 'object' ? response : JSON.parse(response);
+            if (ret.hasOwnProperty("code") && ret.hasOwnProperty("data")) {
+                return _onUploadResponse.call(this, response);
+            } else if (ret.hasOwnProperty("code") && ret.hasOwnProperty("url")) {
+                ret.code = ret.code === 200 ? 1 : ret.code;
+                ret.data = {
+                    url: ret.url
+                };
+                return _onUploadResponse.call(this, JSON.stringify(ret));
+            }
+        } catch (e) {
+        }
+        return _onUploadResponse.call(this, response);
+
+    };
+});
 });
