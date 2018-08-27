@@ -16,6 +16,22 @@ return array (
     array (
       0 => 'loginbg',
     ),
+    'config_init' => 
+    array (
+      0 => 'qcloudsms',
+    ),
+    'sms_send' => 
+    array (
+      0 => 'qcloudsms',
+    ),
+    'sms_notice' => 
+    array (
+      0 => 'qcloudsms',
+    ),
+    'sms_check' => 
+    array (
+      0 => 'qcloudsms',
+    ),
   ),
   'route' => 
   array (
@@ -29,8 +45,5 @@ return array (
     '/example/d2/[:name]' => 'example/demo/demo2',
     '/qrcode$' => 'qrcode/index/index',
     '/qrcode/build$' => 'qrcode/index/build',
-    '/third$' => 'third/index/index',
-    '/third/connect/[:platform]' => 'third/index/connect',
-    '/third/callback/[:platform]' => 'third/index/callback',
   ),
 );

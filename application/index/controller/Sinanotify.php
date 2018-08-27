@@ -447,7 +447,7 @@ class Sinanotify extends Frontend
                             ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
                             ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
                             ->where('t.repaymentStatus', 0)
-                            ->where('c.deadline', '<=', date('Y-m-d H:i:s'))
+                            ->whereTime('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
                             ->sum('t.capital');
         
         return $new_overdue_sum / 100;
@@ -464,7 +464,7 @@ class Sinanotify extends Frontend
                 ->where('ide.status', '<>', -1)
                 ->where('ide.is_debt', 0)
                 ->where('b.test', 0)
-                ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-d H:i:s')])
+                ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
                 ->sum('ide.capital');
     }
         
@@ -645,31 +645,6 @@ class Sinanotify extends Frontend
         return $order_id_main . str_pad((100 - $order_id_sum % 100) % 100, 2, '0', STR_PAD_LEFT);
     }
         
-    public function getoverduemoney()
-    {
-        $new_overdue_sum = Db::table('AppInvestorRepayment')
-                            ->alias('t')
-                            ->join('AppBorrowInfo a', 'a.borrowInfoId = t.borrowInfoId')
-                            ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
-                            ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
-                            ->where('t.repaymentStatus', 0)
-                            ->where('c.deadline', '<=', date('Y-m-d H:i:s'))
-                            ->sum('t.capital');
-        
-        $old_overdue_sum = Db::connect('old_db')
-                            ->name('investor_detail')
-                            ->alias('ide')
-                            ->join('borrow_info b', 'ide.borrow_id = b.id', 'LEFT')
-                            ->where('ide.status', 7)
-                            ->where('ide.repayment_time', 0)
-                            ->where('ide.is_debt', 0)
-                            ->where('b.test', 0)
-                            ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-d H:i:s')])
-                            ->sum('ide.capital');
-        
-        return ($new_overdue_sum / 100) + $old_overdue_sum;
-    }
-        
     public function getnewoverduelist()
     {
         $new_overdue_list = Db::table('AppInvestorRepayment')
@@ -678,7 +653,7 @@ class Sinanotify extends Frontend
                             ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
                             ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
                             ->where('t.repaymentStatus', 0)
-                            ->where('c.deadline', '<=', date('Y-m-d H:i:s'))
+                            ->whereTime('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
                             ->field('t.id,t.capital * 0.01 as capital,c.capital * 0.01 as b_capital,t.userId,t.borrowInfoId,a.borrowSn')
                             ->select();
         
@@ -695,7 +670,7 @@ class Sinanotify extends Frontend
                             ->where('ide.repayment_time', 0)
                             ->where('ide.is_debt', 0)
                             ->where('b.test', 0)
-                            ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-d H:i:s')])
+                            ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
                             ->field('ide.id,ide.capital,ide.borrow_id,ide.receive_capital,ide.invest_id,ide.investor_uid')
                             ->select();
         

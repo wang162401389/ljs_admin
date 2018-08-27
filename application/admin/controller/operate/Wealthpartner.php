@@ -61,7 +61,7 @@ class Wealthpartner extends Backend
                         $query->where('investorCapital', 'gt', 0)->whereOr('inviteCount', 'gt', 0);
                     })
                     ->where($where)
-                    ->count(1);
+                    ->count();
 
             $list = Db::table($subQuery.' t')
                     ->field($field)
@@ -72,7 +72,7 @@ class Wealthpartner extends Backend
                     ->order($sort, $order)
                     ->limit($offset, $limit)
                     ->select();
-                    
+            
             $list = collection($list)->toArray();
             if (!empty($list))
             {

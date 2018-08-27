@@ -85,7 +85,6 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
             bindevent: function () {
                 var getAppFileds = function (app) {
                     var app = apps[app];
-                    console.log(app);
                     var appConfig = app['config'];
                     var str = '';
                     for (i in appConfig) {
@@ -147,7 +146,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form', 'adminlte'], function
                     var type = $(this).val();
                     if (type == 'text') {
                         $("#expand").html('<div class="form-group"><label for="content" class="control-label col-xs-12 col-sm-2">文本内容:</label><div class="col-xs-12 col-sm-8"><textarea class="form-control" name="row[content][content]" data-rule="required"></textarea> <a href="javascript:;" class="btn-insertlink">插入链接</a></div></div>');
-                        //console.log($($("form.form-ajax row[content][content]")));
+                        console.log($($("form.form-ajax row[content][content]")));
                         $("form[role='form']").field("row[content][content]", datas.content);
                     } else if (type == 'app') {
                         $("#expand").html('<div class="form-group"><label for="content" class="control-label col-xs-12 col-sm-2">应用:</label><div class="col-xs-12 col-sm-8"><select class="form-control" name="row[content][app]" id="app">' + $("select[name=applist]").html() + '</select></div></div><div id="appfields"><div>');

@@ -38,7 +38,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
 	                            var options = table ? table.bootstrapTable('getOptions') : {};
 	                    		Fast.api.ajax({
 	    							url: options.extend.repay_url,
-	    							data: {'money' : pass},
+	    							data: {'money': pass},
 	                  		  	}, function (data, ret) {
 		                  		  	if(ret.code == 1){
 		            					document.write(ret.data);

@@ -52,7 +52,7 @@ class Command extends Addons
      */
     public function enable()
     {
-        Menu::delete('command');
+        Menu::enable('command');
         return true;
     }
 
@@ -62,7 +62,7 @@ class Command extends Addons
      */
     public function disable()
     {
-        Menu::delete('command');
+        Menu::disable('command');
         return true;
     }
 

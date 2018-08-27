@@ -58,8 +58,8 @@ class Appuser extends Backend
             
             $total = Db::table($subQuery.' t')
                     ->where($where)
-                    ->count(1);
-
+                    ->count();
+            
             $list = Db::table($subQuery.' t')
                     ->where($where)
                     ->order($sort, $order)
