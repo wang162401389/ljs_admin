@@ -74,9 +74,6 @@ class Index extends Base
         $post->setInc('views');
 
         $category = Category::get($post['category_id']);
-        if (!$category) {
-            $this->error("日志分类未找到");
-        }
 
         $commentlist = Comment::where(['post_id' => $id, 'pid' => 0, 'status' => 'normal'])
             ->with('sublist')

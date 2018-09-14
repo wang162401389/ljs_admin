@@ -4,7 +4,6 @@ namespace addons\epay\library;
 
 use think\Config;
 use Exception;
-use think\Hook;
 use Yansongda\Pay\Log;
 use Yansongda\Pay\Pay;
 

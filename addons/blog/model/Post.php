@@ -32,6 +32,12 @@ class Post extends Model
         return human_date($data['createtime']);
     }
 
+    public function getThumbAttr($value, $data)
+    {
+        $value = $value ? $value : '/assets/addons/blog/img/thumb.png';
+        return cdnurl($value, true);
+    }
+
     public function getImageAttr($value, $data)
     {
         $value = $value ? $value : '/assets/addons/blog/img/thumb.png';

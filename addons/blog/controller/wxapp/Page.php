@@ -25,7 +25,7 @@ class Page extends Base
     {
         $id = 1;
         $post = PostModel::get($id);
-        if (!$post || $post['status'] == 'hidden') {
+        if (!$post) {
             $this->error(__('No specified article found'));
         }
         $category = Category::get($post['category_id']);

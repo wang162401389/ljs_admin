@@ -1,6 +1,6 @@
 var Towxml = require('/assets/libs/towxml/main.js');
 App({
-  apiUrl: 'https://www.fa.com/addons/blog/wxapp.',
+  apiUrl: 'https://miniapp.fastadmin.net/addons/blog/wxapp.',
   si: 0,
   //小程序启动
   onLaunch: function () {

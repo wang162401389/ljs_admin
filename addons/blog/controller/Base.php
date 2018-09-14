@@ -12,7 +12,7 @@ class Base extends \think\addons\Controller
     {
         parent::__construct();
         $config = get_addon_config('blog');
-        $config['indexurl'] = addon_url('blog/index/index');
+        $config['indexurl'] = addon_url('blog/index/index', [], false);
         \think\Config::set('blog', $config);
     }
 

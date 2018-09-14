@@ -14,7 +14,7 @@ use think\Request;
  */
 class Comment extends Backend
 {
-    
+
     /**
      * BlogComment模型对象
      */
@@ -26,7 +26,7 @@ class Comment extends Backend
         $this->model = model('BlogComment');
         $this->view->assign("statusList", $this->model->getStatusList());
     }
-    
+
     /**
      * 查看
      */
@@ -34,27 +34,25 @@ class Comment extends Backend
     {
         //设置过滤方法
         $this->request->filter(['strip_tags']);
-        if ($this->request->isAjax())
-        {
+        if ($this->request->isAjax()) {
             $this->relationSearch = TRUE;
             //如果发送的来源是Selectpage，则转发到Selectpage
-            if ($this->request->request('keyField'))
-            {
+            if ($this->request->request('keyField')) {
                 return $this->selectpage();
             }
             list($where, $sort, $order, $offset, $limit) = $this->buildparams();
-            
+
             $total = $this->model
-                    ->with('post')
-                    ->where($where)
-                    ->order($sort, $order)
-                    ->count();
+                ->with('post')
+                ->where($where)
+                ->order($sort, $order)
+                ->count();
             $list = $this->model
-                    ->with('post')
-                    ->where($where)
-                    ->order($sort, $order)
-                    ->limit($offset, $limit)
-                    ->select();
+                ->with('post')
+                ->where($where)
+                ->order($sort, $order)
+                ->limit($offset, $limit)
+                ->select();
 
             $result = array("total" => $total, "rows" => $list);
 

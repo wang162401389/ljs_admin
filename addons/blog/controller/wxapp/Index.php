@@ -26,7 +26,7 @@ class Index extends Base
     {
         //焦点图
         $bannerList = Post::where('status', 'normal')
-            ->where("FIND_IN_SET(`flag`, 'index')")
+            ->where("FIND_IN_SET( 'index',`flag`)")
             ->field('id,title,image,createtime')
             ->limit(4)
             ->select();

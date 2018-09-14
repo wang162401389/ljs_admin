@@ -12,6 +12,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     multi_url: 'borrow/overdue/multi',
                     repayment_url : 'fkmanage/borrow/repaymentinfo',
                     repay_url : 'borrow/overdue/repay',
+                    public_personal_repay_url : 'borrow/overdue/publicpersonalrepay',
+                    public_all_repay_url : 'borrow/overdue/publicallrepay',
                     table: 'AppBorrowInfo',
                 }
             });
@@ -28,38 +30,98 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             
             //还款
             $(document).on("click", ".btn-repay", function () {
-            	layer.prompt({title: '请输入还款金额', formType: 3}, function(pass, index){
-            		var val = parseInt(pass);
-        		    if(!isNaN(val)){
-        		        if(val % 100 == 0){
-        		        	Layer.confirm('代还款：' + pass + '元，确定进行代还操作？', {
-	                        	btn: ['确定', '取消']
-	                    	}, function(index){
-	                            var options = table ? table.bootstrapTable('getOptions') : {};
-	                    		Fast.api.ajax({
-	    							url: options.extend.repay_url,
-	    							data: {'money': pass},
-	                  		  	}, function (data, ret) {
-		                  		  	if(ret.code == 1){
-		            					document.write(ret.data);
-		            				}else{
-		            					
-		            				}
-	    						}, function (data, ret) {
-	    							
-	    						});
-	                    	},function (){
-                    			
-                            });
-        		        }else{
-        		        	layer.alert("必须是100整数倍");
-        		        }
-        		    } else{
-        		    	layer.alert("输入必须是数字");
-        		    }
-            		layer.close(index);
+            	var total_money = $('#total_money').text();
+                var options = table ? table.bootstrapTable('getOptions') : {};
+            	layer.confirm('还款方式选择？', {
+        		  btn: ['借款人帐号还款', '对公基本户还款'] //按钮
+        		}, function(){
+        			
+        			layer.prompt({title: '请输入还款金额', formType: 3}, function(pass, index){
+                		var val = parseInt(pass);
+            		    if(!isNaN(val)){
+            		    	if(val > total_money){
+            		    		layer.alert("输入的额度大于应还款额度");
+            		    	}else{
+            		    		Layer.confirm('代还款：' + pass + '元，确定进行代还操作？', {
+                                	btn: ['确定', '取消']
+                            	}, function(index){
+                            		Fast.api.ajax({
+            							url: options.extend.repay_url,
+            							data: {'money': pass},
+                          		  	}, function (data, ret) {
+        	                  		  	if(ret.code == 1){
+        	            					document.write(ret.data);
+        	            				}else{
+        	            					
+        	            				}
+            						}, function (data, ret) {
+            							
+            						});
+                            	},function (){
+                        			
+                                });
+            		    	}
+            		    } else{
+            		    	layer.alert("输入必须是数字");
+            		    }
+                		layer.close(index);
+            		});
+        			
+        		}, function(){
+        			
+        			layer.confirm('针对上个月之前所有待还投资人进行还款吗？', {
+        				btn: ['是的', '不是'] //按钮
+    				}, function(){
+    					
+    					layer.prompt({title: '请输入还款金额', formType: 3}, function(pass, index){
+                    		var val = parseInt(pass);
+                		    if(!isNaN(val)){
+                		    	if(val > total_money){
+                		    		layer.alert("输入的额度大于应还款额度");
+                		    	}else{
+                		    		Layer.confirm('代还款：' + pass + '元，确定进行代还操作？', {
+                                    	btn: ['确定', '取消']
+                                	}, function(index){
+                                		Fast.api.ajax({
+                							url: options.extend.public_all_repay_url,
+                							data: {'money': pass},
+                              		  	}, function (data, ret) {
+            	                  		  	if(ret.code == 1){
+            	                  		  		layer.close(index);
+            	            				}else{
+            	            					
+            	            				}
+                						}, function (data, ret) {
+                							
+                						});
+                                	},function (){
+                            			
+                                    });
+                		    	}
+                		    } else{
+                		    	layer.alert("输入必须是数字");
+                		    }
+                    		layer.close(index);
+                		});
+    					
+    				}, function(){
+    					Fast.api.open(options.extend.public_personal_repay_url, '对公基本户还款');
+    				});
+        			
         		});
+            	
             });
+
+            var fmoney = function fmoney(s, n) {
+            	n = n > 0 && n <= 20 ? n : 2;
+            	s = parseFloat((s + "").replace(/[^\d\.-]/g, "")).toFixed(n) + "";
+            	var l = s.split(".")[0].split("").reverse(), r = s.split(".")[1];
+            	t = "";
+            	for (i = 0; i < l.length; i++) {
+            		t += l[i] + ((i + 1) % 3 == 0 && (i + 1) != l.length ? "," : "");
+            	}
+            	return t.split("").reverse().join("") + "." + r;
+            }
 
             // 初始化表格
             table.bootstrapTable({
@@ -118,6 +180,9 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
             Controller.api.bindevent();
         },
         edit: function () {
+            Controller.api.bindevent();
+        },
+        publicpersonalrepay: function () {
             Controller.api.bindevent();
         },
         api: {

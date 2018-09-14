@@ -51,10 +51,15 @@ class BlogPost extends Model
         $list = $this->getStatusList();
         return isset($list[$value]) ? $list[$value] : '';
     }
-    
+
+    protected function setFlagAttr($value)
+    {
+        return is_array($value) ? implode(',', $value) : $value;
+    }
+
     public function category()
     {
-        return $this->belongsTo('BlogCategory', 'category_id')->setEagerlyType(0);
+        return $this->belongsTo('BlogCategory', 'category_id', 'id', [], 'LEFT')->setEagerlyType(0);
     }
 
 }

@@ -119,7 +119,7 @@ if ($(".editor").size() > 0) {
                 toolbarFloat: false,
                 toolbar: toolbar,
                 pasteImage: true,
-                defaultImage: Fast.api.cdnurl('/assets/addons/simditor/images/image.png'),
+                defaultImage: Config.__CDN__ + '/assets/addons/simditor/images/image.png',
                 upload: {url: '/'}
             });
             editor.uploader.on('beforeupload', function (e, file) {

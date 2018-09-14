@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>云片短信发送示例</title>
+        <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link href="//cdn.fastadmin.net/assets/css/frontend.min.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="//cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+          <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="container">
+            <div class="well" style="margin-top:30px;">
+                <form class="form-horizontal" method="POST" action="{:addon_url('yunpian/index/send')}">
+                    <fieldset>
+                        <legend>云片短信发送</legend>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">手机号</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" name="mobile" placeholder="手机号">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">模板id</label>
+                            <div class="col-lg-10">
+                                <input type="text" class="form-control" name="tpl_id" placeholder="1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">模板消息</label>
+                            <div class="col-lg-10">
+                                <dl class="fieldlist" data-name="tpl_value">
+                                    <dd class="form-inline">
+                                        <input type="text" name="k1" class="form-control" value="code" size="10" />
+                                        <input type="text" name="v1" class="form-control" value="1234" size="30" />
+                                    </dd>
+                                    <dd class="form-inline">
+                                        <input type="text" name="k2" class="form-control" value="" size="10" />
+                                        <input type="text" name="v2" class="form-control" value="" size="30" />
+                                    </dd>
+                                    <dd class="form-inline">
+                                        <input type="text" name="k3" class="form-control" value="" size="10" />
+                                        <input type="text" name="v3" class="form-control" value="" size="30" />
+                                    </dd>
+                                    <dd class="form-inline">
+                                        <input type="text" name="k4" class="form-control" value="" size="10" />
+                                        <input type="text" name="v4" class="form-control" value="" size="30" />
+                                    </dd>
+                                    <dd class="form-inline">
+                                        <input type="text" name="k5" class="form-control" value="" size="10" />
+                                        <input type="text" name="v5" class="form-control" value="" size="30" />
+                                    </dd>                                     
+                                </dl>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-10 col-lg-offset-2">
+                                <button type="submit" class="btn btn-primary">发送</button>
+                                <button type="reset" class="btn btn-default">重置</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <script src="//cdn.bootcss.com/jquery/2.1.4/jquery.min.js"></script>
+        <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $(function () {
+
+            });
+        </script>
+    </body>
+</html>

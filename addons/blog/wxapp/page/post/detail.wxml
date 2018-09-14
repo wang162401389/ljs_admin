@@ -35,7 +35,7 @@
       </view>
       <view class="zan-btns">
         <button wx:if="{{ userInfo }}" formType="submit" class='zan-btn zan-btn--small zan-btn--primary'>提交</button>
-        <button wx:if="{{ !userInfo }}" bindtap="login" class='zan-btn zan-btn--small zan-btn--primary'>立即登录</button>
+        <button wx:if="{{ !userInfo }}" bindgetuserinfo="login" open-type='getUserInfo' class='zan-btn zan-btn--small zan-btn--primary'>立即登录</button>
       </view>
     </form>
   </view>

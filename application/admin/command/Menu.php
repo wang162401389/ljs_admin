@@ -27,7 +27,7 @@ class Menu extends Command
             ->addOption('force', 'f', Option::VALUE_OPTIONAL, 'force delete menu,without tips', null)
             ->addOption('equal', 'e', Option::VALUE_OPTIONAL, 'the controller must be equal', null)
             ->setDescription('Build auth menu from controller');
-            //要执行的controller必须一样，不适用模糊查询
+        //要执行的controller必须一样，不适用模糊查询
     }
 
     protected function execute(Input $input, Output $output)
@@ -156,6 +156,7 @@ class Menu extends Command
 
     protected function importRule($controller)
     {
+        $controller = str_replace('\\', '/', $controller);
         $controllerArr = explode('/', $controller);
         end($controllerArr);
         $key = key($controllerArr);

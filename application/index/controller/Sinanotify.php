@@ -115,7 +115,7 @@ class Sinanotify extends Frontend
         }
         die();
     }
-        
+    
     private function sendsms($new, $old)
     {
         if (!empty($new) || !empty($old))
@@ -169,20 +169,20 @@ class Sinanotify extends Frontend
         
     public function handle_new($new_overdue, $new_repay, $orderId)
     {
-        $getnewoverduelist = $this->getnewoverduelist();
-        if (!empty($getnewoverduelist))
+        $newoverduelist = $this->getnewoverduelist();
+        if (!empty($newoverduelist))
         {
             $i = $k = $j = $c = $d = 0;
             $trade_list = $userinfo = $batch_orderId_arr = $act_receive_arr = [];
             
-            foreach ($getnewoverduelist as $v)
+            foreach ($newoverduelist as $v)
             {
                 //按比例还给投资者的钱
-                $receive_money = substr(sprintf("%.3f", $new_repay / $new_overdue * $v['capital']), 0, -1);
+                $receive_money = substr(sprintf("%.3f", $new_repay / $new_overdue * $v['realityMoney']), 0, -1);
                 $t_money = $receive_money * 100;
                 //肯定是小于等于 投资的钱
-                Log::write('新：'.($j * 300 + $i + 1).'、receive_money：'.$receive_money.'capital：'.$v['capital'], 'java');
-                if ($receive_money <= $v['capital'])
+                Log::write('新：'.($j * 300 + $i + 1).'、receive_money：'.$receive_money.'，realityMoney：'.$v['realityMoney'], 'java');
+                if ($receive_money <= ($v['realityMoney'] - $v['receiveMoney']))
                 {
                     $phone = Db::table('AppUser')->where('userId', $v['userId'])->value('userPhone');
                     if (isset($userinfo[$phone]))
@@ -196,11 +196,10 @@ class Sinanotify extends Frontend
                     
                     $upd = [];
                     //还清了
-                    if ($v['capital'] == $receive_money)
+                    if ($v['realityMoney'] - $v['receiveMoney'] == $receive_money)
                     {
                         $upd['repaymentStatus'] = 3;
                     }
-                    $upd['capital'] = Db::raw('capital-'.$t_money);
                     $upd['receiveMoney'] = Db::raw('receiveMoney+'.$t_money);
                     $upd['repaymentTime'] = $upd['updateTime'] = Db::raw('now()');
                     $investor = Db::table('AppInvestorRepayment')->where('id', $v['id'])->update($upd);
@@ -211,12 +210,11 @@ class Sinanotify extends Frontend
                     
                     $upd = [];
                     //还清了
-                    if ($v['b_capital'] == $receive_money)
+                    if ($v['realityMoney'] - $v['receiveMoney'] == $receive_money)
                     {
                         $upd['repaymentStatus'] = 1;
                         $upd['applyAgentRepaymentStatus'] = 2;
                     }
-                    $upd['capital'] = Db::raw('capital-'.$t_money);
                     $upd['repaymentMoney'] = Db::raw('repaymentMoney+'.$t_money);
                     $upd['substituteMoney'] = Db::raw('substituteMoney+'.$t_money);
                     $upd['repaymentTime'] = $upd['substituteTime'] = $upd['updateTime'] = Db::raw('now()');
@@ -257,7 +255,7 @@ class Sinanotify extends Frontend
                         return false;
                     }
                     
-                    if ($v['b_capital'] == $receive_money)
+                    if ($v['realityMoney'] - $v['receiveMoney'] == $receive_money)
                     {
                         $upd = [];
                         $upd['borrowStatus'] = 10;
@@ -330,12 +328,12 @@ class Sinanotify extends Frontend
         
     public function handle_old($old_overdue, $old_repay, $orderId)
     {
-        $getoldoverduelist = $this->getoldoverduelist();
-        if (!empty($getoldoverduelist))
+        $oldoverduelist = $this->getoldoverduelist();
+        if (!empty($oldoverduelist))
         {
             $i = $k = $j = 0;
             $trade_list = $userinfo = $act_receive_arr = [];
-            foreach ($getoldoverduelist as $v)
+            foreach ($oldoverduelist as $v)
             {
                 //按比例还给投资者的钱
                 $receive_money = substr(sprintf("%.3f", $old_repay / $old_overdue * $v['capital']), 0, -1);
@@ -447,8 +445,8 @@ class Sinanotify extends Frontend
                             ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
                             ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
                             ->where('t.repaymentStatus', 0)
-                            ->whereTime('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
-                            ->sum('t.capital');
+                            ->where('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
+                            ->sum('b.realityMoney');
         
         return $new_overdue_sum / 100;
     }
@@ -653,8 +651,8 @@ class Sinanotify extends Frontend
                             ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
                             ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
                             ->where('t.repaymentStatus', 0)
-                            ->whereTime('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
-                            ->field('t.id,t.capital * 0.01 as capital,c.capital * 0.01 as b_capital,t.userId,t.borrowInfoId,a.borrowSn')
+                            ->where('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
+                            ->field('t.id,b.realityMoney * 0.01 as realityMoney,t.receiveMoney * 0.01 as receiveMoney,t.userId,t.borrowInfoId,a.borrowSn')
                             ->select();
         
         return $new_overdue_list;

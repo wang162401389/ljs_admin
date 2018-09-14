@@ -42,7 +42,7 @@ Page(Object.assign({}, Tab, {
   onReachBottom: function () {
     var that = this;
     this.loadPost(function (data) {
-      if (data.blogList.length == 0) {
+      if (data.postList.length == 0) {
         app.info("暂无更多数据");
       }
     });

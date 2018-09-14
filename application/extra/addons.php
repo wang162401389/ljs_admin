@@ -4,6 +4,10 @@ return array (
   'autoload' => false,
   'hooks' => 
   array (
+    'app_init' => 
+    array (
+      0 => 'epay',
+    ),
     'send_msg' => 
     array (
       0 => 'jpush',
@@ -11,26 +15,23 @@ return array (
     'testhook' => 
     array (
       0 => 'jpush',
+      1 => 'luckydraw',
     ),
     'admin_login_init' => 
     array (
       0 => 'loginbg',
     ),
-    'config_init' => 
-    array (
-      0 => 'qcloudsms',
-    ),
     'sms_send' => 
     array (
-      0 => 'qcloudsms',
+      0 => 'yunpian',
     ),
     'sms_notice' => 
     array (
-      0 => 'qcloudsms',
+      0 => 'yunpian',
     ),
     'sms_check' => 
     array (
-      0 => 'qcloudsms',
+      0 => 'yunpian',
     ),
   ),
   'route' => 

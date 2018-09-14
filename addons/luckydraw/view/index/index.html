@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>抽奖大转盘</title>
+    <link href="__ADDON__/css/mui.min.css" rel="stylesheet"/>
+    <link href="__ADDON__/css/component.css" rel="stylesheet" type="text/css">
+    <link href="__ADDON__/css/award.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="__ADDON__/css/animate.min.css"/>
+</head>
+<header class="header" style="background:#DF1D02;">
+    <span class="header_l"><a href="#" style="background-color: unset;padding: unset"><i
+            class="fa fa-chevron-left"></i></a></span>
+    <span class="header_c">抽奖</span>
+    <span class="header_r"><a href="#" style="background-color: unset;padding: unset"><i
+            class="fa fa-user"></i></a></span>
+</header>
+<body>
+<!-------------抽奖页面-------------->
+<div class="ml-main" id="ml-main">
+    <img class="main_back" src="__ADDON__/img/back.png"/>
+    <img class="animated zoomIn img_2_1" src="__ADDON__/img/img_1.png">
+    <img class="animated bounceIn img_2_2" src="__ADDON__/img/img_2.png">
+    <div class="jp-div">
+        <div class="jp-div-l" id="jiang">奖品明细</div>
+        <div class="jp-div-r"><a href="{:addon_url('luckydraw/index/log')}" style="color: white">抽奖记录</a></div>
+    </div>
+    <div class="kePublic">
+        <!--转盘效果开始-->
+        <div style="margin:0 auto">
+            <div class="banner">
+                <div class="turnplate"
+                     style="background-image:url('__ADDON__/img/turnplate-bg_2.png');background-size:100% 100%;">
+                    <canvas class="item" id="wheelcanvas" width="516" height="516"></canvas>
+                    <img id="tupBtn" class="pointer" src="__ADDON__/img/turnplate-pointer_2.png"/>
+                </div>
+            </div>
+        </div>
+        <!--转盘效果结束-->
+        <div class="clear"></div>
+    </div>
+    <img class="bottom_shadow" src="__ADDON__/img/bottom_shadow.png"/>
+    <img class="animated zoomIn kePublic_back" src="__ADDON__/img/back1.png"/>
+
+    <!--------------滚动中奖纪录---------------->
+    <div class="record_line" id="Marquee">
+        {notempty name="record_line"}
+        {foreach name="record_line" item="item"}
+        <div id="">
+            恭喜 {$item.username} 的用户抽中 <span id="gift_coupon">{$item.price}</span>
+        </div>
+        {/foreach}
+        {/notempty}
+    </div>
+    <!-------------底部声明-------------->
+    <img class="rule_title" src="__ADDON__/img/rule_title.png"/>
+    <div class="rule_text">
+        <strong>当前我的积分{$userinfo['score']|default=0}，{$rule['score']|default=0}积分可以抽奖一次。</strong><br>
+    </div>
+</div>
+<!-------------中奖弹窗页面-------------->
+<div class="zj-main" id="zj-main">
+    <div class="txzl">
+        <div class="zj_text">
+            中奖啦<br>恭喜获得<span id="jiangpin"></span><br>可在抽奖记录中查看
+        </div>
+        <div class="close_zj">关闭</div>
+    </div>
+</div>
+<!-------------谢谢参与弹窗-------------->
+<div class="xxcy-main" id="xxcy-main">
+    <div class="xxcy">
+        <div class="xxcy_text">
+            很遗憾<br>没有抽中礼品
+        </div>
+        <div class="close_xxcy">关闭</div>
+    </div>
+</div>
+<script>
+    var UID = "{$userinfo['id']|default=0}";
+    var SCORE = "{$userinfo['score']|default=0}";
+    <!--存储当前抽奖需要用的积分-->
+    var RULE_SCORE = "{$rule['score']|default=0}";
+    <!--存储当前抽奖剩余的份数-->
+    var RULE_COPIES = "{$rule['copies']|default=0}";
+    var LOGIN_URL = "{:url('index/user/login')}?url={:request()->url(true)}";
+    var ADDPRIZE_URL = "{:addon_url('luckydraw/index/addPrize')}";
+    var GETPRIZETEST_RUL = "{:addon_url('luckydraw/index/getPrizetext')}";
+</script>
+<script type="text/javascript" src="{:addon_url('luckydraw/index/getPrizerate')}"></script>
+<script type="text/javascript" src="{:addon_url('luckydraw/index/getPrizeinfo')}"></script>
+<script type="text/javascript" src="__ADDON__/js/jquery.min.js"></script>
+<script type="text/javascript" src="__ADDON__/js/mui.min.js"></script>
+<script type="text/javascript" src="__ADDON__/js/awardRotate.js"></script>
+<script type="text/javascript" src="__ADDON__/js/award.js"></script>
+<script type="text/javascript">
+
+    $('#jiang').click(function () {
+        //获取奖品明细内容
+        $.ajax({
+            type: "get",
+            url: GETPRIZETEST_RUL,
+            success: function (res) {
+                $(".xxcy_text").html(res);
+                $("#xxcy-main").fadeIn();
+                return false;
+            }
+        });
+    });
+
+    $(function () {
+        $("img").on("click", function () {
+            return false;
+        });
+        document.addEventListener("WeixinJSBridgeReady", function () {
+            WeixinJSBridge.call('hideOptionMenu');
+        });
+    });
+</script>
+
+</body>
+</html>

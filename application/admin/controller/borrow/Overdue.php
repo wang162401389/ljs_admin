@@ -5,6 +5,7 @@ namespace app\admin\controller\borrow;
 use app\common\controller\Backend;
 use sinapay\Weibopay;
 use think\Db;
+use think\Log;
 
 /**
  * 逾期的借款
@@ -19,7 +20,16 @@ class Overdue extends Backend
      */
     protected $model = null;
     
-    protected $noNeedRight = ['investinteresttypelist', 'sinacollecttrade', 'getoldoverdue', 'getnewoverdue'];
+    protected $noNeedRight = [
+        'investinteresttypelist', 
+        'sinacollecttrade', 
+        'getoldoverdue', 
+        'getnewoverdue',
+        'checksinaerror',
+        'getoldoverduebyuid',
+        'getnewoverduebyuid',
+        'personaldbhandle'
+    ];
 
     public function _initialize()
     {
@@ -71,14 +81,13 @@ class Overdue extends Backend
             $list = collection($list)->toArray();
             
             $new_overdue_sum = $this->getnewoverdue();
-            
             $old_overdue_sum = $this->getoldoverdue();
-                                
+            
             $result = [
                 "total" => $total, 
                 "rows" => $list, 
-                'new_overdue_sum' => $new_overdue_sum, 
-                'old_overdue_sum' => $old_overdue_sum,
+                'new_overdue_sum' => number_format($new_overdue_sum, 2), 
+                'old_overdue_sum' => number_format($old_overdue_sum, 2),
                 'total_sum' => $new_overdue_sum + $old_overdue_sum
             ];
 
@@ -97,18 +106,24 @@ class Overdue extends Backend
             $param = $this->request->post();
             $money = $param['money'];
             
-            $sina['content'] = date('Y-m-d H:i:s').',系统还款';
+            $sina['summary'] = date('Y-m-d H:i:s').',系统还款';
             $sina['money'] = $money;
             $sina['code'] = '1002';
-            $sina['trade_related_no'] = $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
-            $sina['return_url'] = "http://".$_SERVER['HTTP_HOST']."/manage.php/borrow/overdue?ref=addtabs";
+            $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
             $sina['notify_url'] = "http://".$_SERVER['HTTP_HOST']."/index/Sinanotify/collecttradenotify";
             
             $this->success('还款成功', null, $this->sinacollecttrade($sina));
         }
     }
     
-    private function sinacollecttrade($sina)
+    /**
+     * 代收
+     * @param unknown $sina
+     * @param number $payer 1:借款人 2：对公基本户
+     * @param bool $wlog 是否记日志
+     * @return string
+     */
+    private function sinacollecttrade($sina, $payer = 1, $wlog = false)
     {
         $config = config('site.sinapay');
         $request = \think\Request::instance();
@@ -124,30 +139,53 @@ class Overdue extends Backend
         $data['partner_id'] = $config['partner_id'];
         //网站编码格式
         $data['_input_charset'] = $config['_input_charset'];
-        //签名方式 MD5
+        //签名方式
         $data['sign_type'] = $config['sign_type'];
         //交易订单号
         $data['out_trade_no'] = $sina['out_trade_no'];
         //交易码 1001代收投资金，1002代收还款金
         $data['out_trade_code'] = $sina['code'];
         //摘要
-        $data['summary'] = $sina['content'];
+        $data['summary'] = $sina['summary'];
         //交易关联号
-        $data['trade_related_no'] = $sina['trade_related_no'];
-        //用户ID
-        $data['payer_id'] = '20151008'.$config['uid'];
-        //ID类型
-        $data['payer_identity_type'] = 'UID';
+        $data['trade_related_no'] = $data['out_trade_no'];
+        //付款用户、类型
+        if ($payer == 1) 
+        {
+            $data['payer_id'] = '20151008'.$config['uid'];
+            $data['payer_identity_type'] = 'UID';
+        }
+        else 
+        {
+            $data['payer_id'] = $config['email'];
+            $data['payer_identity_type'] = 'EMAIL';
+        }
         //IP
         $data['payer_ip'] = $request->ip();
         //支付方式：支付方式^金额^扩展|支付方式^金额^扩展。扩展信息内容以“，”分隔
-        $data['pay_method'] = "online_bank^".$sina['money']."^SINAPAY,DEBIT,C";
-        //页面跳转同步返回页面路径
-        $data['return_url'] = $sina['return_url'];
-        //异步回调通知地址
-        $data['notify_url'] = $sina['notify_url'];
-        //扩展信息
-        $data['extend_param'] = "channel_black_list^online_bank^binding_pay^quick_pay";
+        if ($payer == 1)
+        {
+            $data['pay_method'] = "online_bank^".$sina['money']."^SINAPAY,DEBIT,C";
+        }
+        else
+        {
+            $data['pay_method'] = "balance^".$sina['money']."^BASIC";
+        }
+        if (isset($sina['return_url'])) 
+        {
+            //页面跳转同步返回页面路径
+            $data['return_url'] = $sina['return_url'];
+        }
+        if (isset($sina['notify_url']))
+        {
+            //异步回调通知地址
+            $data['notify_url'] = $sina['notify_url'];
+        }
+        if ($payer == 1) 
+        {
+            //扩展信息
+            $data['extend_param'] = "channel_black_list^online_bank^binding_pay^quick_pay";
+        }
         ksort($data);
         //计算签名
         $data['sign'] = $weibopay->getSignMsg($data, $data['sign_type']);
@@ -155,41 +193,71 @@ class Overdue extends Backend
         //模拟表单提交
         $result = $weibopay->curlPost($config['mas'], $setdata);
         
-        $old_overdue = $this->getoldoverdue();
-        $new_overdue = $this->getnewoverdue();
-        $overdue_total = $old_overdue + $new_overdue;
+        $rs = $this->checksinaerror($result);
         
-        $ins = [];
-        $ins['userId'] = $ins['accountId'] = $config['uid'];
-        $ins['payChannelType'] = 2;
-        $ins['flowingType'] = 2;
-        $ins['relatedUserId'] = $ins['borrowInfoId'] = 0;
-        $new_repay = substr(sprintf("%.3f", $sina['money'] / $overdue_total * $new_overdue), 0, -1);
-        $ins['transactionAmt'] = $new_repay * 100;
-        $ins['handingFee'] = 0;
-        $ins['remark'] = '新版本代还款金额：'.$new_repay;
-        $ins['transactionStatus'] = 1;
-        $ins['transactionType'] = 6;
-        $ins['orderId'] = $sina['out_trade_no'];
-        $ins['bankCardNo'] = $ins['realName'] = $ins['pid'] = $ins['bankCode'] = $ins['bankName'] = 
-        $ins['mobile'] = $ins['userIp'] = $ins['signPay'] = '';
-        $ins['payTime'] = $ins['addTime'] = $ins['updateTime'] = date('Y-m-d H:i:s');
-        $ins['couponsIdJx'] = $ins['couponsIdTz'] = 0;
-        Db::table('AppTransactionFlowing')->insert($ins);
+        if ($payer == 1 || $wlog) 
+        {
+            $old_overdue = $this->getoldoverdue();
+            $new_overdue = $this->getnewoverdue();
+            $overdue_total = $old_overdue + $new_overdue;
+            
+            $ins = [];
+            $ins['userId'] = $ins['accountId'] = $config['uid'];
+            $ins['payChannelType'] = 2;
+            $ins['flowingType'] = 2;
+            $ins['relatedUserId'] = $ins['borrowInfoId'] = 0;
+            $new_repay = substr(sprintf("%.3f", $sina['money'] / $overdue_total * $new_overdue), 0, -1);
+            $ins['transactionAmt'] = $new_repay * 100;
+            $ins['handingFee'] = 0;
+            $ins['remark'] = '新版本代还款金额：'.$new_repay;
+            $ins['transactionStatus'] = 1;
+            $ins['transactionType'] = 6;
+            $ins['orderId'] = $data['out_trade_no'];
+            $ins['bankCardNo'] = $ins['realName'] = $ins['pid'] = $ins['bankCode'] = $ins['bankName'] =
+            $ins['mobile'] = $ins['userIp'] = $ins['signPay'] = '';
+            $ins['payTime'] = $ins['addTime'] = $ins['updateTime'] = date('Y-m-d H:i:s');
+            $ins['couponsIdJx'] = $ins['couponsIdTz'] = 0;
+            Db::table('AppTransactionFlowing')->insert($ins);
+            
+            $ins = [];
+            $ins['uid'] = $config['uid'];
+            $ins['borrow_id'] = 0;
+            $ins['type'] = 4;
+            $ins['order_no'] = $data['out_trade_no'];
+            $ins['money'] = substr(sprintf("%.3f", $sina['money'] / $overdue_total * $old_overdue), 0, -1);
+            $ins['addtime'] = time();
+            $ins['sort_order'] = 1;
+            $ins['coupons'] = $ins['jx_coupons'] = '';
+            $ins['is_auto'] = 0;
+            Db::connect('old_db')->name('sinalog')->insert($ins);
+        }
+        else 
+        {
+            
+        }
         
-        $ins = [];
-        $ins['uid'] = $config['uid'];
-        $ins['borrow_id'] = 0;
-        $ins['type'] = 4;
-        $ins['order_no'] = $sina['out_trade_no'];
-        $ins['money'] = substr(sprintf("%.3f", $sina['money'] / $overdue_total * $old_overdue), 0, -1);
-        $ins['addtime'] = time();
-        $ins['sort_order'] = 1;
-        $ins['coupons'] = $data['jx_coupons'] = '';
-        $ins['is_auto'] = 0;
-        Db::connect('old_db')->name('sinalog')->insert($ins);
+        return $payer == 1 ? $result : $rs;
+    }
+    
+    public function checksinaerror($data)
+    {
+        $config = config('site.sinapay');
+        $weibopay = new Weibopay();
         
-        return $result;
+        $deresult = urldecode($data);
+        $splitdata = (array)json_decode($deresult, true);
+        //对签名参数据排序
+        ksort($splitdata); 
+        
+        if ($weibopay->checkSignMsg($splitdata, $splitdata["sign_type"])) 
+        {
+            return $splitdata;
+        } 
+        else 
+        {
+            return "sing error!" ;
+            exit();
+        }
     }
     
     public function getoldoverdue()
@@ -206,6 +274,23 @@ class Overdue extends Backend
                 ->sum('ide.capital-ide.substitute_money');
     }
     
+    private function getoldoverduebyuid($uid)
+    {
+        $old_overdue = Db::connect('old_db')
+                        ->name('investor_detail')
+                        ->alias('ide')
+                        ->join('borrow_info b', 'ide.borrow_id = b.id')
+                        ->where('investor_uid', $uid)
+                        ->where('ide.status', 7)
+                        ->where('ide.repayment_time', 0)
+                        ->where('ide.is_debt', 0)
+                        ->where('b.test', 0)
+                        ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-d H:i:s')])
+                        ->sum('ide.capital-ide.substitute_money');
+        
+        return $old_overdue;
+    }
+    
     public function getnewoverdue()
     {
         $new_overdue_sum = Db::table('AppInvestorRepayment')
@@ -215,9 +300,24 @@ class Overdue extends Backend
                             ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
                             ->where('t.repaymentStatus', 0)
                             ->where('c.deadline', '<=', date('Y-m-d H:i:s'))
-                            ->sum('t.capital');
+                            ->sum('b.realityMoney-t.receiveMoney');
         
         return $new_overdue_sum / 100;
+    }
+    
+    private function getnewoverduebyuid($uid)
+    {
+        $new_overdue = Db::table('AppInvestorRepayment')
+                        ->alias('t')
+                        ->join('AppBorrowInfo a', 'a.borrowInfoId = t.borrowInfoId')
+                        ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
+                        ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
+                        ->where('t.repaymentStatus', 0)
+                        ->where('c.deadline', '<=', date('Y-m-d H:i:s'))
+                        ->where('t.userId', $uid)
+                        ->sum('b.realityMoney-t.receiveMoney');
+        
+        return $new_overdue / 100;
     }
     
     /**
@@ -248,5 +348,217 @@ class Overdue extends Backend
         $this->view->assign('feeTypeList', build_select('row[feeType]', model('Appborrowinfo')->getFeeTypeList(), $row['feeType'], ['class' => 'form-control selectpicker']));
         
         return $this->view->fetch();
+    }
+    
+    /**
+     * 基本户针对个人还款
+     * @return string
+     */
+    public function publicpersonalrepay()
+    {
+        if ($this->request->isPost()) 
+        {
+            $params = $this->request->post();
+            if ($params) 
+            {
+                foreach ($params['phone'] as $k => $v) 
+                {
+                    if (empty($v)) 
+                    {
+                        $this->error('手机号不能为空！');
+                    }
+                    $userId = Db::table('AppUser')->where('userPhone', $v)->value('userId');
+                    if(!$userId)
+                    {
+                        $this->error('手机号'.$v.'不存在！');
+                    }
+                    $userId_arr[] = $userId;
+                }
+                foreach ($params['money'] as $k => &$v)
+                {
+                    if ($v <= 0)
+                    {
+                        $this->error('还款金额必须大于0！');
+                    }
+                    $v = substr(sprintf("%.3f", $v), 0, -1);
+                }
+            }
+            
+            $repay_userinfo = array_combine($userId_arr, $params['money']);
+            foreach ($repay_userinfo as $uid => $money) 
+            {
+                $old_overdue = $this->getoldoverduebyuid($uid);
+                
+                $new_overdue = $this->getnewoverduebyuid($uid);
+                
+                if ($money > $old_overdue + $new_overdue) 
+                {
+                    $this->error('实际还款金额必须小于待还金额！（uid:'.$uid.'）');
+                }
+            }
+            
+            $sina['summary'] = date('Y-m-d H:i:s').',后台管理员还款操作';
+            $sina['money'] = array_sum($repay_userinfo);
+            $sina['code'] = '1002';
+            $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
+            
+            $rs = $this->sinacollecttrade($sina, 2);
+            
+            Log::write("基本户代收结果 ： " . var_export($rs, true), 'java');
+            
+            if ($rs['response_code'] == 'APPLY_SUCCESS') 
+            {
+                //这里是处理数据表的逻辑
+                // 启动事务
+                Db::startTrans();
+                
+                try{
+                    
+                    foreach ($repay_userinfo as $uid => $money)
+                    {
+                        $res = $this->personaldbhandle($uid, $money);
+                    }
+                    
+                }catch (\Exception $e) {
+                    // 回滚事务
+                    Db::rollback();
+                }
+                //这里是处理数据表的逻辑
+                
+                $i = $k = $j = 0;
+                $trade_list = ""; //新浪的交易列表
+                foreach ($repay_userinfo as $uid => $money)
+                {
+                    if ($i < 300) 
+                    {
+                        if ($k === 0) 
+                        {
+                            $trade_list[$j] = date('YmdHis').mt_rand(100000, 999999).'~20151008'.$uid.'~UID~SAVING_POT~'.$money.'~~对公基本户个人还款金额'.$money.'~~~~~'.$sina['out_trade_no'];
+                            $k++;
+                        } 
+                        else 
+                        {
+                            $trade_list[$j] .= '$'.date('YmdHis').mt_rand(100000, 999999).'~20151008'.$uid.'~UID~SAVING_POT~'.$money.'~~对公基本户个人还款金额'.$money.'~~~~~'.$sina['out_trade_no'];
+                        }
+                        $i++;
+                        if ($i === 300) 
+                        {
+                            $i = $k = 0;
+                            $j++;
+                        }
+                    }
+                }
+                
+                $weibopay = new Weibopay();
+                $request = \think\Request::instance();
+                $config = config('site.sinapay');
+                //接口名称
+                $data['service'] = "create_batch_hosting_pay_trade";
+                //接口版本
+                $data['version'] = $config['version'];
+                //请求时间
+                $data['request_time'] = date('YmdHis');
+                //用户IP地址
+                $data['user_ip'] = $request->ip();
+                //合作者身份ID
+                $data['partner_id'] = $config['partner_id'];
+                //网站编码格式
+                $data['_input_charset'] = $config['_input_charset'];
+                //签名方式
+                $data['sign_type'] = $config['sign_type'];
+                //交易订单号
+                $data['out_pay_no'] = date('YmdHis').mt_rand(100000, 999999);
+                //交易码 2001代付借款金 2002代付（本金/收益）金
+                $data['out_trade_code'] = '2002';
+                //交易列表
+                $data['trade_list'] = $trade_list[0];
+                //通知方式：single_notify: 交易逐笔通知 batch_notify: 批量通知
+                $data['notify_method'] = 'batch_notify';
+                ksort($data);
+                //计算签名
+                $data['sign'] = $weibopay->getSignMsg($data, $data['sign_type']);
+                $setdata = $weibopay->createcurl_data($data);
+                //模拟表单提交
+                $result = $weibopay->curlPost($config['mas'], $setdata);
+                $rs = $this->checksinaerror($result);
+                
+                Log::write("基本户代付结果 ： " . var_export($rs, true), 'java');
+                
+                if ($rs['response_code'] == 'APPLY_SUCCESS')
+                {
+                    $this->success($rs['response_message']);
+                }
+                else
+                {
+                    $this->error($rs['response_message']);
+                }
+            }
+            else 
+            {
+                $this->error($rs['response_message']);
+            }
+            
+            $this->error(__('Parameter %s can not be empty', ''));
+        }
+        
+        return $this->view->fetch();
+    }
+    
+    /**
+     * 基本户对个人还款数据库处理
+     * @param int $uid
+     * @param float $money
+     * @return boolean
+     */
+    public function personaldbhandle($uid, $money)
+    {
+        //输入总还款
+        $trade_amount = $money;
+        //新版本总逾期额度
+        $new_overdue = $this->getnewoverduebyuid($uid);
+        //旧版本总逾期额度
+        $old_overdue = $this->getoldoverduebyuid($uid);
+        //新版本分配还款额度
+        $new_repay = substr(sprintf("%.3f", $trade_amount / ($new_overdue + $old_overdue) * $new_overdue), 0, -1);
+        //旧版本分配还款额度
+        $old_repay = substr(sprintf("%.3f", $trade_amount / ($new_overdue + $old_overdue) * $old_overdue), 0, -1);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        return true;
+    }
+    
+    /**
+     * 基本户对所有人还款
+     */
+    public function publicallrepay()
+    {
+        if ($this->request->isAjax())
+        {
+            $param = $this->request->post();
+            $money = $param['money'];
+            
+            $sina['summary'] = date('Y-m-d H:i:s').',对公基本户系统对这个月'.date('Y-m').'之前所有待还投资者还款';
+            $sina['money'] = $money;
+            $sina['code'] = '1002';
+            $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
+            $sina['notify_url'] = "http://".$_SERVER['HTTP_HOST']."/index/Sinanotify/collecttradenotify";
+            $rs = $this->sinacollecttrade($sina, 2, true);
+            Log::write("基本户针对所有人代收结果 ： " . var_export($rs, true), 'java');
+            if ($rs['response_code'] == 'APPLY_SUCCESS')
+            {
+                $this->success($rs['response_message']);
+            }
+            else
+            {
+                $this->error($rs['response_message']);
+            }
+        }
     }
 }

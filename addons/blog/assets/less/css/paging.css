@@ -1,0 +1,23 @@
+.paging li {
+  display: inline-block;
+}
+.paging a {
+  color: #333;
+  padding: 8px 12px;
+  line-height: 18px;
+  display: block;
+}
+.paging .disabled a:link,
+.paging .disabled a:visited,
+.paging .disabled a:hover {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: #ddd;
+}
+.paging .active {
+  pointer-events: none;
+}
+.paging .active,
+.paging a:hover {
+  background: #f5f5f5;
+}
