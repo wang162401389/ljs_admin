@@ -361,7 +361,7 @@ class Overdue extends Backend
             $params = $this->request->post();
             if ($params) 
             {
-                foreach ($params['phone'] as $k => $v) 
+                foreach ($params['phone'] as $v) 
                 {
                     if (empty($v)) 
                     {
@@ -374,7 +374,7 @@ class Overdue extends Backend
                     }
                     $userId_arr[] = $userId;
                 }
-                foreach ($params['money'] as $k => &$v)
+                foreach ($params['money'] as &$v)
                 {
                     if ($v <= 0)
                     {
@@ -385,20 +385,30 @@ class Overdue extends Backend
             }
             
             $repay_userinfo = array_combine($userId_arr, $params['money']);
+            $uid_money_arr = [];
             foreach ($repay_userinfo as $uid => $money) 
+            {
+                $uid_money_arr[$uid] += $money;
+            }
+            
+            foreach ($uid_money_arr as $uid => $money) 
             {
                 $old_overdue = $this->getoldoverduebyuid($uid);
                 
                 $new_overdue = $this->getnewoverduebyuid($uid);
                 
-                if ($money > $old_overdue + $new_overdue) 
+                if ($money > $old_overdue + $new_overdue)
                 {
                     $this->error('实际还款金额必须小于待还金额！（uid:'.$uid.'）');
                 }
             }
+                
+                
+                
+                
             
             $sina['summary'] = date('Y-m-d H:i:s').',后台管理员还款操作';
-            $sina['money'] = array_sum($repay_userinfo);
+            $sina['money'] = array_sum($uid_money_arr);
             $sina['code'] = '1002';
             $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
             
@@ -414,7 +424,7 @@ class Overdue extends Backend
                 
                 try{
                     
-                    foreach ($repay_userinfo as $uid => $money)
+                    foreach ($uid_money_arr as $uid => $money)
                     {
                         $res = $this->personaldbhandle($uid, $money);
                     }
@@ -427,7 +437,7 @@ class Overdue extends Backend
                 
                 $i = $k = $j = 0;
                 $trade_list = ""; //新浪的交易列表
-                foreach ($repay_userinfo as $uid => $money)
+                foreach ($uid_money_arr as $uid => $money)
                 {
                     if ($i < 300) 
                     {
