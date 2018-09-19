@@ -186,7 +186,7 @@ class Sinanotify extends Frontend
         return Db::connect('old_db')
                 ->name('investor_detail')
                 ->alias('ide')
-                ->join('borrow_info b', 'ide.borrow_id = b.id', 'LEFT')
+                ->join('borrow_info b', 'ide.borrow_id = b.id')
                 ->where('ide.status', 7)
                 ->where('ide.repayment_time', 0)
                 ->where('ide.status', '<>', -1)

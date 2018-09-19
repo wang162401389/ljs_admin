@@ -21,6 +21,18 @@ return array (
     array (
       0 => 'loginbg',
     ),
+    'response_send' => 
+    array (
+      0 => 'loginvideo',
+    ),
+    'wipecache_after' => 
+    array (
+      0 => 'tinymce',
+    ),
+    'set_tinymce' => 
+    array (
+      0 => 'tinymce',
+    ),
     'sms_send' => 
     array (
       0 => 'yunpian',

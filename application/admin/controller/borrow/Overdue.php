@@ -280,7 +280,7 @@ class Overdue extends Backend
                         ->where('ide.repayment_time', 0)
                         ->where('ide.is_debt', 0)
                         ->where('b.test', 0)
-                        ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-d H:i:s')])
+                        ->whereTime('ide.deadline', 'between', ['2018-07-19 00:00:00', '2018-09-01 00:00:00'])
                         ->sum('ide.capital-ide.substitute_money');
         
         return $old_overdue;
@@ -310,7 +310,7 @@ class Overdue extends Backend
                         ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
                         ->where('t.repaymentStatus', 0)
                         ->where('a.testFlag', 0)
-                        ->where('c.deadline', '<=', date('Y-m-d H:i:s'))
+                        ->where('c.deadline', 'between', ['2018-07-19 00:00:00', '2018-09-01 00:00:00'])
                         ->where('t.userId', $uid)
                         ->sum('b.realityMoney-t.receiveMoney');
         
@@ -570,5 +570,122 @@ class Overdue extends Backend
                 $this->error($rs['response_message']);
             }
         }
+    }
+    
+    /**
+     * 导入
+     */
+    public function import()
+    {
+        Db::table('AppInvestorRepayment')
+        ->alias('t')
+        ->join('AppBorrowInfo a', 'a.borrowInfoId = t.borrowInfoId')
+        ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
+        ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
+        ->where('t.repaymentStatus', 0)
+        ->where('a.testFlag', 0)
+        //->where('c.deadline', '<=', date('Y-m-d H:i:s'))
+        ->where('c.deadline', 'between', ['2018-07-19 00:00:00', '2018-09-01 00:00:00'])
+        ->sum('b.realityMoney-t.receiveMoney');
+        
+        halt(Db::table('AppInvestorRepayment')->getLastSql());
+        
+        $file = $this->request->request('file');
+        if (!$file)
+        {
+            $this->error(__('Parameter %s can not be empty', 'file'));
+        }
+        $filePath = ROOT_PATH . DS . 'public' . DS . $file;
+        if (!is_file($filePath))
+        {
+            $this->error(__('No results were found'));
+        }
+        $PHPReader = new \PHPExcel_Reader_Excel2007();
+        if (!$PHPReader->canRead($filePath))
+        {
+            $PHPReader = new \PHPExcel_Reader_Excel5();
+            if (!$PHPReader->canRead($filePath))
+            {
+                $PHPReader = new \PHPExcel_Reader_CSV();
+                if (!$PHPReader->canRead($filePath))
+                {
+                    $this->error(__('Unknown data format'));
+                }
+            }
+        }
+        
+        $PHPExcel = $PHPReader->load($filePath); //加载文件
+        $currentSheet = $PHPExcel->getSheet(0);  //读取文件中的第一个工作表
+        $allColumn = $currentSheet->getHighestDataColumn(); //取得最大的列号//H
+        $allRow = $currentSheet->getHighestRow(); //取得一共有多少行//878
+        $maxColumnNumber = \PHPExcel_Cell::columnIndexFromString($allColumn);//8
+        for ($currentRow = 1; $currentRow <= 1; $currentRow++)
+        {
+            for ($currentColumn = 0; $currentColumn < $maxColumnNumber; $currentColumn++)
+            {
+                $val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getValue();
+                $fields[] = $val;
+            }
+        }
+        $phone_arr = [];
+        for ($currentRow = 2; $currentRow <= $allRow; $currentRow++)
+        {
+            $values = [];
+            for ($currentColumn = 0; $currentColumn < $maxColumnNumber; $currentColumn++)
+            {
+                $val = $currentSheet->getCellByColumnAndRow($currentColumn, $currentRow)->getValue();
+                $values[] = is_null($val) ? '' : $val;
+            }
+            if ($values[1] != '' && $values[3] != '') 
+            {
+                $phone_arr[] = $values[1];
+            }
+        }
+        $phone_arr = array_unique(array_filter($phone_arr));
+        if (!$phone_arr)
+        {
+            $this->error(__('No rows were updated'));
+        }
+        
+        $tmp_arr = [];
+        foreach ($phone_arr as $phone) 
+        {
+            $val = [];
+            $userId = Db::table('AppUser')->where('userPhone', $phone)->value('userId');
+            if($userId)
+            {
+                $old_overdue = $this->getoldoverduebyuid($userId);
+                $new_overdue = $this->getnewoverduebyuid($userId);
+                
+                $val['userId'] = $userId;
+                $val['phone'] = $phone;
+                $val['old_overdue'] = $old_overdue;
+                $val['new_overdue'] = $new_overdue;
+                $val['total_overdue'] = $old_overdue + $new_overdue;
+                if ($val['total_overdue'] == 0) 
+                {
+                    continue;
+                }
+            }
+            $tmp_arr[] = $val;
+        }
+        
+        $sum_money = array_sum(array_column($tmp_arr, 'total_overdue'));
+        
+        $sina['summary'] = date('Y-m-d H:i:s').',后台管理员还款操作';
+        $sina['money'] = substr(sprintf("%.3f", $sum_money * 0.048), 0, -1);
+        $sina['code'] = '1002';
+        $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
+        
+        $rs = $this->sinacollecttrade($sina, 2, true);
+        
+        Log::write("基本户代收结果 ： " . var_export($rs, true), 'java');
+        
+        if ($rs['response_code'] == 'APPLY_SUCCESS')
+        {
+            
+        }
+        
+        $this->success();
     }
 }

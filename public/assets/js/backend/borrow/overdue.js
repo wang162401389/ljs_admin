@@ -14,6 +14,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     repay_url : 'borrow/overdue/repay',
                     public_personal_repay_url : 'borrow/overdue/publicpersonalrepay',
                     public_all_repay_url : 'borrow/overdue/publicallrepay',
+                    import_url : 'borrow/overdue/import',
                     table: 'AppBorrowInfo',
                 }
             });

@@ -12,7 +12,6 @@ class Tinymce extends Addons
 {
 
 
-
     /**
      * 插件安装方法
      * @return bool
@@ -30,7 +29,7 @@ class Tinymce extends Addons
      */
     public function uninstall()
     {
-        
+
         return true;
     }
 
@@ -51,7 +50,7 @@ class Tinymce extends Addons
      */
     public function disable()
     {
-        
+
         return true;
     }
 
@@ -62,13 +61,13 @@ class Tinymce extends Addons
     public function wipecacheAfter($param)
     {
         $info = $this->getInfo();
-        if($info['state']== 0){
+        if ($info['state'] == 0) {
             //如未开启插件直接返回
             return true;
         }
         $config = $this->getConfig();
-        $configBase = include(__DIR__.'/configBase.php');
-        if($config == $configBase){
+        $configBase = include(__DIR__ . '/configBase.php');
+        if ($config == $configBase) {
             //如配置未变更直接返回
             return true;
         }
@@ -81,13 +80,14 @@ class Tinymce extends Addons
     /**
      * 初始化tinymce插件文件
      */
-    public function setTinymce(){
+    public function setTinymce()
+    {
         //基础tinymce插件必须有不可配置
         $mustPlugins = [
             'advlist',// '高级列表'
             'link', // '链接'
             'image',// '图片'
-            'lists' ,// '列表'
+            'lists',// '列表'
             'charmap',
             'hr',//'水平分割线'
             'anchor',//'描点'
@@ -106,10 +106,10 @@ class Tinymce extends Addons
             'help',//'帮助'
         ];
         //所有可配置的tinymce插件
-        $allConfigPlugins =[
+        $allConfigPlugins = [
             'autolink',//'自动识别创建超链接',
             'autosave',// '自动保存',
-            'print' ,//'打印',
+            'print',//'打印',
             'preview',// '预览',
             'spellchecker',//'拼写检查',
             'fullscreen',//'全屏',
@@ -122,32 +122,32 @@ class Tinymce extends Addons
         //tinymce工具栏默认配置项
         $baseToolbar = 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons | spellchecker help';
         $config = $this->getConfig();
-        $jsContent = file_get_contents(__DIR__.'/bootstrapBase.js');
-        $jsContent = str_replace("{language}",$config['language'],$jsContent);
-        if(!empty($config['plugins'])){
-            $plugins = array_merge($mustPlugins,explode(',',$config['plugins']));
-        }else{
+        $jsContent = file_get_contents(__DIR__ . '/bootstrapBase.js');
+        $jsContent = str_replace("{language}", $config['language'], $jsContent);
+        if (!empty($config['plugins'])) {
+            $plugins = array_merge($mustPlugins, explode(',', $config['plugins']));
+        } else {
             $plugins = $mustPlugins;
         }
-        $jsContent = str_replace("{plugins}",implode(' ',$plugins),$jsContent);
-        if(in_array('spellchecker',$plugins)){
-            $jsContent = str_replace("'{browser_spellcheck}'",'true',$jsContent);
-        }else{
-            $jsContent = str_replace("'{browser_spellcheck}'",'false',$jsContent);
+        $jsContent = str_replace("{plugins}", implode(' ', $plugins), $jsContent);
+        if (in_array('spellchecker', $plugins)) {
+            $jsContent = str_replace("'{browser_spellcheck}'", 'true', $jsContent);
+        } else {
+            $jsContent = str_replace("'{browser_spellcheck}'", 'false', $jsContent);
         }
-        if($config['toolbar']){
-            $arr = array_diff($allConfigPlugins,$plugins);
-            foreach ($arr as $value){
-                $this->baseToolbar = str_replace($value,'',$baseToolbar);
+        if ($config['toolbar']) {
+            $arr = array_diff($allConfigPlugins, $plugins);
+            foreach ($arr as $value) {
+                $this->baseToolbar = str_replace($value, '', $baseToolbar);
             }
-            $jsContent = str_replace("{toolbar}",$baseToolbar,$jsContent);
-        }else{
-            $jsContent = str_replace("'{toolbar}'",'false',$jsContent);
+            $jsContent = str_replace("{toolbar}", $baseToolbar, $jsContent);
+        } else {
+            $jsContent = str_replace("'{toolbar}'", 'false', $jsContent);
         }
-        $jsContent = str_replace("{subDom}",$config['subDom'],$jsContent);
-        file_put_contents ( __DIR__.'/bootstrap.js', $jsContent);
+        $jsContent = str_replace("{subDom}", $config['subDom'], $jsContent);
+        file_put_contents(__DIR__ . '/bootstrap.js', $jsContent);
         //将本次配置写入配置记录文件
-        file_put_contents ( __DIR__.'/configBase.php','<?php return '.var_export($config,true).';' );
+        file_put_contents(__DIR__ . '/configBase.php', '<?php return ' . var_export($config, true) . ';');
         return true;
     }
 

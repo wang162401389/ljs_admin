@@ -69,6 +69,7 @@ return array (
     'msg' => '必须选择语言',
     'tip' => '选择语言包',
     'ok' => '',
+    'extend' => '',
   ),
   1 => 
   array (
@@ -94,6 +95,7 @@ return array (
     'msg' => '',
     'tip' => '自主选择插件',
     'ok' => '',
+    'extend' => '',
   ),
   2 => 
   array (
@@ -110,6 +112,7 @@ return array (
     'msg' => '',
     'tip' => '',
     'ok' => '',
+    'extend' => '',
   ),
   3 => 
   array (
