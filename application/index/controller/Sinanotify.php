@@ -116,6 +116,93 @@ class Sinanotify extends Frontend
         die();
     }
     
+    public function basiccollecttradenotify()
+    {
+        Log::write('还款回调 ：' . var_export($_REQUEST, true), 'java');
+        $orderId = $_REQUEST['outer_trade_no'];
+        
+        $status = Db::table('AppTransactionFlowing')->where('orderId', $orderId)->where('transactionType', 6)->value('transactionStatus');
+        
+        if ($_REQUEST['trade_status'] == 'TRADE_FINISHED' && $status == 1)
+        {
+            $return = require RUNTIME_PATH . 'log' . DS . date('Ym') . DS . $orderId . '.php';
+            
+            // 启动事务
+            Db::startTrans();
+        
+            try{
+        
+                $new_return = handle_new($orderId, array_column($return, 'userId'));
+        
+                $old_return = handle_old($orderId, array_column($return, 'userId'));
+        
+                Log::write('新版本handle return：'.json_encode($new_return), 'java');
+                Log::write('旧版本handle return：'.json_encode($old_return), 'java');
+        
+                if ($new_return && $old_return)
+                {
+                    Log::write("正在发奖", 'java');
+                    foreach ($new_return['trade_list'] as $k => $list)
+                    {
+                        $res1 = $this->batchpay($list, $new_return['batch_orderid_arr'][$k], 1, $new_return['act_receive_arr'][$k]);
+                        Log::write("新版本批量回款结果 ： " . var_export($res1, true), 'java');
+                    }
+        
+                    foreach ($old_return['trade_list'] as $k => $list)
+                    {
+                        $res2 = $this->batchpay($list, '', 2, $old_return['act_receive_arr'][$k]);
+                        Log::write("旧版本批量回款结果 ： " . var_export($res2, true), 'java');
+                    }
+        
+                    if ($res1['response_code'] == 'APPLY_SUCCESS' && $res2['response_code'] == 'APPLY_SUCCESS')
+                    {
+                        Log::write("发奖成功", 'java');
+        
+                        $upd = [];
+                        $upd['payTime'] = $upd['updateTime'] = date('Y-m-d H:i:s');
+                        $upd['transactionStatus'] = 2;
+                        Db::table('AppTransactionFlowing')->where('orderId', $orderId)->update($upd);
+        
+                        $upd = [];
+                        $upd['status'] = 2;
+                        $upd['completetime'] = time();
+                        Db::connect("old_db")->name("sinalog")->where('order_no', $orderId)->where('type', 4)->update($upd);
+        
+                        Log::write("新版本投资用户 ： " . json_encode($new_return['userinfo']), 'java');
+                        Log::write("旧版本投资用户 ： " . json_encode($old_return['userinfo']), 'java');
+        
+                        $this->sendsms($new_return['userinfo'], $old_return['userinfo']);
+        
+                        echo 'success';
+                    }
+        
+                    // 提交事务
+                    Db::commit();
+                }
+                else
+                {
+                    // 回滚事务
+                    Db::rollback();
+                }
+        
+            } catch (\Exception $e) {
+                // 回滚事务
+                Db::rollback();
+            }
+        
+            echo 'success';
+        }
+        elseif ($_REQUEST['trade_status'] == 'PAY_FINISHED')
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'success';
+        }
+        die();
+    }
+    
     private function sendsms($new, $old)
     {
         if (!empty($new) || !empty($old))

@@ -802,17 +802,15 @@ function encrypt($str)
 
 /**
  * 处理新版本数据
- * @param number $new_overdue
  * @param number $new_repay
  * @param string $orderId
- * @param number $uid
+ * @param array $uid
  * @return boolean|array
  */
-function handle_new($new_overdue, $new_repay, $orderId, $uid = '')
+function handle_new($orderId, $uid = [])
 {
     if (!empty($uid)) 
     {
-        $phone = Db::table('AppUser')->where('userId', $uid)->value('userPhone');
         $newoverduelist = getnewoverduelistbyuid($uid);
     }
     else 
@@ -827,29 +825,21 @@ function handle_new($new_overdue, $new_repay, $orderId, $uid = '')
         foreach ($newoverduelist as $v)
         {
             //按比例还给投资者的钱
-            $receive_money = substr(sprintf("%.3f", $new_repay / $new_overdue * $v['realityMoney']), 0, -1);
+            $receive_money = substr(sprintf("%.3f", $v['realityMoney'] * 0.048), 0, -1);
             $t_money = $receive_money * 100;
             //肯定是小于等于 投资的钱
             Log::write('新：'.($j * 300 + $i + 1).'、receive_money：'.$receive_money.'，realityMoney：'.$v['realityMoney'], 'java');
             if ($receive_money <= ($v['realityMoney'] - $v['receiveMoney']))
             {
-                if (!empty($uid))
+                $phone = Db::table('AppUser')->where('userId', $v['userId'])->value('userPhone');
+                if (isset($userinfo[$phone]))
                 {
                     $userinfo[$phone] += $receive_money;
                 }
-                else 
+                else
                 {
-                    $phone = Db::table('AppUser')->where('userId', $v['userId'])->value('userPhone');
-                    if (isset($userinfo[$phone]))
-                    {
-                        $userinfo[$phone] += $receive_money;
-                    }
-                    else
-                    {
-                        $userinfo[$phone] = $receive_money;
-                    }
+                    $userinfo[$phone] = $receive_money;
                 }
-                
 
                 $upd = [];
                 //还清了
@@ -927,10 +917,10 @@ function handle_new($new_overdue, $new_repay, $orderId, $uid = '')
 
             if ($i < 300)
             {
-                $person_orderId = $this->buildorderno();
+                $person_orderId = buildorderno();
                 if ($k === 0)
                 {
-                    $batch_orderId_arr[$j] = $this->buildorderno();
+                    $batch_orderId_arr[$j] = buildorderno();
                     //实际还款总额
                     $act_receive_arr[$j] = $t_money;
                     $trade_list[$j] = $person_orderId.'~20151008'.$v['userId'].'~UID~SAVING_POT~'.$receive_money.'~~新版本标号：'.$v['borrowSn'].'系统还款~~~~~'.$orderId;
@@ -989,10 +979,10 @@ function getnewoverduelistbyuid($uid)
                         ->join('AppBorrowInfo a', 'a.borrowInfoId = t.borrowInfoId and t.receiveMoney < t.capital')
                         ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
                         ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
-                        ->where('t.userId', $uid)
+                        ->whereIn('t.userId', $uid)
                         ->where('t.repaymentStatus', 0)
                         ->where('a.testFlag', 0)
-                        ->where('c.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
+                        ->where('c.deadline', 'between', ['2018-07-19 00:00:00', '2018-09-01 00:00:00'])
                         ->field('t.id,b.realityMoney * 0.01 as realityMoney,t.receiveMoney * 0.01 as receiveMoney,t.userId,t.borrowInfoId,a.borrowSn')
                         ->select();
 
@@ -1020,14 +1010,13 @@ function getnewoverduelist()
  * @param float $old_overdue
  * @param float $old_repay
  * @param string $orderId
- * @param int $uid
+ * @param array $uid
  * @return boolean|array
  */
-function handle_old($old_overdue, $old_repay, $orderId, $uid = '')
+function handle_old($orderId, $uid = [])
 {
     if (!empty($uid))
     {
-        $phone = Db::connect('old_db')->name('members')->where('id', $uid)->value('user_phone');
         $oldoverduelist = getoldoverduelistbyuid($uid);
     }
     else
@@ -1041,30 +1030,23 @@ function handle_old($old_overdue, $old_repay, $orderId, $uid = '')
         foreach ($oldoverduelist as $v)
         {
             //按比例还给投资者的钱
-            $receive_money = substr(sprintf("%.3f", $old_repay / $old_overdue * $v['capital']), 0, -1);
+            $receive_money = substr(sprintf("%.3f", $v['capital'] * 0.048), 0, -1);
             //肯定是小于等于 投资的钱
             Log::write('旧：'.($j * 300 + $i + 1).'、receive_money：'.$receive_money.'capital：'.$v['capital'], 'java');
 
             //肯定是小于等于 投资的钱
             if ($receive_money <= ($v['capital'] - $v['receive_capital']))
             {
-                if (!empty($uid))
+                $phone = Db::connect('old_db')->name('members')->where('id', $v['investor_uid'])->value('user_phone');
+                if (!empty($phone))
                 {
-                    $userinfo[$phone] += $receive_money;
-                }
-                else
-                {
-                    $phone = Db::connect('old_db')->name('members')->where('id', $v['investor_uid'])->value('user_phone');
-                    if (!empty($phone))
+                    if (isset($userinfo[$phone]))
                     {
-                        if (isset($userinfo[$phone]))
-                        {
-                            $userinfo[$phone] += $receive_money;
-                        }
-                        else
-                        {
-                            $userinfo[$phone] = $receive_money;
-                        }
+                        $userinfo[$phone] += $receive_money;
+                    }
+                    else
+                    {
+                        $userinfo[$phone] = $receive_money;
                     }
                 }
 
@@ -1126,13 +1108,13 @@ function handle_old($old_overdue, $old_repay, $orderId, $uid = '')
                 {
                     //实际还款总额
                     $act_receive_arr[$j] = $receive_money;
-                    $trade_list[$j] = $this->buildorderno().'~20151008'.$v['investor_uid'].'~UID~SAVING_POT~'.$receive_money.'~~旧版本标号：'.$borrowsn.'系统还款~~~~~'.$orderId;
+                    $trade_list[$j] = buildorderno().'~20151008'.$v['investor_uid'].'~UID~SAVING_POT~'.$receive_money.'~~旧版本标号：'.$borrowsn.'系统还款~~~~~'.$orderId;
                     $k++;
                 }
                 else
                 {
                     $act_receive_arr[$j] += $receive_money;
-                    $trade_list[$j] .= '$'.$this->buildorderno().'~20151008'.$v['investor_uid'].'~UID~SAVING_POT~'.$receive_money.'~~旧版本标号：'.$borrowsn.'系统还款~~~~~'.$orderId;
+                    $trade_list[$j] .= '$'.buildorderno().'~20151008'.$v['investor_uid'].'~UID~SAVING_POT~'.$receive_money.'~~旧版本标号：'.$borrowsn.'系统还款~~~~~'.$orderId;
                 }
                 $i++;
                 if ($i === 300)
@@ -1155,12 +1137,12 @@ function getoldoverduelistbyuid($uid)
                         ->name('investor_detail')
                         ->alias('ide')
                         ->join('borrow_info b', 'ide.borrow_id = b.id')
-                        ->where('ide.investor_uid', $uid)
+                        ->whereIn('ide.investor_uid', $uid)
                         ->where('ide.status', 7)
                         ->where('ide.repayment_time', 0)
                         ->where('ide.is_debt', 0)
                         ->where('b.test', 0)
-                        ->whereTime('ide.deadline', 'between', ['2018-01-01 00:00:00', date('Y-m-t', strtotime('-1 month'))])
+                        ->whereTime('ide.deadline', 'between', ['2018-07-19 00:00:00', '2018-09-01 00:00:00'])
                         ->field('ide.id,ide.capital,ide.borrow_id,ide.receive_capital,ide.invest_id,ide.investor_uid')
                         ->select();
 

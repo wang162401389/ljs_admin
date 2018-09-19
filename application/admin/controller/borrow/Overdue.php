@@ -516,27 +516,26 @@ class Overdue extends Backend
     
     /**
      * 基本户对个人还款数据库处理
-     * @param int $uid
-     * @param float $money 总还款
+     * @param array $info 个人还款信息
      * @param string $orderid 订单号
      * @return boolean
      */
-    public function personaldbhandle($uid, $money, $orderid)
+    public function personaldbhandle($info, $orderid)
     {
         //新版本逾期额度
-        $new_overdue = $this->getnewoverduebyuid($uid);
+        $new_overdue = $info['new_overdue'];
         //旧版本逾期额度
-        $old_overdue = $this->getoldoverduebyuid($uid);
+        $old_overdue = $info['old_overdue'];
         //新版本分配还款额度
-        $new_repay = substr(sprintf("%.3f", $money / ($new_overdue + $old_overdue) * $new_overdue), 0, -1);
+        $new_repay = substr(sprintf("%.3f", $new_overdue * 0.048), 0, -1);
         //旧版本分配还款额度
-        $old_repay = substr(sprintf("%.3f", $money / ($new_overdue + $old_overdue) * $old_overdue), 0, -1);
+        $old_repay = substr(sprintf("%.3f", $old_overdue * 0.048), 0, -1);
 
-        Log::write('uid:'.$uid.'，新版本逾期额度：'.$new_overdue.'，新版本分配还款额度：'.$new_repay.'，旧版本逾期额度：'.$old_overdue.'，旧版本分配还款额度'.$old_repay, 'java');
+        Log::write('uid:'.$info['userId'].'，新版本逾期额度：'.$new_overdue.'，新版本分配还款额度：'.$new_repay.'，旧版本逾期额度：'.$old_overdue.'，旧版本分配还款额度'.$old_repay, 'java');
         
-        $new_return = handle_new($new_overdue, $new_repay, $orderid, $uid);
+        $new_return = handle_new($new_overdue, $new_repay, $orderid, $info['userId']);
         
-        $old_return = handle_old($old_overdue, $old_repay, $orderid, $uid);
+        $old_return = handle_old($old_overdue, $old_repay, $orderid, $info['userId']);
         
         Log::write('新版本handle return：'.json_encode($new_return), 'java');
         Log::write('旧版本handle return：'.json_encode($old_return), 'java');
@@ -577,19 +576,6 @@ class Overdue extends Backend
      */
     public function import()
     {
-        Db::table('AppInvestorRepayment')
-        ->alias('t')
-        ->join('AppBorrowInfo a', 'a.borrowInfoId = t.borrowInfoId')
-        ->join('AppInvestorRecord b', 'b.id = t.borrowInvestorId')
-        ->join('AppBorrowRepayment c', 'c.borrowInfoId = t.borrowInfoId')
-        ->where('t.repaymentStatus', 0)
-        ->where('a.testFlag', 0)
-        //->where('c.deadline', '<=', date('Y-m-d H:i:s'))
-        ->where('c.deadline', 'between', ['2018-07-19 00:00:00', '2018-09-01 00:00:00'])
-        ->sum('b.realityMoney-t.receiveMoney');
-        
-        halt(Db::table('AppInvestorRepayment')->getLastSql());
-        
         $file = $this->request->request('file');
         if (!$file)
         {
@@ -676,16 +662,18 @@ class Overdue extends Backend
         $sina['money'] = substr(sprintf("%.3f", $sum_money * 0.048), 0, -1);
         $sina['code'] = '1002';
         $sina['out_trade_no'] = date('YmdHis').mt_rand(100000, 999999);
+        $sina['notify_url'] = "http://".$_SERVER['HTTP_HOST']."/index/Sinanotify/basiccollecttradenotify";
         
         $rs = $this->sinacollecttrade($sina, 2, true);
-        
         Log::write("基本户代收结果 ： " . var_export($rs, true), 'java');
         
         if ($rs['response_code'] == 'APPLY_SUCCESS')
         {
-            
+            $this->success($rs['response_message']);
         }
-        
-        $this->success();
+        else 
+        {
+            $this->error($rs['response_message']);
+        }
     }
 }
