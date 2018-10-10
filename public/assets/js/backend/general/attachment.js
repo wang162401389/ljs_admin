@@ -76,9 +76,9 @@ define(['jquery', 'bootstrap', 'backend', 'form', 'table'], function ($, undefin
                         {field: 'id', title: __('Id')},
                         {field: 'admin_id', title: __('Admin_id'), visible: false},
                         {field: 'user_id', title: __('User_id'), visible: false},
-                        {field: 'url', title: __('Preview'), formatter: Controller.api.formatter.thumb},
-                        {field: 'imagewidth', title: __('Imagewidth')},
-                        {field: 'imageheight', title: __('Imageheight')},
+                        {field: 'url', title: __('Preview'), formatter: Controller.api.formatter.thumb, operate: false},
+                        {field: 'imagewidth', title: __('Imagewidth'), operate: false},
+                        {field: 'imageheight', title: __('Imageheight'), operate: false},
                         {
                             field: 'mimetype', title: __('Mimetype'), operate: 'LIKE %...%',
                             process: function (value, arg) {

@@ -41,6 +41,7 @@ class Config extends Model
             'images'   => __('Images'),
             'file'     => __('File'),
             'files'    => __('Files'),
+            'switch'   => __('Switch'),
             'checkbox' => __('Checkbox'),
             'radio'    => __('Radio'),
             'array'    => __('Array'),
