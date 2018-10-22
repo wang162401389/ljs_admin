@@ -32,17 +32,17 @@ body {
   -moz-box-shadow: none;
   box-shadow: none;
 }
-/*ä¿®å¤nice-validatorå’Œsummernoteçš„ç¼–è¾‘æ¡†å†²çª*/
+/*ÐÞ¸´nice-validatorºÍsummernoteµÄ±à¼­¿ò³åÍ»*/
 .nice-validator .note-editor .note-editing-area .note-editable {
   display: inherit;
 }
-/*é¢„è§ˆåŒºåŸŸ*/
+/*Ô¤ÀÀÇøÓò*/
 .plupload-preview {
-  padding: 10px;
+  padding: 0 10px;
   margin-bottom: 0;
 }
 .plupload-preview li {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .plupload-preview .thumbnail {
   margin-bottom: 10px;
@@ -201,7 +201,24 @@ body {
   line-height: 1.5;
   padding: 4px 13px;
 }
-/* å¼¹çª—ä¸­çš„è¡¨å• */
+.fieldlist dd {
+  display: block;
+  margin: 5px 0;
+}
+.fieldlist dd input {
+  display: inline-block;
+  width: 300px;
+}
+.fieldlist dd input:first-child {
+  width: 110px;
+}
+.fieldlist dd ins {
+  width: 110px;
+  display: inline-block;
+  text-decoration: none;
+  font-weight: bold;
+}
+/* µ¯´°ÖÐµÄ±íµ¥ */
 .form-layer {
   height: 100%;
   min-height: 150px;
@@ -474,5 +491,26 @@ main.content {
     padding: 10px;
     line-height: 30px;
   }
+}
+.pager .pagination {
+  margin: 0;
+}
+.pager li {
+  margin: 0 .4em;
+  display: inline-block;
+}
+.pager li:first-child > a,
+.pager li:last-child > a,
+.pager li:first-child > span,
+.pager li:last-child > span {
+  padding: .5em 1.2em;
+}
+.pager li > a,
+.pager li > span {
+  background: none;
+  border: 1px solid #e6e6e6;
+  border-radius: 0.25em;
+  padding: .5em .93em;
+  font-size: 14px;
 }
 /*# sourceMappingURL=../css/frontend.css.map */
