@@ -89,7 +89,7 @@ trait Backend
                     if ($this->modelValidate)
                     {
                         $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
-                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : true) : $this->modelValidate;
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.add' : $name) : $this->modelValidate;
                         $this->model->validate($validate);
                     }
                     $result = $this->model->allowField(true)->save($params);
@@ -140,8 +140,8 @@ trait Backend
                     //是否采用模型验证
                     if ($this->modelValidate)
                     {
-                        $name = basename(str_replace('\\', '/', get_class($this->model)));
-                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : true) : $this->modelValidate;
+                        $name = str_replace("\\model\\", "\\validate\\", get_class($this->model));
+                        $validate = is_bool($this->modelValidate) ? ($this->modelSceneValidate ? $name . '.edit' : $name) : $this->modelValidate;
                         $row->validate($validate);
                     }
                     $result = $row->allowField(true)->save($params);
