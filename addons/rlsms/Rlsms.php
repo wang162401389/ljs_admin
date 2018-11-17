@@ -2,7 +2,6 @@
 
 namespace addons\rlsms;
 
-use app\common\library\Menu;
 use think\Addons;
 
 /**
@@ -58,7 +57,7 @@ class Rlsms extends Addons
      */
     public function smsSend(&$params)
     {
-        $config = get_addon_config('yunsm');
+        $config = get_addon_config('rlsms');
         //请求地址，格式如下，不需要写https://
         $serverIP = 'app.cloopen.com';
         //请求端口
@@ -69,8 +68,8 @@ class Rlsms extends Addons
         $rest = new library\Rest($serverIP, $serverPort, $softVersion);
         $rest->setAccount($config['accountSid'], $config['accountToken']);
         $rest->setAppId($config['appId']);
-        $content = [$params['code'], 10];
-        $result = $rest->sendTemplateSMS($params->mobile, $content, $params['template']);
+        $content = [$params['code'], '10分钟'];
+        $result = $rest->sendTemplateSMS($params->mobile, $content, $config['template'][$params['event']]);
         $status = $result->statusCode;
         if ($result->statusCode == 0) {
             $smsMessage = $result->TemplateSMS;
@@ -88,7 +87,7 @@ class Rlsms extends Addons
      */
     public function smsNotice(&$params)
     {
-        $config = get_addon_config('yunsm');
+        $config = get_addon_config('rlsms');
         //请求地址，格式如下，不需要写https://
         $serverIP = 'app.cloopen.com';
         //请求端口
@@ -100,7 +99,6 @@ class Rlsms extends Addons
         $rest->setAppId($config['appId']);
         $content = [$params['code'], 10];
         $result = $rest->sendTemplateSMS($params->mobile, $content, $params['template']);
-
         return $result->statusCode == 0 ? true : false;
     }
 

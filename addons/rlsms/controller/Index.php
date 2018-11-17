@@ -1,6 +1,6 @@
 <?php
 
-namespace addons\yunsm\controller;
+namespace addons\rlsms\controller;
 
 use think\addons\Controller;
 

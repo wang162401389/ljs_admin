@@ -8,6 +8,22 @@ return array (
     array (
       0 => 'epay',
     ),
+    'ems_send' => 
+    array (
+      0 => 'faems',
+    ),
+    'ems_notice' => 
+    array (
+      0 => 'faems',
+    ),
+    'action_begin' => 
+    array (
+      0 => 'geetest',
+    ),
+    'config_init' => 
+    array (
+      0 => 'geetest',
+    ),
     'send_msg' => 
     array (
       0 => 'jpush',
@@ -27,15 +43,26 @@ return array (
     ),
     'sms_send' => 
     array (
-      0 => 'yunpian',
+      0 => 'rlsms',
+      1 => 'yunpian',
     ),
     'sms_notice' => 
     array (
-      0 => 'yunpian',
+      0 => 'rlsms',
+      1 => 'yunpian',
     ),
     'sms_check' => 
     array (
-      0 => 'yunpian',
+      0 => 'rlsms',
+      1 => 'yunpian',
+    ),
+    'module_init' => 
+    array (
+      0 => 'webmaintain',
+    ),
+    'addon_begin' => 
+    array (
+      0 => 'webmaintain',
     ),
   ),
   'route' => 
